@@ -1,17 +1,12 @@
 backend:
   name: git-gateway
   branch: master
-  # For pure GitHub backend, use instead:
-  # name: github
-  # repo: YOUR_GITHUB_USERNAME/YOUR_REPO_NAME
-  # branch: main
-  # base_url: https://YOUR_OAUTH_PROXY_DOMAIN
-  # auth_endpoint: /api/auth
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
 local_backend: true
+# publish_mode: editorial_workflow   # optional
 
 collections:
   - name: "settings"
@@ -23,16 +18,20 @@ collections:
         label: "Global Settings"
         file: "content/settings.json"
         fields:
-          - { name: "siteTitle", label: "Site Title", widget: "string" }
-          - { name: "tagline", label: "Tagline", widget: "string" }
-          - { name: "heroImage",     label: "Hero Image",     widget: "image", required: false }
-          - { name: "aboutImage",    label: "About Image",    widget: "image", required: false }
-          - { name: "concertsImage", label: "Concerts Image (optional bg)", widget: "image", required: false }
-          - { name: "contactImage",  label: "Contact Image",  widget: "image", required: false }
-          - { name: "contactEmail", label: "Contact Email", widget: "string", required: false }
-          - { name: "instagram", label: "Instagram URL", widget: "string", required: false }
-          - { name: "facebook", label: "Facebook URL", widget: "string", required: false }
-          - { name: "heroImage", label: "Hero Image", widget: "image", required: false }
+          # --- Text/meta ---
+          - { label: "Site Title",    name: "siteTitle",   widget: "string" }
+          - { label: "Tagline",       name: "tagline",     widget: "string", required: false }
+
+          # --- Images (UNIQUE names) ---
+          - { label: "Hero Image",        name: "heroImage",     widget: "image", required: false }
+          - { label: "About Image",       name: "aboutImage",    widget: "image", required: false }
+          - { label: "Concerts Image",    name: "concertsImage", widget: "image", required: false }
+          - { label: "Contact Image",     name: "contactImage",  widget: "image", required: false }
+
+          # --- Contact/social ---
+          - { label: "Contact Email", name: "contactEmail", widget: "string", required: false }
+          - { label: "Instagram URL", name: "instagram",    widget: "string", required: false }
+          - { label: "Facebook URL",  name: "facebook",     widget: "string", required: false }
 
   - name: "events"
     label: "Events"
@@ -42,12 +41,12 @@ collections:
     extension: "json"
     format: "json"
     fields:
-      - { name: "title", label: "Title", widget: "string" }
-      - { name: "date", label: "Date/Time (ISO)", widget: "datetime" }
-      - { name: "venue", label: "Venue", widget: "string", required: false }
-      - { name: "city", label: "City", widget: "string", required: false }
+      - { name: "title",     label: "Title",     widget: "string" }
+      - { name: "date",      label: "Date/Time (ISO)", widget: "datetime" }
+      - { name: "venue",     label: "Venue",     widget: "string", required: false }
+      - { name: "city",      label: "City",      widget: "string", required: false }
       - { name: "ticketUrl", label: "Ticket URL", widget: "string", required: false }
-      - { name: "slug", label: "Slug", widget: "string", required: false }
+      - { name: "slug",      label: "Slug",      widget: "string", required: false }
 
   - name: "releases"
     label: "Releases"
@@ -57,17 +56,17 @@ collections:
     extension: "json"
     format: "json"
     fields:
-      - { name: "title", label: "Title", widget: "string" }
+      - { name: "title",    label: "Title",    widget: "string" }
       - { name: "subtitle", label: "Subtitle", widget: "string", required: false }
-      - { name: "cover", label: "Cover Image", widget: "image", required: false }
+      - { name: "cover",    label: "Cover Image", widget: "image", required: false }
       - label: "Links"
         name: "links"
         widget: "list"
         collapsed: true
         fields:
           - { name: "label", label: "Label", widget: "string" }
-          - { name: "href", label: "URL", widget: "string" }
-      - { name: "slug", label: "Slug", widget: "string", required: false }
+          - { name: "href",  label: "URL",   widget: "string" }
+      - { name: "slug",     label: "Slug",   widget: "string", required: false }
 
   - name: "quotes"
     label: "Press Quotes"
@@ -78,4 +77,4 @@ collections:
     format: "json"
     fields:
       - { name: "outlet", label: "Outlet", widget: "string" }
-      - { name: "text", label: "Quote", widget: "text" }
+      - { name: "text",   label: "Quote",  widget: "text" }

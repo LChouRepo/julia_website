@@ -25,6 +25,10 @@ collections:
         fields:
           - { name: "siteTitle", label: "Site Title", widget: "string" }
           - { name: "tagline", label: "Tagline", widget: "string" }
+          - { name: "heroImage",     label: "Hero Image",     widget: "image", required: false }
+          - { name: "aboutImage",    label: "About Image",    widget: "image", required: false }
+          - { name: "concertsImage", label: "Concerts Image (optional bg)", widget: "image", required: false }
+          - { name: "contactImage",  label: "Contact Image",  widget: "image", required: false }
           - { name: "contactEmail", label: "Contact Email", widget: "string", required: false }
           - { name: "instagram", label: "Instagram URL", widget: "string", required: false }
           - { name: "facebook", label: "Facebook URL", widget: "string", required: false }

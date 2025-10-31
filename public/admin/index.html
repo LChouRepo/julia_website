@@ -6,16 +6,17 @@
     <title>Content Admin</title>
   </head>
   <body>
-    <!-- Netlify Identity widget (handles invite/confirm token) -->
+    <!-- Netlify Identity widget: processes invite/confirm/reset tokens -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
     <!-- Decap CMS -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
 
     <script>
-      // After login, send editors back to /admin (helpful after confirmation flow)
+      // If an invite/reset token lands us here, the widget will open its UI
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on('init', (user) => {
+          // Convenience: send user back to /admin after login
           if (!user) {
             window.netlifyIdentity.on('login', () => {
               document.location.href = '/admin/';

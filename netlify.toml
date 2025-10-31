@@ -1,13 +1,6 @@
-# netlify.toml
 [build]
   command = "npm run build"
   publish = ".next"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-# NEW: send Identity confirm to the CMS page
-[[redirects]]
-  from = "/.netlify/identity/*"
-  to   = "/admin"
-  status = 200

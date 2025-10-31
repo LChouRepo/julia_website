@@ -78,7 +78,7 @@ export default async function ContactPage() {
               method="POST"
               action="/contact/thanks"
               data-netlify="true"
-              data-netlify-recaptcha="true"   // 👈 add this line
+              data-netlify-recaptcha="true"  
 
               netlify-honeypot="bot-field"
               className="space-y-4"

@@ -1,8 +1,8 @@
 {
   "title": "Recital Debut",
-  "date": "2025-10-31T19:26:28Z",
-  "venue": "City Concert Hall",
-  "city": "Your City",
-  "ticketUrl": "#",
+  "date": "2025-11-22T19:30:00-05:00",
+  "venue": "Smith Hall",
+  "city": "New York, NY",
+  "ticketUrl": "https://example.com/tickets",
   "slug": "recital-debut"
 }

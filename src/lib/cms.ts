@@ -3,6 +3,9 @@ import {
   readSettings, readEvents, readReleases, readQuotes,
   readEventBySlug, readReleaseBySlug
 } from "@/lib/content"
+import { readAbout } from "@/lib/content";
+
+export async function getAbout() { return (await readAbout()) ?? null }
 
 export async function getSettings()  { return (await readSettings()) ?? F.settings }
 export async function getEvents()    { const v = await readEvents();   return v?.length ? v : F.events }

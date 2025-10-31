@@ -31,6 +31,19 @@ export async function readSettings() {
   const file = path.join(CONTENT_DIR, "settings.json");
   return await readJson(file);
 }
+// --- ABOUT ---
+type About = {
+  bioShort?: string;   // markdown (optional)
+  bioLong?: string;    // markdown (official bio)
+  headshots?: { src: string; alt?: string; credit?: string }[];
+  pressKit?: string;   // optional PDF path
+};
+
+export async function readAbout(): Promise<About | null> {
+  noStore();
+  const file = path.join(CONTENT_DIR, "about.json");
+  return await readJson<About>(file);
+}
 
 // ---- EVENTS ----
 type EventItem = {

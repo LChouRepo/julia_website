@@ -1,22 +1,12 @@
-import * as F from '@/lib/data.fallback'
-import { readSettings, readEvents, readReleases, readQuotes } from '@/lib/content'
+import * as F from "@/lib/data.fallback"
+import {
+  readSettings, readEvents, readReleases, readQuotes,
+  readEventBySlug, readReleaseBySlug
+} from "@/lib/content"
 
-export async function getSettings() {
-  const data = await readSettings()
-  return data ?? F.settings
-}
-
-export async function getEvents() {
-  const list = await readEvents()
-  return (list?.length ? list : F.events)
-}
-
-export async function getReleases() {
-  const list = await readReleases()
-  return (list?.length ? list : F.releases)
-}
-
-export async function getQuotes() {
-  const list = await readQuotes()
-  return (list?.length ? list : F.quotes)
-}
+export async function getSettings()  { return (await readSettings()) ?? F.settings }
+export async function getEvents()    { const v = await readEvents();   return v?.length ? v : F.events }
+export async function getReleases()  { const v = await readReleases(); return v?.length ? v : F.releases }
+export async function getQuotes()    { const v = await readQuotes();   return v?.length ? v : F.quotes }
+export async function getEvent(slug: string)   { return (await readEventBySlug(slug))   ?? null }
+export async function getRelease(slug: string) { return (await readReleaseBySlug(slug)) ?? null }

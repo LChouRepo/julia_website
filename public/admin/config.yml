@@ -78,3 +78,22 @@ collections:
     fields:
       - { name: "outlet", label: "Outlet", widget: "string" }
       - { name: "text",   label: "Quote",  widget: "text" }
+  - name: "about"
+    label: "About (Official Biography)"
+    delete: false
+    format: "json"
+    files:
+      - name: "official"
+        label: "Official Biography"
+        file: "content/about.json"
+        fields:
+          - { name: "bioShort", label: "Short Bio (Markdown)", widget: "markdown", required: false }
+          - { name: "bioLong",  label: "Official Bio (Markdown)", widget: "markdown" }
+          - label: "Headshots"
+            name: "headshots"
+            widget: "list"
+            fields:
+              - { name: "src",    label: "Image", widget: "image" }
+              - { name: "alt",    label: "Alt Text", widget: "string", required: false }
+              - { name: "credit", label: "Credit", widget: "string", required: false }
+          - { name: "pressKit", label: "Press Kit (PDF)", widget: "file", required: false }

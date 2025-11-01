@@ -140,9 +140,7 @@ export default async function ContactPage() {
               </button>
             </form>
 
-            <p className="mt-3 text-xs text-neutral-500">
-              This form uses Netlify Forms—no server code required.
-            </p>
+
           </div>
         </div>
       </section>

@@ -13,11 +13,27 @@ export default function HomeMediaPreview({ release, quotes = [] as Quote[], lang
             {release?.cover && (
               <img src={release.cover} alt={t((release as any)?.title, lang, "")} className="mb-4 w-full rounded-lg object-cover" />
             )}
-            <h3 className="text-xl font-semibold">{release?.title ?? 'Featured release'}</h3>
-            {release?.subtitle && <p className="mt-1 text-sm text-white/80">{t((release as any)?.subtitle, lang, "")}</p>}
+            <h3 className="text-xl font-semibold">
+              {t((release as any)?.title, lang, "Featured release")}
+            </h3>
+
+            {t((release as any)?.subtitle, lang, "") && (
+              <p className="mt-1 text-sm text-white/80">
+                {t((release as any)?.subtitle, lang, "")}
+              </p>
+            )}
+
             <div className="mt-4 flex flex-wrap gap-2">
-              {release?.links?.map((l,i)=> (
-                <a key={i} className="rounded border border-white/40 px-3 py-1 text-sm hover:bg-white hover:text-black" href={l.href} target="_blank" rel="noreferrer">{t((l as any).label, lang, "")}</a>
+              {release?.links?.map((l: any, i: number) => (
+                <a
+                  key={i}
+                  className="rounded border border-white/40 px-3 py-1 text-sm hover:bg-white hover:text-black"
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t(l.label, lang, "")}
+                </a>
               ))}
             </div>
           </div>

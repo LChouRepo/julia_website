@@ -7,7 +7,9 @@ import { getSettings, getEvents, getReleases, getQuotes } from "@/lib/cms"
 import { getLang } from "@/lib/lang"
 import { t } from "@/lib/i18n"
 export const runtime = "nodejs"
-export const revalidate = 60
+
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default async function HomePage() {
   const lang = await getLang()

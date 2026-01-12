@@ -1,3 +1,5 @@
+import { getLang } from "@/lib/lang"
+import { t } from "@/lib/i18n"
 export default function Releases({ releases = [] as any[], lang = "en" }: { releases?: any[]; lang?: "en" | "de" }) {
   return (
     <section id="media" className="section container">

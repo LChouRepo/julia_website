@@ -1,5 +1,6 @@
 import { MapPin, Ticket } from "lucide-react"
-
+import { getLang } from "@/lib/lang"
+import { t } from "@/lib/i18n"
 export default function EventsList({ events = [] as any[], lang = "en" }: { events?: any[]; lang?: "en" | "de" }) {
   return (
     <div className="mt-8 divide-y card">

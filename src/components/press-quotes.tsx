@@ -1,3 +1,5 @@
+import { getLang } from "@/lib/lang"
+import { t } from "@/lib/i18n"
 export default function PressQuotes({ quotes = [] as any[], lang = "en" }: { quotes?: any[]; lang?: "en" | "de" }) {
   return (
     <section className="container">

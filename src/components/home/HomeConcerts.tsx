@@ -1,5 +1,8 @@
 import Link from "next/link"
 import { t } from "@/lib/i18n"
+import { getLang } from "@/lib/lang"
+
+const lang = await getLang()
 
 type Event = {
   title: any

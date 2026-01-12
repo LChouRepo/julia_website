@@ -1,7 +1,13 @@
 {
-  "title": "Recital Debut",
+  "title": {
+    "en": "Recital Debut",
+    "de": ""
+  },
   "date": "2025-11-22T19:30:00-05:00",
-  "venue": "Smith Hall",
+  "venue": {
+    "en": "Smith Hall",
+    "de": ""
+  },
   "city": "New York, NY",
   "ticketUrl": "https://example.com/tickets",
   "slug": "recital-debut"

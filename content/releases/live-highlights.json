@@ -1,10 +1,19 @@
 {
-  "title": "Live Highlights",
-  "subtitle": "Selections 2024–2025",
+  "title": {
+    "en": "Live Highlights",
+    "de": ""
+  },
+  "subtitle": {
+    "en": "Selections 2024–2025",
+    "de": ""
+  },
   "cover": "",
   "links": [
     {
-      "label": "youtube",
+      "label": {
+        "en": "youtube",
+        "de": ""
+      },
       "href": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1"
     }
   ],

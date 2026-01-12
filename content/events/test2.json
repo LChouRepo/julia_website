@@ -1,7 +1,13 @@
 {
-  "title": "test2",
+  "title": {
+    "en": "test2",
+    "de": ""
+  },
   "date": "2025-11-14T08:29:00.000+08:00",
-  "venue": "123",
+  "venue": {
+    "en": "123",
+    "de": ""
+  },
   "city": "hk",
   "ticketUrl": "google.com",
   "slug": "https://github.com/"

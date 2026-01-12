@@ -1,7 +1,13 @@
 {
-  "title": "test1",
+  "title": {
+    "en": "test1",
+    "de": ""
+  },
   "date": "2025-11-01T05:53:00.000+08:00",
-  "venue": "here",
+  "venue": {
+    "en": "here",
+    "de": ""
+  },
   "city": "hk",
   "ticketUrl": "213.go.com",
   "slug": "123"

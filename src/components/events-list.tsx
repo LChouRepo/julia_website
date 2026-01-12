@@ -1,16 +1,16 @@
 import { MapPin, Ticket } from "lucide-react"
 
-export default function EventsList({ events = [] as any[] }) {
+export default function EventsList({ events = [] as any[], lang = "en" }: { events?: any[]; lang?: "en" | "de" }) {
   return (
     <div className="mt-8 divide-y card">
       {events.map((ev) => (
         <div key={ev._id} className="grid gap-4 p-5 sm:grid-cols-12 sm:items-center">
           <div className="sm:col-span-3">
             <div className="text-sm text-gray-500">{new Date(ev.date).toLocaleDateString()}</div>
-            <div className="text-base font-medium">{ev.title}</div>
+            <div className="text-base font-medium">{t(ev.title, lang, "")}</div>
           </div>
           <div className="sm:col-span-6">
-            <div className="flex items-center gap-2 text-sm"><MapPin className="h-4 w-4" /> {ev.venue}</div>
+            <div className="flex items-center gap-2 text-sm"><MapPin className="h-4 w-4" /> {t(ev.venue, lang, "")}</div>
             <div className="text-sm text-gray-500">{ev.city}</div>
           </div>
           <div className="sm:col-span-3 sm:justify-self-end">

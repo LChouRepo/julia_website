@@ -4,11 +4,13 @@ import HomeConcertsPreview from "@/components/home/HomeConcerts"
 import HomeMediaPreview from "@/components/home/HomeMedia"
 import HomeContactPreview from "@/components/home/HomeContact"
 import { getSettings, getEvents, getReleases, getQuotes } from "@/lib/cms"
-
+import { getLang } from "@/lib/lang"
+import { t } from "@/lib/i18n"
 export const runtime = "nodejs"
 export const revalidate = 60
 
 export default async function HomePage() {
+  const lang = await getLang()
   const [settings, events, releases, quotes] = await Promise.all([
     getSettings(),
     getEvents(),
@@ -45,7 +47,7 @@ export default async function HomePage() {
             JULIA WANG
           </h1>
           <p className="mt-4 text-lg text-white/90">
-            {settings?.tagline ?? "Violinist"}
+            {t(settings?.tagline, lang, "Violinist")}
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <a href="#concerts" className="rounded-md border px-4 py-2 text-sm font-semibold">
@@ -65,11 +67,11 @@ export default async function HomePage() {
       <HomeAboutPreview html={aboutHtml ?? undefined} image={settings?.aboutImage|| "/images/about.jpg"} />
 
       {/* CONCERTS PREVIEW */}
-      <HomeConcertsPreview events={events as any} bgImage={settings?.concertsImage || "/images/concerts_bg.jpg"} />
+      <HomeConcertsPreview events={events as any} bgImage={settings?.concertsImage || "/images/concerts_bg.jpg"} lang={lang} />
 
 
       {/* MEDIA PREVIEW */}
-      <HomeMediaPreview release={(releases?.[0] as any)} quotes={quotes as any} />
+      <HomeMediaPreview release={(releases?.[0] as any)} quotes={quotes as any} lang={lang} />
 
       {/* CONTACT PREVIEW */}
       <HomeContactPreview

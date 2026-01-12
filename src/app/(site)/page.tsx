@@ -8,6 +8,7 @@ import Contact from "@/components/contact"
 import Footer from "@/components/footer"
 
 import { getSettings, getEvents, getReleases, getQuotes } from "@/lib/cms"
+import { getLang } from "@/lib/lang"
 
 export const revalidate = 60
 
@@ -21,9 +22,9 @@ export default async function HomePage() {
 
   return (
     <div>
-      <Navbar siteTitle={settings?.siteTitle || "Your Ensemble"} />
+      <Navbar siteTitle={t(settings?.siteTitle, lang, "Your Ensemble")} />
       <main>
-        <Hero settings={settings} />
+        <Hero settings={settings} lang={lang} />
         <section id="events" className="section container">
           <div className="flex items-end justify-between">
             <div>
@@ -31,14 +32,14 @@ export default async function HomePage() {
               <p className="subtle">Catch us on tour. New dates added regularly.</p>
             </div>
           </div>
-          <EventsList events={events} />
+          <EventsList events={events} lang={lang} />
         </section>
         <About />
-        <Releases releases={releases} />
-        <PressQuotes quotes={quotes} />
+        <Releases releases={releases} lang={lang} />
+        <PressQuotes quotes={quotes} lang={lang} />
         <Contact email={settings?.contactEmail} instagram={settings?.instagram} facebook={settings?.facebook} />
       </main>
-      <Footer siteTitle={settings?.siteTitle} />
+      <Footer siteTitle={t(settings?.siteTitle, lang, "")} />
     </div>
   )
 }

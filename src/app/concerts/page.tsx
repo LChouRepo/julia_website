@@ -1,5 +1,7 @@
 import Sidebar from "@/components/home/Sidebar"
 import { getEvents } from "@/lib/cms"
+import { getLang } from "@/lib/lang"
+import { t } from "@/lib/i18n"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -12,7 +14,7 @@ function startOfToday() {
 }
 
 export default async function ConcertsPage() {
-  const events = await getEvents()
+  const [lang, events] = await Promise.all([getLang(), getEvents()])
 
   const sorted = [...events].sort(
     (a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -33,9 +35,9 @@ export default async function ConcertsPage() {
         })}
       </div>
       <div>
-        <div className="font-semibold">{e.title}</div>
+        <div className="font-semibold">{t(e.title, lang, "")}</div>
         <div className="text-sm text-neutral-600">
-          {[e.venue, e.city].filter(Boolean).join(" · ")}
+          {[t(e.venue, lang, ""), e.city].filter(Boolean).join(" · ")}
         </div>
       </div>
       <div className="flex gap-2 md:justify-end">

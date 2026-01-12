@@ -1,9 +1,10 @@
 import Link from "next/link"
+import { t } from "@/lib/i18n"
 
 type Event = {
-  title: string
+  title: any
   date: string          // ISO string recommended
-  venue?: string
+  venue?: any
   city?: string
   ticketUrl?: string
   slug?: string
@@ -25,6 +26,7 @@ export default function HomeConcertsPreview({
 }: {
   events?: Event[]
   bgImage?: string   // allow override from CMS
+  lang: "en" | "de"
 }) {
   // Sort by date ascending and keep only upcoming (today or later)
   const now = Date.now()
@@ -78,7 +80,7 @@ export default function HomeConcertsPreview({
                   <p className={`text-xs tracking-widest ${hasBg ? "text-white/80" : "text-neutral-500"}`}>
                     {formatDate(e.date)}
                   </p>
-                  <h3 className="text-lg font-semibold">{e.title}</h3>
+                  <h3 className="text-lg font-semibold">{t((e as any).title, lang, "")}</h3>
                   {meta && (
                     <p className={`text-sm ${hasBg ? "text-white/85" : "text-neutral-600"}`}>
                       {meta}

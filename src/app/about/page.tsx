@@ -1,5 +1,7 @@
 import Sidebar from "@/components/home/Sidebar"
 import { getAbout, getSettings } from "@/lib/cms"
+import { getLang } from "@/lib/lang"
+import { t } from "@/lib/i18n"
 import { marked } from "marked"
 
 export const runtime = "nodejs"
@@ -7,10 +9,10 @@ export const dynamic = "force-dynamic"
 export const revalidate = 60
 
 export default async function AboutPage() {
-  const [about, settings] = await Promise.all([getAbout(), getSettings()])
+  const [lang, about, settings] = await Promise.all([getLang(), getAbout(), getSettings()])
 
   // Prefer official long bio; fall back to settings.aboutHtml if provided
-  const raw = about?.bioLong ?? (settings as any)?.aboutHtml ?? ""
+  const raw = t(about?.bioLong, lang, "") || (settings as any)?.aboutHtml || ""
   const html = raw ? await marked(raw) : "<p>Official biography coming soon.</p>"
 
   return (

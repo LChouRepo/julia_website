@@ -1,7 +1,9 @@
+import { t } from "@/lib/i18n"
+
 type Release = { title: string; subtitle?: string; cover?: string; links?: {label:string; href:string}[]; slug?: string }
 type Quote = { outlet: string; text: string }
 
-export default function HomeMediaPreview({ release, quotes = [] as Quote[] }: { release?: Release, quotes?: Quote[] }) {
+export default function HomeMediaPreview({ release, quotes = [] as Quote[], lang }: { release?: Release, quotes?: Quote[], lang: "en" | "de" }) {
   return (
     <section id="media" className="bg-rose-700 text-white">
       <div className="container mx-auto max-w-5xl px-4 py-16 md:py-24">
@@ -9,20 +11,20 @@ export default function HomeMediaPreview({ release, quotes = [] as Quote[] }: { 
         <div className="grid gap-8 md:grid-cols-2">
           <div className="rounded-2xl border border-white/20 p-4 md:p-6">
             {release?.cover && (
-              <img src={release.cover} alt={release.title} className="mb-4 w-full rounded-lg object-cover" />
+              <img src={release.cover} alt={t((release as any)?.title, lang, "")} className="mb-4 w-full rounded-lg object-cover" />
             )}
             <h3 className="text-xl font-semibold">{release?.title ?? 'Featured release'}</h3>
-            {release?.subtitle && <p className="mt-1 text-sm text-white/80">{release.subtitle}</p>}
+            {release?.subtitle && <p className="mt-1 text-sm text-white/80">{t((release as any)?.subtitle, lang, "")}</p>}
             <div className="mt-4 flex flex-wrap gap-2">
               {release?.links?.map((l,i)=> (
-                <a key={i} className="rounded border border-white/40 px-3 py-1 text-sm hover:bg-white hover:text-black" href={l.href} target="_blank" rel="noreferrer">{l.label}</a>
+                <a key={i} className="rounded border border-white/40 px-3 py-1 text-sm hover:bg-white hover:text-black" href={l.href} target="_blank" rel="noreferrer">{t((l as any).label, lang, "")}</a>
               ))}
             </div>
           </div>
           <div className="grid place-items-center">
             <div className="grid max-w-xl gap-6 text-center">
               {quotes.slice(0,5).map((q,i)=>(
-                <blockquote key={i} className="text-lg leading-relaxed text-white/90">“{q.text}” <span className="block text-sm text-white/70 mt-1">— {q.outlet}</span></blockquote>
+                <blockquote key={i} className="text-lg leading-relaxed text-white/90">“{t((q as any).text, lang, "")}” <span className="block text-sm text-white/70 mt-1">— {q.outlet}</span></blockquote>
               ))}
             </div>
           </div>

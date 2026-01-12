@@ -18,7 +18,9 @@ export default async function Sidebar() {
       <header className="md:hidden sticky top-0 z-[70] bg-black/55 backdrop-blur border-b border-white/10">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="text-white font-extrabold tracking-wide">JULIA WANG</div>
+            <Link href="/" className="text-white font-extrabold tracking-wide hover:opacity-80">
+              JULIA WANG
+            </Link>
             <LanguageToggle />
           </div>
 
@@ -35,9 +37,9 @@ export default async function Sidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden md:flex fixed inset-y-0 left-0 z-[60] w-56 flex-col bg-black/55 backdrop-blur border-r border-white/10 p-6 text-white">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="text-xl font-extrabold tracking-wide">JULIA WANG</div>
-          </div>
+          <Link href="/" className="text-xl font-extrabold tracking-wide hover:opacity-80">
+            JULIA WANG
+          </Link>
           <LanguageToggle />
         </div>
 

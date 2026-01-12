@@ -9,10 +9,12 @@ import Footer from "@/components/footer"
 
 import { getSettings, getEvents, getReleases, getQuotes } from "@/lib/cms"
 import { getLang } from "@/lib/lang"
+import { t } from "@/lib/i18n"
 
 export const revalidate = 60
 
 export default async function HomePage() {
+  const lang = await getLang()
   const [settings, events, releases, quotes] = await Promise.all([
     getSettings(),
     getEvents(),

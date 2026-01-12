@@ -6,9 +6,12 @@ media_folder: "public/uploads"
 public_folder: "/uploads"
 
 local_backend: true
-# publish_mode: editorial_workflow   # optional
+# publish_mode: editorial_workflow
 
 collections:
+  # -------------------------
+  # GLOBAL SETTINGS
+  # -------------------------
   - name: "settings"
     label: "Site Settings"
     delete: false
@@ -18,36 +21,76 @@ collections:
         label: "Global Settings"
         file: "content/settings.json"
         fields:
-          # --- Text/meta ---
-          - { label: "Site Title",    name: "siteTitle",   widget: "string" }
-          - { label: "Tagline",       name: "tagline",     widget: "string", required: false }
+          - label: "Site Title"
+            name: "siteTitle"
+            widget: "object"
+            fields:
+              - { label: "English", name: "en", widget: "string" }
+              - { label: "Deutsch", name: "de", widget: "string" }
 
-          # --- Images (UNIQUE names) ---
-          - { label: "Hero Image",        name: "heroImage",     widget: "image", required: false }
-          - { label: "About Image",       name: "aboutImage",    widget: "image", required: false }
-          - { label: "Concerts Image",    name: "concertsImage", widget: "image", required: false }
-          - { label: "Contact Image",     name: "contactImage",  widget: "image", required: false }
+          - label: "Tagline"
+            name: "tagline"
+            widget: "object"
+            required: false
+            fields:
+              - { label: "English", name: "en", widget: "string", required: false }
+              - { label: "Deutsch", name: "de", widget: "string", required: false }
+
+          - label: "Home Intro (Hello section)"
+            name: "homeHello"
+            widget: "object"
+            required: false
+            fields:
+              - { label: "English", name: "en", widget: "text", required: false }
+              - { label: "Deutsch", name: "de", widget: "text", required: false }
+
+          # --- Images ---
+          - { label: "Hero Image", name: "heroImage", widget: "image", required: false }
+          - { label: "About Image", name: "aboutImage", widget: "image", required: false }
+          - { label: "Concerts Image", name: "concertsImage", widget: "image", required: false }
+          - { label: "Contact Image", name: "contactImage", widget: "image", required: false }
+          - { label: "Media Gallery Header Image (optional)", name: "galleryHero", widget: "image", required: false }
 
           # --- Contact/social ---
           - { label: "Contact Email", name: "contactEmail", widget: "string", required: false }
-          - { label: "Instagram URL", name: "instagram",    widget: "string", required: false }
-          - { label: "Facebook URL",  name: "facebook",     widget: "string", required: false }
+          - { label: "Instagram URL", name: "instagram", widget: "string", required: false }
+          - { label: "Facebook URL", name: "facebook", widget: "string", required: false }
 
+  # -------------------------
+  # EVENTS / CONCERTS
+  # -------------------------
   - name: "events"
-    label: "Events"
+    label: "Concerts (Events)"
     folder: "content/events"
     create: true
     slug: "{{slug}}"
     extension: "json"
     format: "json"
     fields:
-      - { name: "title",     label: "Title",     widget: "string" }
-      - { name: "date",      label: "Date/Time (ISO)", widget: "datetime" }
-      - { name: "venue",     label: "Venue",     widget: "string", required: false }
-      - { name: "city",      label: "City",      widget: "string", required: false }
-      - { name: "ticketUrl", label: "Ticket URL", widget: "string", required: false }
-      - { name: "slug",      label: "Slug",      widget: "string", required: false }
+      - label: "Title"
+        name: "title"
+        widget: "object"
+        fields:
+          - { label: "English", name: "en", widget: "string" }
+          - { label: "Deutsch", name: "de", widget: "string", required: false }
 
+      - { name: "date", label: "Date/Time (ISO)", widget: "datetime" }
+
+      - label: "Venue"
+        name: "venue"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "English", name: "en", widget: "string", required: false }
+          - { label: "Deutsch", name: "de", widget: "string", required: false }
+
+      - { name: "city", label: "City", widget: "string", required: false }
+      - { name: "ticketUrl", label: "Ticket URL", widget: "string", required: false }
+      - { name: "slug", label: "Slug (optional)", widget: "string", required: false }
+
+  # -------------------------
+  # RELEASES
+  # -------------------------
   - name: "releases"
     label: "Releases"
     folder: "content/releases"
@@ -56,18 +99,41 @@ collections:
     extension: "json"
     format: "json"
     fields:
-      - { name: "title",    label: "Title",    widget: "string" }
-      - { name: "subtitle", label: "Subtitle", widget: "string", required: false }
-      - { name: "cover",    label: "Cover Image", widget: "image", required: false }
+      - label: "Title"
+        name: "title"
+        widget: "object"
+        fields:
+          - { label: "English", name: "en", widget: "string" }
+          - { label: "Deutsch", name: "de", widget: "string", required: false }
+
+      - label: "Subtitle"
+        name: "subtitle"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "English", name: "en", widget: "string", required: false }
+          - { label: "Deutsch", name: "de", widget: "string", required: false }
+
+      - { name: "cover", label: "Cover Image", widget: "image", required: false }
+
       - label: "Links"
         name: "links"
         widget: "list"
         collapsed: true
         fields:
-          - { name: "label", label: "Label", widget: "string" }
-          - { name: "href",  label: "URL",   widget: "string" }
-      - { name: "slug",     label: "Slug",   widget: "string", required: false }
+          - label: "Label"
+            name: "label"
+            widget: "object"
+            fields:
+              - { label: "English", name: "en", widget: "string" }
+              - { label: "Deutsch", name: "de", widget: "string", required: false }
+          - { name: "href", label: "URL", widget: "string" }
 
+      - { name: "slug", label: "Slug (optional)", widget: "string", required: false }
+
+  # -------------------------
+  # PRESS QUOTES
+  # -------------------------
   - name: "quotes"
     label: "Press Quotes"
     folder: "content/quotes"
@@ -77,7 +143,17 @@ collections:
     format: "json"
     fields:
       - { name: "outlet", label: "Outlet", widget: "string" }
-      - { name: "text",   label: "Quote",  widget: "text" }
+
+      - label: "Quote"
+        name: "text"
+        widget: "object"
+        fields:
+          - { label: "English", name: "en", widget: "text" }
+          - { label: "Deutsch", name: "de", widget: "text", required: false }
+
+  # -------------------------
+  # ABOUT / OFFICIAL BIOGRAPHY
+  # -------------------------
   - name: "about"
     label: "About (Official Biography)"
     delete: false
@@ -87,13 +163,52 @@ collections:
         label: "Official Biography"
         file: "content/about.json"
         fields:
-          - { name: "bioShort", label: "Short Bio (Markdown)", widget: "markdown", required: false }
-          - { name: "bioLong",  label: "Official Bio (Markdown)", widget: "markdown" }
+          - label: "Short Bio"
+            name: "bioShort"
+            widget: "object"
+            required: false
+            fields:
+              - { label: "English", name: "en", widget: "markdown", required: false }
+              - { label: "Deutsch", name: "de", widget: "markdown", required: false }
+
+          - label: "Official Bio"
+            name: "bioLong"
+            widget: "object"
+            fields:
+              - { label: "English", name: "en", widget: "markdown" }
+              - { label: "Deutsch", name: "de", widget: "markdown", required: false }
+
           - label: "Headshots"
             name: "headshots"
             widget: "list"
+            required: false
             fields:
-              - { name: "src",    label: "Image", widget: "image" }
-              - { name: "alt",    label: "Alt Text", widget: "string", required: false }
+              - { name: "src", label: "Image", widget: "image" }
+              - { name: "alt", label: "Alt Text", widget: "string", required: false }
               - { name: "credit", label: "Credit", widget: "string", required: false }
+
           - { name: "pressKit", label: "Press Kit (PDF)", widget: "file", required: false }
+
+  # -------------------------
+  # GALLERY / PHOTOS
+  # -------------------------
+  - name: "gallery"
+    label: "Gallery (Photos)"
+    folder: "content/gallery"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    fields:
+      - label: "Caption"
+        name: "title"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "English", name: "en", widget: "string", required: false }
+          - { label: "Deutsch", name: "de", widget: "string", required: false }
+
+      - { name: "image", label: "Image", widget: "image" }
+      - { name: "credit", label: "Credit", widget: "string", required: false }
+      - { name: "weight", label: "Order (lower first)", widget: "number", required: false }
+      - { name: "featured", label: "Featured (show on top)", widget: "boolean", required: false, default: false }

@@ -4,6 +4,12 @@ import {
   readEventBySlug, readReleaseBySlug
 } from "@/lib/content"
 import { readAbout } from "@/lib/content";
+import { readGallery } from "@/lib/content";
+
+export async function getGallery() {
+  const v = await readGallery();
+  return v?.length ? v : [];
+}
 
 export async function getAbout() { return (await readAbout()) ?? null }
 

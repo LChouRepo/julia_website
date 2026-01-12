@@ -1,8 +1,24 @@
 {
-  "siteTitle": "Julia-Xiaozhuo Wang",
-  "tagline": "Playing the violin is translation — a direct, human language.",
+  "siteTitle": {
+    "en": "Julia-Xiaozhuo Wang",
+    "de": "Julia-Xiaozhuo Wang"
+  },
+  "tagline": {
+    "en": "Playing the violin is translation — a direct, human language.",
+    "de": "Geige spielen ist Übersetzung — eine direkte, menschliche Sprache."
+  },
+  "homeHello": {
+    "en": "",
+    "de": ""
+  },
+
   "contactEmail": "booking@example.com",
   "instagram": "",
   "facebook": "",
-  "heroImage": ""
+
+  "heroImage": "",
+  "aboutImage": "",
+  "concertsImage": "",
+  "contactImage": "",
+  "galleryHero": ""
 }

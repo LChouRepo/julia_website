@@ -134,3 +134,28 @@ export async function readQuotes(): Promise<QuoteItem[]> {
   const items = await Promise.all(files.map(f => readJson<QuoteItem>(path.join(dir, f))));
   return (items.filter(Boolean) as QuoteItem[]);
 }
+// ---- GALLERY ----
+type GalleryItem = {
+  title?: { en?: string; de?: string };
+  image: string;
+  credit?: string;
+  weight?: number;
+  featured?: boolean;
+};
+
+export async function readGallery(): Promise<GalleryItem[]> {
+  noStore();
+  const dir = path.join(CONTENT_DIR, "gallery");
+  const files = (await readDirSafe(dir)).filter(f => f.toLowerCase().endsWith(".json"));
+
+  const items = await Promise.all(
+    files.map(async (f) => {
+      const abs = path.join(dir, f);
+      const obj = await readJson<GalleryItem>(abs);
+      return obj;
+    })
+  );
+
+  return (items.filter(Boolean) as GalleryItem[])
+    .sort((a, b) => (a.weight ?? 9999) - (b.weight ?? 9999));
+}

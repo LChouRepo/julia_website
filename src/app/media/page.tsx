@@ -1,33 +1,18 @@
 import Sidebar from "@/components/home/Sidebar"
-import { getReleases, getQuotes } from "@/lib/cms"
-import fs from "fs/promises"
-import path from "path"
+import Gallery from "@/components/media/Gallery"
+import { getReleases, getQuotes, getGallery } from "@/lib/cms"
+import { getLang } from "@/lib/lang"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const revalidate = 60
 
-type Photo = { src: string; title?: string; credit?: string; weight?: number }
-
-async function readPortraits(): Promise<Photo[]> {
-  // OPTIONAL: reads content/portraits.json if present
-  try {
-    const file = path.join(process.cwd(), "content", "portraits.json")
-    const raw = await fs.readFile(file, "utf-8")
-    const arr = JSON.parse(raw) as Photo[]
-    return arr
-      .filter(p => p?.src)
-      .sort((a, b) => (a.weight ?? 9999) - (b.weight ?? 9999))
-  } catch {
-    return []
-  }
-}
-
 export default async function MediaPage() {
-  const [releases, quotes, portraits] = await Promise.all([
+  const [lang, releases, quotes, gallery] = await Promise.all([
+    getLang(),
     getReleases(),
     getQuotes(),
-    readPortraits(), // optional; returns [] if file not found
+    getGallery(),
   ])
 
   return (
@@ -35,14 +20,21 @@ export default async function MediaPage() {
       <Sidebar />
 
       <section className="container mx-auto max-w-6xl px-4 py-16 md:py-24">
-        <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide">Media</h1>
-        <p className="mt-2 text-neutral-600">Releases, press, and portraits.</p>
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide">
+          {lang === "de" ? "Medien" : "Media"}
+        </h1>
+        <p className="mt-2 text-neutral-600">
+          {lang === "de" ? "Veröffentlichungen, Presse und Galerie." : "Releases, press, and gallery."}
+        </p>
 
         {/* Releases */}
-        <h2 className="mt-10 mb-4 text-xl font-semibold">Releases</h2>
+        <h2 className="mt-10 mb-4 text-xl font-semibold">
+          {lang === "de" ? "Veröffentlichungen" : "Releases"}
+        </h2>
+
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {releases.map((r: any, i: number) => (
-            <figure key={i} className="overflow-hidden rounded-xl border">
+            <figure key={i} className="overflow-hidden rounded-xl border bg-white">
               {r.cover ? (
                 <img src={r.cover} alt={r.title} className="h-64 w-full object-cover" />
               ) : (
@@ -54,7 +46,13 @@ export default async function MediaPage() {
                 {Array.isArray(r.links) && r.links.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {r.links.map((l: any, j: number) => (
-                      <a key={j} href={l.href} target="_blank" rel="noreferrer" className="rounded border px-3 py-1 text-sm">
+                      <a
+                        key={j}
+                        href={l.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded border px-3 py-1 text-sm hover:bg-neutral-50"
+                      >
                         {l.label}
                       </a>
                     ))}
@@ -66,11 +64,11 @@ export default async function MediaPage() {
           {!releases.length && <p className="py-6 text-neutral-500">No releases yet.</p>}
         </div>
 
-        {/* Press quotes */}
-        <h2 className="mt-12 mb-4 text-xl font-semibold">Press</h2>
+        {/* Press */}
+        <h2 className="mt-12 mb-4 text-xl font-semibold">{lang === "de" ? "Presse" : "Press"}</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {quotes.map((q: any, i: number) => (
-            <blockquote key={i} className="rounded-xl border px-4 py-3 text-neutral-800">
+            <blockquote key={i} className="rounded-xl border bg-white px-4 py-3 text-neutral-800">
               <p className="leading-relaxed">“{q.text}”</p>
               <cite className="mt-2 block text-sm text-neutral-500">— {q.outlet}</cite>
             </blockquote>
@@ -78,22 +76,9 @@ export default async function MediaPage() {
           {!quotes.length && <p className="py-6 text-neutral-500">No press yet.</p>}
         </div>
 
-        {/* Portraits (optional simple grid from a single JSON) */}
-        <h2 className="mt-12 mb-4 text-xl font-semibold">Portraits</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {portraits.map((p, i) => (
-            <figure key={i} className="overflow-hidden rounded-xl border">
-              <img src={p.src} alt={p.title ?? "Portrait"} className="h-64 w-full object-cover" />
-              {(p.title || p.credit) && (
-                <figcaption className="px-3 py-2 text-sm text-neutral-600">
-                  {p.title}
-                  {p.credit && <span className="block text-xs text-neutral-500">© {p.credit}</span>}
-                </figcaption>
-              )}
-            </figure>
-          ))}
-          {!portraits.length && <p className="py-6 text-neutral-500">No portraits uploaded yet.</p>}
-        </div>
+        {/* Gallery */}
+        <h2 className="mt-12 mb-4 text-xl font-semibold">{lang === "de" ? "Galerie" : "Gallery"}</h2>
+        <Gallery items={gallery as any} lang={lang} />
       </section>
     </main>
   )

@@ -1,50 +1,57 @@
-"use client"
-import { useState } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react" // install via: npm install lucide-react
+import LanguageToggle from "@/components/LanguageToggle"
+import { getLang } from "@/lib/lang"
 
-export default function Sidebar() {
-  const [open, setOpen] = useState(false)
+export default async function Sidebar() {
+  const lang = await getLang()
+
+  const labels = {
+    about: lang === "de" ? "Biografie" : "About",
+    concerts: lang === "de" ? "Konzerte" : "Concerts",
+    media: lang === "de" ? "Medien" : "Media",
+    contact: lang === "de" ? "Kontakt" : "Contact",
+  }
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="fixed left-0 top-0 hidden h-screen w-56 flex-col justify-start bg-transparent p-6 md:flex z-50">
-        <Link
-          href="/"
-          className="text-2xl font-extrabold tracking-wide text-white drop-shadow-sm"
-        >
-          JULIA WANG
-        </Link>
-        <nav className="mt-6 flex flex-col space-y-2 text-white/90">
-          <Link href="/about" className="block hover:underline">About</Link>
-          <Link href="/concerts" className="block hover:underline">Concerts</Link>
-          <Link href="/media" className="block hover:underline">Media</Link>
-          <Link href="/contact" className="block hover:underline">Contact</Link>
-        </nav>
-      </aside>
-
       {/* Mobile top bar */}
-      <div className="fixed left-0 top-0 z-50 flex w-full items-center justify-between bg-black/60 px-4 py-3 text-white backdrop-blur md:hidden">
-        <Link href="/" className="text-lg font-extrabold tracking-wide">
-          JULIA WANG
-        </Link>
-        <button onClick={() => setOpen(!open)} aria-label="Menu">
-          {open ? <X size={26} /> : <Menu size={26} />}
-        </button>
-      </div>
+      <header className="md:hidden sticky top-0 z-[70] bg-black/55 backdrop-blur border-b border-white/10">
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="text-white font-extrabold tracking-wide">JULIA WANG</div>
+            <LanguageToggle />
+          </div>
 
-      {/* Mobile menu drawer */}
-      {open && (
-        <div className="fixed top-0 right-0 z-40 h-screen w-2/3 bg-black/90 p-8 text-white md:hidden">
-          <nav className="flex flex-col space-y-4 text-lg">
-            <Link href="/about" onClick={() => setOpen(false)}>About</Link>
-            <Link href="/concerts" onClick={() => setOpen(false)}>Concerts</Link>
-            <Link href="/media" onClick={() => setOpen(false)}>Media</Link>
-            <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
+          {/* stack links vertically (fixes "all in one line") */}
+          <nav className="mt-3 flex flex-col gap-2 text-white/90 text-sm">
+            <Link href="/about" className="hover:text-white">{labels.about}</Link>
+            <Link href="/concerts" className="hover:text-white">{labels.concerts}</Link>
+            <Link href="/media" className="hover:text-white">{labels.media}</Link>
+            <Link href="/contact" className="hover:text-white">{labels.contact}</Link>
           </nav>
         </div>
-      )}
+      </header>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex fixed inset-y-0 left-0 z-[60] w-56 flex-col bg-black/55 backdrop-blur border-r border-white/10 p-6 text-white">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="text-xl font-extrabold tracking-wide">JULIA WANG</div>
+          </div>
+          <LanguageToggle />
+        </div>
+
+        <nav className="mt-6 flex flex-col gap-2 text-sm text-white/90">
+          <Link href="/about" className="hover:text-white">{labels.about}</Link>
+          <Link href="/concerts" className="hover:text-white">{labels.concerts}</Link>
+          <Link href="/media" className="hover:text-white">{labels.media}</Link>
+          <Link href="/contact" className="hover:text-white">{labels.contact}</Link>
+        </nav>
+
+        <div className="mt-auto pt-6 text-xs text-white/60">
+          © {new Date().getFullYear()} Julia Wang
+        </div>
+      </aside>
     </>
   )
 }

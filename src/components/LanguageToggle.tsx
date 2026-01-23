@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useEffect, useState } from "react"
 
 type Lang = "en" | "de"
@@ -14,7 +15,7 @@ function getCookie(name: string) {
 function setCookie(name: string, value: string, days = 365) {
   const exp = new Date()
   exp.setDate(exp.getDate() + days)
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${exp.toUTCString()}; path=/; SameSite=Lax`
+  document.cookie = `${name}=${value}; expires=${exp.toUTCString()}; path=/; SameSite=Lax`
 }
 
 export default function LanguageToggle() {
@@ -25,23 +26,34 @@ export default function LanguageToggle() {
     setLang(v === "de" ? "de" : "en")
   }, [])
 
-  function toggle() {
-    const next: Lang = lang === "en" ? "de" : "en"
+  function switchLang(next: Lang) {
+    if (next === lang) return
     setCookie(COOKIE, next)
-    setLang(next)
-    // simplest: full refresh so all server components pick up cookie
     window.location.reload()
   }
 
   return (
-    <button
-      onClick={toggle}
-      className="rounded-md border border-white/40 bg-white/10 px-3 py-1 text-xs font-semibold text-white hover:bg-white/20"
-      aria-label="Switch language"
-      title="Switch language"
-      type="button"
-    >
-      {lang === "en" ? "EN → DE" : "DE → EN"}
-    </button>
+    <div className="flex items-center gap-2">
+      {(["en", "de"] as Lang[]).map(l => (
+        <button
+          key={l}
+          onClick={() => switchLang(l)}
+          className={`rounded-full border transition ${
+            lang === l
+              ? "border-white"
+              : "border-white/30 opacity-60 hover:opacity-100"
+          }`}
+          aria-label={`Switch to ${l}`}
+        >
+          <Image
+            src={`/flags/${l}.png`}
+            alt={l}
+            width={22}
+            height={22}
+            className="rounded-full"
+          />
+        </button>
+      ))}
+    </div>
   )
 }

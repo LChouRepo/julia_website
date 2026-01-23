@@ -2,13 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Utility aliases used across the site */
+/* Default body text */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Display font (Cinzel) */
+.font-display {
+  font-family: var(--font-display), serif;
+  font-optical-sizing: auto;
+}
+
+/* Your existing helpers (fine to keep) */
 :root { --radius: 1rem; }
 
 .container { @apply mx-auto max-w-6xl px-4; }
 .section { @apply py-20; }
-.h1 { @apply text-4xl sm:text-5xl font-bold tracking-tight; }
-.h2 { @apply text-2xl sm:text-3xl font-bold tracking-tight; }
+.h1 { @apply font-display text-4xl sm:text-5xl font-bold tracking-tight; }
+.h2 { @apply font-display text-2xl sm:text-3xl font-bold tracking-tight; }
 .subtle { @apply text-sm text-gray-500; }
 .btn { @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 border; }
 .btn-primary { @apply bg-foreground text-white border-foreground; }

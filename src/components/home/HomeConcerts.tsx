@@ -62,7 +62,7 @@ export default function HomeConcertsPreview({
       {hasBg && <div className="absolute inset-0 -z-10 bg-black/45" aria-hidden />}
 
       <div className="container mx-auto max-w-5xl px-4">
-        <div className="mb-8 flex items-end justify-between">
+        <div className="font-display mb-8 flex items-end justify-between">
           <h2 id="concerts-heading" className="text-3xl font-extrabold tracking-wide md:text-4xl">
             Concerts
           </h2>

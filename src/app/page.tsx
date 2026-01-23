@@ -45,13 +45,13 @@ export default async function HomePage() {
       {/* Full-height centering wrapper */}
       <div className="mx-auto flex h-[100svh] max-w-none items-center justify-center px-4 md:h-[100vh]">
         <div className="text-center text-white">
-          <h1 className="text-balance text-4xl font-extrabold tracking-wide sm:text-6xl lg:text-7xl">
+          <h1 className="font-display text-balance text-4xl font-extrabold tracking-wide sm:text-6xl lg:text-7xl">
             JULIA WANG
           </h1>
           <p className="mt-4 text-lg text-white/90">
             {t(settings?.tagline, lang, "Violinist")}
           </p>
-          <div className="mt-8 flex justify-center gap-4">
+          <div className="font-display mt-8 flex justify-center gap-4">
             <a href="#concerts" className="rounded-md border px-4 py-2 text-sm font-semibold">
               Concerts
             </a>

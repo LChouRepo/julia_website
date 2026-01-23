@@ -2,17 +2,22 @@
 import "./globals.css"
 import type { ReactNode } from "react"
 import Script from "next/script"
+import { Cinzel } from "next/font/google"
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display",
+})
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cinzel.variable}>
       <head>
-        {/* Load Netlify Identity widget globally so invite/reset tokens are processed */}
         <Script
           src="https://identity.netlify.com/v1/netlify-identity-widget.js"
           strategy="beforeInteractive"
         />
-        {/* If someone lands on /.netlify/identity/*, send them to /admin with the token */}
         <Script id="identity-redirect" strategy="beforeInteractive">{`
           (function () {
             try {

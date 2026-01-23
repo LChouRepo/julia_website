@@ -7,7 +7,7 @@ export default function HomeMediaPreview({ release, quotes = [] as Quote[], lang
   return (
     <section id="media" className="bg-rose-700 text-white">
       <div className="container mx-auto max-w-5xl px-4 py-16 md:py-24">
-        <h2 className="mb-8 text-3xl font-extrabold tracking-wide md:text-4xl">Portraits</h2>
+        <h2 className="font-display mb-8 text-3xl font-extrabold tracking-wide md:text-4xl">Portraits</h2>
         <div className="grid gap-8 md:grid-cols-2">
           <div className="rounded-2xl border border-white/20 p-4 md:p-6">
             {release?.cover && (
@@ -45,7 +45,7 @@ export default function HomeMediaPreview({ release, quotes = [] as Quote[], lang
             </div>
           </div>
         </div>
-        <a href="/media" className="mt-10 inline-block rounded-md border px-4 py-2 text-sm font-semibold">More media</a>
+        <a href="/media" className="font-display mt-10 inline-block rounded-md border px-4 py-2 text-sm font-semibold">More media</a>
       </div>
     </section>
   )

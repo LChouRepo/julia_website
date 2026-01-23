@@ -15,7 +15,7 @@ export default function HomeAboutPreview({ html, image }: Props) {
       ) : null}
       <div className="absolute inset-0 -z-10 bg-black/55" />
       <div className="mx-auto max-w-5xl px-4 py-20 text-white md:py-28">
-        <h2 className="font-display mb-4 text-3xl tracking-wide md:text-4xl">Hello!</h2>
+        <h2 className="font-display mb-4 text-3xl font-bold tracking-wide md:text-4xl">Hello!</h2>
         {html ? (
           <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: html }} />
         ) : (

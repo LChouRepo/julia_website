@@ -11,6 +11,7 @@ body {
 .font-display {
   font-family: var(--font-display), serif;
   font-optical-sizing: auto;
+  font-weight: 500;
 }
 
 /* Your existing helpers (fine to keep) */

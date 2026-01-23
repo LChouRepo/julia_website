@@ -63,7 +63,7 @@ export default function HomeConcertsPreview({
 
       <div className="container mx-auto max-w-5xl px-4">
         <div className="font-display mb-8 flex items-end justify-between">
-          <h2 id="concerts-heading" className="text-3xl font-extrabold tracking-wide md:text-4xl">
+          <h2 id="concerts-heading" className="text-3xl tracking-wide md:text-4xl">
             Concerts
           </h2>
           <Link

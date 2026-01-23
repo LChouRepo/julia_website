@@ -18,7 +18,7 @@ export default async function Sidebar() {
       <header className="md:hidden sticky top-0 z-[70] bg-black/55 backdrop-blur border-b border-white/10">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link href="/" className="text-white font-extrabold tracking-wide hover:opacity-80">
+            <Link href="/" className="text-white tracking-wide hover:opacity-80">
               JULIA WANG
             </Link>
             <LanguageToggle />

@@ -6,7 +6,7 @@ export default function HomeContactPreview({ email, instagram, facebook, image }
       {image ? <div className="absolute inset-0 -z-10 bg-cover bg-center" style={{ backgroundImage: `url(${image})` }} /> : null}
       <div className="absolute inset-0 -z-10 bg-black/60" />
       <div className="mx-auto max-w-5xl px-4 py-16 text-white md:py-24">
-        <h2 className="font-display text-3xl font-extrabold tracking-wide md:text-4xl">Stay Updated</h2>
+        <h2 className="font-display text-3xl tracking-wide md:text-4xl">Stay Updated</h2>
         <div className="mt-4 space-y-3 text-white/90">
           {email && <div>Email: <a className="underline" href={`mailto:${email}`}>{email}</a></div>}
           <div className="flex gap-4">

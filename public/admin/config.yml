@@ -163,21 +163,50 @@ collections:
         label: "Official Biography"
         file: "content/about.json"
         fields:
-          - label: "Short Bio"
-            name: "bioShort"
-            widget: "object"
-            required: false
-            fields:
-              - { label: "English", name: "en", widget: "markdown", required: false }
-              - { label: "Deutsch", name: "de", widget: "markdown", required: false }
 
-          - label: "Official Bio"
-            name: "bioLong"
+          # ---------- Section 1 ----------
+          - label: "Bio Section 1"
+            name: "section1"
             widget: "object"
             fields:
-              - { label: "English", name: "en", widget: "markdown" }
-              - { label: "Deutsch", name: "de", widget: "markdown", required: false }
+              - label: "Text"
+                name: "text"
+                widget: "object"
+                fields:
+                  - { label: "English", name: "en", widget: "markdown", required: false }
+                  - { label: "Deutsch",  name: "de", widget: "markdown", required: false }
+              - { label: "Image", name: "image", widget: "image", required: false }
+              - { label: "Image Credit", name: "credit", widget: "string", required: false }
 
+          # ---------- Section 2 ----------
+          - label: "Bio Section 2"
+            name: "section2"
+            widget: "object"
+            fields:
+              - label: "Text"
+                name: "text"
+                widget: "object"
+                fields:
+                  - { label: "English", name: "en", widget: "markdown", required: false }
+                  - { label: "Deutsch",  name: "de", widget: "markdown", required: false }
+              - { label: "Image", name: "image", widget: "image", required: false }
+              - { label: "Image Credit", name: "credit", widget: "string", required: false }
+
+          # ---------- Section 3 ----------
+          - label: "Bio Section 3"
+            name: "section3"
+            widget: "object"
+            fields:
+              - label: "Text"
+                name: "text"
+                widget: "object"
+                fields:
+                  - { label: "English", name: "en", widget: "markdown", required: false }
+                  - { label: "Deutsch",  name: "de", widget: "markdown", required: false }
+              - { label: "Image", name: "image", widget: "image", required: false }
+              - { label: "Image Credit", name: "credit", widget: "string", required: false }
+
+          # ---------- Optional extras (keep what you already had) ----------
           - label: "Headshots"
             name: "headshots"
             widget: "list"
@@ -188,7 +217,6 @@ collections:
               - { name: "credit", label: "Credit", widget: "string", required: false }
 
           - { name: "pressKit", label: "Press Kit (PDF)", widget: "file", required: false }
-
   # -------------------------
   # GALLERY / PHOTOS
   # -------------------------

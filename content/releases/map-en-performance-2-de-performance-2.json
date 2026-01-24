@@ -1,0 +1,15 @@
+{
+  "title": {
+    "en": "Performance 2",
+    "de": "Performance 2"
+  },
+  "cover": "/uploads/img_1727.jpg",
+  "links": [
+    {
+      "href": "https://www.youtube.com/watch?v=7sxVHYZ_PnA&list=RD7sxVHYZ_PnA&start_radio=1",
+      "label": {
+        "en": "Youtube"
+      }
+    }
+  ]
+}

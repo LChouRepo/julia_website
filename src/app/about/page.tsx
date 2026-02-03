@@ -55,49 +55,51 @@ export default async function AboutPage() {
         {/* subtle divider */}
         <div className="mt-6 h-px w-full bg-neutral-200" />
 
-        {/* ===== Section 1 (top-left text) ===== */}
-        <div className="mt-10 grid gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-start">
-          <article
-            className="prose max-w-none prose-p:leading-relaxed prose-p:text-neutral-700"
-            dangerouslySetInnerHTML={{ __html: s1Html || "<p>Coming soon.</p>" }}
-          />
-          <div className="md:pt-10">
+        {/* ===== Section 1 (TEXT centered vertically, image right) ===== */}
+        <div className="mt-10 grid gap-10 md:grid-cols-[1.15fr_0.85fr] md:items-center">
+          <article className="max-w-prose text-[15px] leading-7 text-neutral-800">
+            <div
+              className="prose prose-neutral max-w-none prose-p:my-0 prose-p:mb-6"
+              dangerouslySetInnerHTML={{ __html: s1Html }}
+            />
+          </article>
+
+          <div className="md:justify-self-end w-full">
             <ImageBlock src={s1.image} credit={s1.credit} />
           </div>
         </div>
 
-        {/* ===== Section 2 (image left / text right-center like reference) ===== */}
-        <div className="mt-14 grid gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-center">
-          <div className="md:pr-10">
+        {/* ===== Section 2 (image left, text right — keep your centered feel) ===== */}
+        <div className="mt-14 grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+          <div className="w-full">
             <ImageBlock src={s2.image} credit={s2.credit} />
           </div>
 
-          <article
-            className="prose max-w-none prose-p:leading-relaxed prose-p:text-neutral-700 md:pl-8"
-            dangerouslySetInnerHTML={{ __html: s2Html || "" }}
-          />
+          <article className="max-w-prose text-[15px] leading-7 text-neutral-800 md:pl-10">
+            <div
+              className="prose prose-neutral max-w-none prose-p:my-0 prose-p:mb-6"
+              dangerouslySetInnerHTML={{ __html: s2Html }}
+            />
+          </article>
         </div>
 
-        {/* ===== Section 3 (bottom block centered like reference) ===== */}
-        <div className="mt-16 grid gap-10 md:grid-cols-[1fr_1fr]">
-          <div className="hidden md:block" />
-          <article
-            className="prose max-w-none text-center prose-p:leading-relaxed prose-p:text-neutral-700 md:text-left"
-            dangerouslySetInnerHTML={{ __html: s3Html || "" }}
-          />
-        </div>
+        {/* ===== Section 3 (TEXT LEFT, image right — and image now renders) ===== */}
+        <div className="mt-16 grid gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-center">
+          <article className="max-w-prose text-left text-[15px] leading-7 text-neutral-800">
+            <div className="mb-3 text-base font-semibold text-neutral-900">
+              {lang === "de" ? "Preise & Auszeichnungen" : "Prizes & Recognition"}
+            </div>
 
-        {/* Optional: Press kit */}
-        {about?.pressKit ? (
-          <div className="mt-14">
-            <a
-              href={about.pressKit}
-              className="inline-flex rounded-full border px-5 py-2 text-sm font-semibold hover:bg-neutral-900 hover:text-white transition"
-            >
-              {lang === "de" ? "Pressemappe herunterladen" : "Download Press Kit"}
-            </a>
+            <div
+              className="prose prose-neutral max-w-none prose-ul:my-0 prose-li:my-2"
+              dangerouslySetInnerHTML={{ __html: s3Html }}
+            />
+          </article>
+
+          <div className="md:justify-self-end w-full">
+            <ImageBlock src={s3.image} credit={s3.credit} />
           </div>
-        ) : null}
+        </div>
       </section>
     </main>
   )

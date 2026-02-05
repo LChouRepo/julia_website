@@ -26,17 +26,32 @@ export default async function HomePage() {
   return (
     <main className="relative">   
     {/* HERO */}
-    <section className="relative min-h-[100svh] md:min-h-[100vh]">
-      {/* Background image or fallback */}
-      {heroImage ? (
-        <div
-          className="absolute inset-0 -z-10 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImage})` }}
-          aria-hidden
-        />
-      ) : (
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-neutral-700 to-neutral-900" aria-hidden />
-      )}
+<section className="relative min-h-[100svh] md:min-h-[100vh]">
+  {heroImage ? (
+    <>
+      {/* Mobile background */}
+      <div
+        className="absolute inset-0 -z-10 bg-cover md:hidden"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          backgroundPosition: "50% 12%", // mobile: center on face/upper body
+        }}
+        aria-hidden
+      />
+
+      {/* Desktop background */}
+      <div
+        className="absolute inset-0 -z-10 hidden bg-cover md:block"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          backgroundPosition: "60% 10%", // desktop: your preferred focal point
+        }}
+        aria-hidden
+      />
+    </>
+  ) : (
+    <div className="absolute inset-0 -z-10 bg-gradient-to-br from-neutral-700 to-neutral-900" aria-hidden />
+  )}
       {/* Darken for legibility */}
       <div className="absolute inset-0 -z-10 bg-black/45" />
 

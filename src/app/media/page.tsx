@@ -17,7 +17,7 @@ export default async function MediaPage() {
   ])
 
   return (
-    <main className="relative md:pl-56">
+    <main className="relative xl:pl-72">
       <Sidebar />
 
       <section className="container mx-auto max-w-6xl px-4 py-16 md:py-24">

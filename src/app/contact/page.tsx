@@ -10,7 +10,7 @@ export default async function ContactPage() {
   const contactImage = settings?.contactImage || "/images/contact.jpg"
 
   return (
-    <main className="relative md:pl-56">
+    <main className="relative xl:pl-72">
       <Sidebar />
 
       {/* Banner */}

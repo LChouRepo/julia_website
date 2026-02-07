@@ -24,7 +24,7 @@ export default async function HomePage() {
   const aboutHtml = settings?.aboutHtml || null
 
   return (
-    <main className="relative">   
+    <main className="relative ">   
     {/* HERO */}
 <section className="relative min-h-[100svh] md:min-h-[100vh]">
   {heroImage ? (

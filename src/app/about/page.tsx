@@ -87,7 +87,7 @@ export default async function AboutPage() {
         <div className="mt-16 grid gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-center">
           <article className="max-w-prose text-left text-[15px] leading-7 text-neutral-800">
             <div className="mb-3 text-base font-semibold text-neutral-900">
-              {lang === "de" ? "Preise & Auszeichnungen" : "Prizes & Recognition"}
+              {/* {lang === "de" ? "Preise & Auszeichnungen" : "Prizes & Recognition"} */}
             </div>
 
             <div

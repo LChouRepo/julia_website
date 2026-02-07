@@ -3,7 +3,7 @@ import LanguageToggle from "@/components/LanguageToggle"
 import { getLang } from "@/lib/lang"
 import SidebarClient from "./SidebarClient"
 
-const Note = () => <span className="mr-2 opacity-70">♪</span>
+// const Note = () => <span className="mr-2 opacity-70">♪</span>
 
 export default async function Sidebar() {
   const lang = await getLang()

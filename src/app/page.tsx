@@ -63,9 +63,9 @@ export default async function HomePage() {
           <h1 className="font-display text-balance text-4xl tracking-wide sm:text-6xl lg:text-7xl">
             JULIA WANG
           </h1>
-          <p className="mt-4 text-lg text-white/90">
+          {/* <p className="mt-4 text-lg text-white/90">
             {t(settings?.tagline, lang, "Violinist")}
-          </p>
+          </p> */}
           <div className="font-display mt-8 flex justify-center gap-4">
             <a href="#concerts" className="rounded-md border px-4 py-2 text-sm font-semibold">
               Concerts

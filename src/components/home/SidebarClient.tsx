@@ -61,7 +61,7 @@ export default function SidebarClient({
                   active ? "bg-white/10 text-white" : "",
                 ].join(" ")}
               >
-                <span className="opacity-80">♪</span>
+                {/* <span className="opacity-80">♪</span> */}
                 <span>{it.label}</span>
               </Link>
             )
@@ -148,7 +148,7 @@ export default function SidebarClient({
                       active ? "bg-white/10 text-white" : "",
                     ].join(" ")}
                   >
-                    <span className="opacity-80">♪</span>
+                    {/* <span className="opacity-80">♪</span> */}
                     <span>{it.label}</span>
                   </Link>
                 )

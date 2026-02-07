@@ -1,7 +1,7 @@
 // Updated fallback data for Julia-Xiaozhuo Wang
 export const settings = {
   siteTitle: "Julia-Xiaozhuo Wang",
-  // tagline: "Playing the violin is translation — a direct, human language.",
+  tagline: "Playing the violin is translation — a direct, human language.",
   heroImage: null,
   contactEmail: "booking@example.com",
   instagram: "",

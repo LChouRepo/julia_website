@@ -4,10 +4,10 @@
     "de": "Julia-Xiaozhuo Wang"
   },
   "tagline": {
-    // "en": "Playing the violin is translation — a direct, human language.",
-    // "de": "Geige spielen ist Übersetzung — eine direkte, menschliche Sprache."
-    "en": "",
-    "de": ""
+    "en": "Playing the violin is translation — a direct, human language.",
+    "de": "Geige spielen ist Übersetzung — eine direkte, menschliche Sprache."
+    // "en": "",
+    // "de": ""
 
   },
   "homeHello": {

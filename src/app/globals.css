@@ -26,3 +26,17 @@ body {
 .btn-primary { @apply bg-foreground text-white border-foreground; }
 .btn-secondary { @apply bg-muted border-transparent; }
 .card { @apply rounded-2xl border; }
+/* Treat touch devices (iPad) as "mobile/tablet nav" even if wide */
+@media (hover: none) and (pointer: coarse) {
+  .sidebar-desktop {
+    display: none !important;
+  }
+  .sidebar-touch {
+    display: block !important;
+  }
+
+  /* If you have main padding for the desktop sidebar, kill it on touch */
+  .content-with-sidebar {
+    padding-left: 0 !important;
+  }
+}

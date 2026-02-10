@@ -37,7 +37,7 @@ export default function SidebarClient({
   return (
     <>
       {/* ===== DESKTOP (xl+) fixed glass sidebar ===== */}
-      <aside className="hidden xl:flex fixed inset-y-0 left-0 z-[60] w-72 flex-col bg-black/45 backdrop-blur-md border-r border-white/10 px-7 py-6 text-white">
+      <aside className="sidebar-desktop hidden xl:flex fixed inset-y-0 left-0 z-[60] w-72 flex-col bg-black/45 backdrop-blur-md border-r border-white/10 px-7 py-6 text-white">
         <div className="flex items-center justify-between gap-3">
           <Link href="/" className="font-display text-xl tracking-wide hover:opacity-90">
             JULIA WANG
@@ -55,7 +55,7 @@ export default function SidebarClient({
                 key={it.href}
                 href={it.href}
                 className={[
-                  "group flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] font-semibold",
+                  "group flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] font-display",
                   "text-white/90 hover:text-white",
                   "hover:bg-white/10",
                   active ? "bg-white/10 text-white" : "",
@@ -72,7 +72,7 @@ export default function SidebarClient({
       </aside>
 
       {/* ===== TABLET + MOBILE (< xl): left drawer, glass look ===== */}
-      <div className="xl:hidden">
+      <div className="sidebar-touch xl:hidden">
         {/* Left “rail” (shows on tablet/phone) */}
         <div className="fixed left-0 top-0 z-[70] h-14 w-full bg-black/35 backdrop-blur-md border-b border-white/10">
           <div className="h-full px-4 flex items-center justify-between">

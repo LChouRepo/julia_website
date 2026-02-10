@@ -19,7 +19,7 @@ export default function HomeAboutPreview({ html, image }: Props) {
         {html ? (
           <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: html }} />
         ) : (
-          <p className="max-w-2xl text-white/90">
+          <p className="max-w-2xl text-white/90 italic">
 Playing the violin is translation — a direct, human language.
 
           </p>

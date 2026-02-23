@@ -1,15 +1,17 @@
 {
   "title": {
-    "en": "Performance 2",
-    "de": "Performance 2"
+    "en": "Szymanowski Violin Sonata in d-minor, op.9, 1.Allegro Moderato",
+    "de": "Szymanowski Violin Sonata in d-minor, op.9, 1.Allegro Moderato"
   },
-  "cover": "/uploads/img_1727.jpg",
+  "cover": "/uploads/thumbnail2.png",
   "links": [
     {
-      "href": "https://www.youtube.com/watch?v=7sxVHYZ_PnA&list=RD7sxVHYZ_PnA&start_radio=1",
+      "href": "https://youtu.be/CSNyzWzgWDQ",
       "label": {
-        "en": "Youtube"
+        "en": "Youtube",
+        "de": "Youtube"
       }
     }
-  ]
+  ],
+  "slug": "Szymanowski Violin Sonata in d-minor, op.9, 1.Allegro Moderato"
 }

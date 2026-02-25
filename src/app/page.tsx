@@ -53,7 +53,7 @@ export default async function HomePage() {
     <div className="absolute inset-0 -z-10 bg-gradient-to-br from-neutral-700 to-neutral-900" aria-hidden />
   )}
       {/* Darken for legibility */}
-      <div className="absolute inset-0 -z-10 bg-black/45" />
+      <div className="absolute inset-0 -z-10 bg-black/20" />
 
       <Sidebar />
 

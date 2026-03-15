@@ -3,7 +3,7 @@ export const settings = {
   siteTitle: "Julia-Xiaozhuo Wang",
   tagline: "Playing the violin is translation — a direct, human language.",
   heroImage: null,
-  contactEmail: "booking@example.com",
+  contactEmail: "mingchu.breakaleg@gmail.com",
   instagram: "",
   facebook: ""
 }

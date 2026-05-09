@@ -12,13 +12,12 @@ function isRequestScopeError(e: unknown) {
 
 export async function getLang(): Promise<Lang> {
   try {
-    const storeAny = cookies() as any
-    const store = typeof storeAny?.then === "function" ? await storeAny : storeAny
+    const store = await cookies()
     const v = store.get("lang")?.value
     return v === "de" ? "de" : "en"
   } catch (e) {
     // During next build / collect page data, there is no request scope.
-    // Default to English so build can complete.
+    // Default to English so the build can complete.
     if (isRequestScopeError(e)) return "en"
     throw e
   }

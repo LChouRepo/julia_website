@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+import typography from "@tailwindcss/typography"
 
 const config: Config = {
   darkMode: ["class"],
@@ -16,14 +17,15 @@ const config: Config = {
         muted: "hsl(210 40% 96.1%)",
         accent: {
           DEFAULT: "hsl(267 85% 52%)",
-          foreground: "#fff"
-        }
+          foreground: "#fff",
+        },
       },
       borderRadius: {
-        "2xl": "1rem"
-      }
-    }
+        "2xl": "1rem",
+      },
+    },
   },
-  plugins: [require("@tailwindcss/typography")]
+  plugins: [typography],
 }
 export default config
+

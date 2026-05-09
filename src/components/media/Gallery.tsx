@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 type Item = {
   image: string
@@ -24,29 +24,29 @@ export default function Gallery({ items, lang }: { items: Item[]; lang: "en" | "
   const startX = useRef<number | null>(null)
   const dragging = useRef(false)
 
-  const current = ordered[index]
   const total = ordered.length
+  // Clamp during render rather than via setState in an effect.
+  const safeIndex = total > 0 ? Math.min(index, total - 1) : 0
+  const current = ordered[safeIndex]
 
-  function go(next: number) {
-    if (!total) return
-    const wrapped = (next + total) % total
-    setIndex(wrapped)
-  }
-
-  useEffect(() => {
-    // if items change and index becomes invalid
-    if (index > total - 1) setIndex(0)
-  }, [total, index])
+  const go = useCallback(
+    (next: number) => {
+      if (!total) return
+      const wrapped = ((next % total) + total) % total
+      setIndex(wrapped)
+    },
+    [total],
+  )
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (!total) return
-      if (e.key === "ArrowRight") go(index + 1)
-      if (e.key === "ArrowLeft") go(index - 1)
+      if (e.key === "ArrowRight") go(safeIndex + 1)
+      if (e.key === "ArrowLeft") go(safeIndex - 1)
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [index, total])
+  }, [safeIndex, total, go])
 
   if (!total) {
     return <p className="text-sm text-neutral-500">No photos yet.</p>
@@ -65,21 +65,15 @@ export default function Gallery({ items, lang }: { items: Item[]; lang: "en" | "
             dragging.current = true
             startX.current = e.clientX
           }}
-          onPointerMove={(e) => {
-            if (!dragging.current || startX.current == null) return
-            const dx = e.clientX - startX.current
-            // don’t do anything while moving; we decide on pointer up
-          }}
           onPointerUp={(e) => {
             if (!dragging.current || startX.current == null) return
             const dx = e.clientX - startX.current
             dragging.current = false
             startX.current = null
 
-            // swipe threshold
             if (Math.abs(dx) > 45) {
-              if (dx < 0) go(index + 1)
-              else go(index - 1)
+              if (dx < 0) go(safeIndex + 1)
+              else go(safeIndex - 1)
             }
           }}
           onPointerCancel={() => {
@@ -87,6 +81,8 @@ export default function Gallery({ items, lang }: { items: Item[]; lang: "en" | "
             startX.current = null
           }}
         >
+          {/* CMS uploads have arbitrary dimensions; <img> avoids forcing a crop. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={current.image}
             alt={caption || "Gallery photo"}
@@ -101,7 +97,7 @@ export default function Gallery({ items, lang }: { items: Item[]; lang: "en" | "
           <button
             type="button"
             aria-label="Previous"
-            onClick={() => go(index - 1)}
+            onClick={() => go(safeIndex - 1)}
             className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/45 px-3 py-2 text-white backdrop-blur hover:bg-black/60"
           >
             ‹
@@ -109,7 +105,7 @@ export default function Gallery({ items, lang }: { items: Item[]; lang: "en" | "
           <button
             type="button"
             aria-label="Next"
-            onClick={() => go(index + 1)}
+            onClick={() => go(safeIndex + 1)}
             className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/45 px-3 py-2 text-white backdrop-blur hover:bg-black/60"
           >
             ›
@@ -128,13 +124,13 @@ export default function Gallery({ items, lang }: { items: Item[]; lang: "en" | "
       {/* Thumbnails */}
       <div className="mt-4 flex items-center gap-3">
         <div className="text-xs text-neutral-500 tabular-nums">
-          {index + 1} / {total}
+          {safeIndex + 1} / {total}
         </div>
 
         <div className="flex-1 overflow-x-auto">
           <div className="flex gap-2 pr-2">
             {ordered.map((it, i) => {
-              const isActive = i === index
+              const isActive = i === safeIndex
               const cap = getCaption(it, lang)
               return (
                 <button
@@ -149,6 +145,7 @@ export default function Gallery({ items, lang }: { items: Item[]; lang: "en" | "
                   ].join(" ")}
                   title={cap || "Photo"}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={it.image}
                     alt={cap || "Thumbnail"}

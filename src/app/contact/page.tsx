@@ -1,16 +1,39 @@
 import Sidebar from "@/components/home/Sidebar"
 import { getSettings } from "@/lib/cms"
+import { getLang } from "@/lib/lang"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const revalidate = 60
 
 export default async function ContactPage() {
-  const settings = await getSettings()
+  const [lang, settings] = await Promise.all([getLang(), getSettings()])
   const contactImage = settings?.contactImage || "/images/contact.jpg"
 
+  const copy = {
+    title: lang === "de" ? "Kontakt" : "Contact",
+    headline: lang === "de" ? "Für Buchungen & Medien" : "For bookings & media",
+    blurb:
+      lang === "de"
+        ? "Für Konzertbuchungen, Kooperationen, Meisterklassen oder Presseanfragen nutzen Sie bitte das Formular oder schreiben Sie direkt."
+        : "For concert bookings, collaborations, masterclasses, or press inquiries, please use the form or reach out directly.",
+    tip:
+      lang === "de"
+        ? "Tipp: Bitte Wunschtermine, Veranstaltungsort und Programm angeben."
+        : "Tip: include proposed dates, venue, and program if available.",
+    nameLabel: lang === "de" ? "Ihr Name" : "Your name",
+    emailLabel: lang === "de" ? "E-Mail" : "Email",
+    subjectLabel: lang === "de" ? "Betreff" : "Subject",
+    messageLabel: lang === "de" ? "Nachricht" : "Message",
+    send: lang === "de" ? "Senden" : "Send",
+    honeypotLabel:
+      lang === "de"
+        ? "Bitte nicht ausfüllen, wenn Sie ein Mensch sind:"
+        : "Don’t fill this out if you’re human:",
+  }
+
   return (
-    <main className="relative xl:pl-72">
+    <main className="relative content-with-sidebar">
       <Sidebar />
 
       {/* Banner */}
@@ -21,9 +44,9 @@ export default async function ContactPage() {
           aria-hidden
         />
         <div className="absolute inset-0 -z-10 bg-black/45" aria-hidden />
-        <div className="container mx-auto flex h-[40vh] max-w-5xl items-center px-4">
+        <div className="container mx-auto flex min-h-[40vh] max-w-5xl items-center px-4 py-12">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide text-white">
-            Contact
+            {copy.title}
           </h1>
         </div>
       </section>
@@ -31,12 +54,9 @@ export default async function ContactPage() {
       {/* Details + Form */}
       <section className="container mx-auto max-w-5xl px-4 py-12 md:py-16">
         <div className="grid gap-10 md:grid-cols-2">
-          {/* Left: details */}
           <div>
-            <h2 className="text-xl font-semibold">For bookings & media</h2>
-            <p className="mt-2 text-neutral-600">
-              For concert bookings, collaborations, masterclasses, or press inquiries, please use the form or reach out directly.
-            </p>
+            <h2 className="text-xl font-semibold">{copy.headline}</h2>
+            <p className="mt-2 text-neutral-600">{copy.blurb}</p>
 
             <div className="mt-6 space-y-2 text-sm">
               {settings?.contactEmail && (
@@ -65,57 +85,62 @@ export default async function ContactPage() {
               )}
             </div>
 
-            <p className="mt-8 text-sm text-neutral-500">
-              Tip: include proposed dates, venue, and program if available.
-            </p>
+            <p className="mt-8 text-sm text-neutral-500">{copy.tip}</p>
           </div>
 
-          {/* Right: Netlify form */}
           <div className="rounded-xl border p-6">
-            {/* Netlify forms: name + hidden input + honeypot + data-netlify */}
             <form
               name="contact"
               method="POST"
               action="/contact/thanks"
               data-netlify="true"
-
-
               netlify-honeypot="bot-field"
               className="space-y-4"
             >
-              {/* Netlify needs this hidden input to map to the form name */}
               <input type="hidden" name="form-name" value="contact" />
-              {/* Honeypot field */}
+
+              {/* Honeypot */}
               <p className="hidden">
-                <label>
-                  Don’t fill this out if you’re human:
-                  <input name="bot-field" />
+                <label htmlFor="contact-bot-field">
+                  {copy.honeypotLabel}
+                  <input id="contact-bot-field" name="bot-field" />
                 </label>
               </p>
 
               <div>
-                <label className="block text-sm font-medium">Your name</label>
+                <label htmlFor="contact-name" className="block text-sm font-medium">
+                  {copy.nameLabel}
+                </label>
                 <input
+                  id="contact-name"
                   className="mt-1 w-full rounded-md border px-3 py-2 outline-none focus:ring"
                   type="text"
                   name="name"
+                  autoComplete="name"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium">Email</label>
+                <label htmlFor="contact-email" className="block text-sm font-medium">
+                  {copy.emailLabel}
+                </label>
                 <input
+                  id="contact-email"
                   className="mt-1 w-full rounded-md border px-3 py-2 outline-none focus:ring"
                   type="email"
                   name="email"
+                  autoComplete="email"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium">Subject</label>
+                <label htmlFor="contact-subject" className="block text-sm font-medium">
+                  {copy.subjectLabel}
+                </label>
                 <input
+                  id="contact-subject"
                   className="mt-1 w-full rounded-md border px-3 py-2 outline-none focus:ring"
                   type="text"
                   name="subject"
@@ -123,8 +148,11 @@ export default async function ContactPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium">Message</label>
+                <label htmlFor="contact-message" className="block text-sm font-medium">
+                  {copy.messageLabel}
+                </label>
                 <textarea
+                  id="contact-message"
                   className="mt-1 w-full rounded-md border px-3 py-2 outline-none focus:ring"
                   name="message"
                   rows={6}
@@ -136,11 +164,9 @@ export default async function ContactPage() {
                 type="submit"
                 className="w-full rounded-md border px-4 py-2 text-sm font-semibold hover:bg-black hover:text-white transition"
               >
-                Send
+                {copy.send}
               </button>
             </form>
-
-
           </div>
         </div>
       </section>

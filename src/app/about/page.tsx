@@ -1,7 +1,7 @@
 import Sidebar from "@/components/home/Sidebar"
 import { getAbout } from "@/lib/cms"
 import { getLang } from "@/lib/lang"
-import { t } from "@/lib/i18n"
+import { t, type I18nText } from "@/lib/i18n"
 import { marked } from "marked"
 
 export const runtime = "nodejs"
@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 export const revalidate = 60
 
 type BioSection = {
-  text?: any
+  text?: I18nText
   image?: string
   credit?: string
 }
@@ -22,7 +22,9 @@ function ImageBlock({ src, credit }: { src?: string; credit?: string }) {
   if (!src) return null
   return (
     <figure className="overflow-hidden rounded-2xl border bg-white/60 shadow-sm">
-      <img src={src} alt="" className="w-full object-cover" />
+      {/* Source dimensions vary per CMS upload, so leave intrinsic ratio. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt="" loading="lazy" className="w-full object-cover" />
       {credit ? (
         <figcaption className="px-3 py-2 text-xs text-neutral-500">© {credit}</figcaption>
       ) : null}
@@ -44,7 +46,7 @@ export default async function AboutPage() {
   const title = lang === "de" ? "Biografie" : "Biography"
 
   return (
-    <main className="relative md:pl-64">
+    <main className="relative content-with-sidebar">
       <Sidebar />
 
       <section className="container mx-auto max-w-6xl px-4 py-14 md:py-20">
@@ -52,10 +54,8 @@ export default async function AboutPage() {
           {title}
         </h1>
 
-        {/* subtle divider */}
         <div className="mt-6 h-px w-full bg-neutral-200" />
 
-        {/* ===== Section 1 (TEXT centered vertically, image right) ===== */}
         <div className="mt-10 grid gap-10 md:grid-cols-[1.15fr_0.85fr] md:items-center">
           <article className="max-w-prose text-[15px] leading-7 text-neutral-800">
             <div
@@ -69,7 +69,6 @@ export default async function AboutPage() {
           </div>
         </div>
 
-        {/* ===== Section 2 (image left, text right — keep your centered feel) ===== */}
         <div className="mt-14 grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:items-center">
           <div className="w-full">
             <ImageBlock src={s2.image} credit={s2.credit} />
@@ -83,13 +82,8 @@ export default async function AboutPage() {
           </article>
         </div>
 
-        {/* ===== Section 3 (TEXT LEFT, image right — and image now renders) ===== */}
         <div className="mt-16 grid gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-center">
           <article className="max-w-prose text-left text-[15px] leading-7 text-neutral-800">
-            <div className="mb-3 text-base font-semibold text-neutral-900">
-              {/* {lang === "de" ? "Preise & Auszeichnungen" : "Prizes & Recognition"} */}
-            </div>
-
             <div
               className="prose prose-neutral max-w-none prose-ul:my-0 prose-li:my-2"
               dangerouslySetInnerHTML={{ __html: s3Html }}

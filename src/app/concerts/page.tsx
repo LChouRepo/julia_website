@@ -1,11 +1,20 @@
 import Sidebar from "@/components/home/Sidebar"
 import { getEvents } from "@/lib/cms"
 import { getLang } from "@/lib/lang"
-import { t } from "@/lib/i18n"
+import { t, type I18nText } from "@/lib/i18n"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const revalidate = 60
+
+type Event = {
+  title: I18nText
+  date: string
+  venue?: I18nText
+  city?: string
+  ticketUrl?: string
+  slug?: string
+}
 
 function startOfToday() {
   const t = new Date()
@@ -14,19 +23,22 @@ function startOfToday() {
 }
 
 export default async function ConcertsPage() {
-  const [lang, events] = await Promise.all([getLang(), getEvents()])
+  const [lang, eventsRaw] = await Promise.all([getLang(), getEvents()])
+  const events = eventsRaw as Event[]
 
   const sorted = [...events].sort(
-    (a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   )
   const today = startOfToday()
-  const upcoming = sorted.filter((e: any) => new Date(e.date).getTime() >= today)
-  const past = sorted.filter((e: any) => new Date(e.date).getTime() < today).reverse()
+  const upcoming = sorted.filter((e) => new Date(e.date).getTime() >= today)
+  const past = sorted.filter((e) => new Date(e.date).getTime() < today).reverse()
 
-  const Row = ({ e }: { e: any }) => (
+  const dateLocale = lang === "de" ? "de-DE" : "en-US"
+
+  const Row = ({ e }: { e: Event }) => (
     <div className="grid gap-3 border-b py-4 md:grid-cols-[12rem_1fr_auto] md:items-center">
       <div className="text-sm text-neutral-500">
-        {new Date(e.date).toLocaleString(undefined, {
+        {new Date(e.date).toLocaleString(dateLocale, {
           year: "numeric",
           month: "short",
           day: "numeric",
@@ -43,7 +55,7 @@ export default async function ConcertsPage() {
       <div className="flex gap-2 md:justify-end">
         {e.slug && (
           <a className="rounded border px-3 py-1 text-sm" href={`/events/${e.slug}`}>
-            Details
+            {lang === "de" ? "Details" : "Details"}
           </a>
         )}
         {e.ticketUrl && (
@@ -53,7 +65,7 @@ export default async function ConcertsPage() {
             target="_blank"
             rel="noreferrer"
           >
-            Tickets
+            {lang === "de" ? "Tickets" : "Tickets"}
           </a>
         )}
       </div>
@@ -61,22 +73,36 @@ export default async function ConcertsPage() {
   )
 
   return (
-    <main className="relative xl:pl-72">
+    <main className="relative content-with-sidebar">
       <Sidebar />
       <section className="container mx-auto max-w-5xl px-4 py-16 md:py-24">
-        <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide">Concerts</h1>
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide">
+          {lang === "de" ? "Konzerte" : "Concerts"}
+        </h1>
 
-        <h2 className="mt-10 mb-2 text-xl font-semibold">Upcoming</h2>
+        <h2 className="mt-10 mb-2 text-xl font-semibold">
+          {lang === "de" ? "Anstehend" : "Upcoming"}
+        </h2>
         <div className="divide-y">
-          {upcoming.length ? upcoming.map((e: any, i: number) => <Row key={i} e={e} />) : (
-            <p className="py-6 text-neutral-500">No upcoming events yet.</p>
+          {upcoming.length ? (
+            upcoming.map((e, i) => <Row key={i} e={e} />)
+          ) : (
+            <p className="py-6 text-neutral-500">
+              {lang === "de" ? "Noch keine Termine angekündigt." : "No upcoming events yet."}
+            </p>
           )}
         </div>
 
-        <h2 className="mt-12 mb-2 text-xl font-semibold">Past</h2>
+        <h2 className="mt-12 mb-2 text-xl font-semibold">
+          {lang === "de" ? "Vergangen" : "Past"}
+        </h2>
         <div className="divide-y">
-          {past.length ? past.map((e: any, i: number) => <Row key={i} e={e} />) : (
-            <p className="py-6 text-neutral-500">No past events.</p>
+          {past.length ? (
+            past.map((e, i) => <Row key={i} e={e} />)
+          ) : (
+            <p className="py-6 text-neutral-500">
+              {lang === "de" ? "Keine vergangenen Termine." : "No past events."}
+            </p>
           )}
         </div>
       </section>

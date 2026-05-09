@@ -5,6 +5,10 @@
 /* Default body text */
 body {
   font-family: Arial, Helvetica, sans-serif;
+  /* iOS rubber-band background and respect device safe areas */
+  background-color: hsl(0 0% 100%);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* Display font (Cinzel) */
@@ -14,19 +18,24 @@ body {
   font-weight: 500;
 }
 
-/* Your existing helpers (fine to keep) */
-:root { --radius: 1rem; }
+/* Helpers used by legacy markup */
+:root {
+  --radius: 1rem;
+}
 
 .container { @apply mx-auto max-w-6xl px-4; }
 .section { @apply py-20; }
 .h1 { @apply font-display text-4xl sm:text-5xl font-bold tracking-tight; }
 .h2 { @apply font-display text-2xl sm:text-3xl font-bold tracking-tight; }
 .subtle { @apply text-sm text-gray-500; }
-.btn { @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 border; }
-.btn-primary { @apply bg-foreground text-white border-foreground; }
-.btn-secondary { @apply bg-muted border-transparent; }
-.card { @apply rounded-2xl border; }
-/* Treat touch devices (iPad) as "mobile/tablet nav" even if wide */
+
+/* Reserve room for the fixed desktop sidebar at xl+. Suppressed on touch
+   devices below, where the hamburger drawer is used instead. */
+.content-with-sidebar { @apply xl:pl-72; }
+
+/* Treat touch devices (iPad / hybrid) as mobile/tablet nav even at wide widths.
+   Without this, a Surface or iPad Pro in landscape would show the desktop sidebar
+   while the user expects a hamburger drawer. */
 @media (hover: none) and (pointer: coarse) {
   .sidebar-desktop {
     display: none !important;
@@ -34,8 +43,6 @@ body {
   .sidebar-touch {
     display: block !important;
   }
-
-  /* If you have main padding for the desktop sidebar, kill it on touch */
   .content-with-sidebar {
     padding-left: 0 !important;
   }

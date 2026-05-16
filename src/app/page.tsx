@@ -29,24 +29,14 @@ export default async function HomePage() {
       {/* HERO — spans full width, the fixed sidebar overlays via translucent glass */}
       <section className="relative min-h-[100svh]">
         {heroImage ? (
-          <>
-            <div
-              className="absolute inset-0 -z-10 bg-cover md:hidden"
-              style={{
-                backgroundImage: `url(${heroImage})`,
-                backgroundPosition: "50% 12%",
-              }}
-              aria-hidden
-            />
-            <div
-              className="absolute inset-0 -z-10 hidden bg-cover md:block"
-              style={{
-                backgroundImage: `url(${heroImage})`,
-                backgroundPosition: "60% 10%",
-              }}
-              aria-hidden
-            />
-          </>
+          <div
+            className="absolute inset-0 -z-10 bg-cover bg-no-repeat"
+            style={{
+              backgroundImage: `url(${heroImage})`,
+              backgroundPosition: "50% 30%",
+            }}
+            aria-hidden
+          />
         ) : (
           <div
             className="absolute inset-0 -z-10 bg-gradient-to-br from-neutral-700 to-neutral-900"
@@ -62,13 +52,13 @@ export default async function HomePage() {
             </h1>
             <div className="font-display mt-8 flex justify-center gap-4">
               <a
-                href="#concerts"
+                href="/concerts"
                 className="rounded-md border px-4 py-2 text-sm font-semibold hover:bg-white hover:text-black transition"
               >
                 {lang === "de" ? "Konzerte" : "Concerts"}
               </a>
               <a
-                href="#about"
+                href="/about"
                 className="rounded-md border px-4 py-2 text-sm font-semibold hover:bg-white hover:text-black transition"
               >
                 {lang === "de" ? "Biografie" : "About"}

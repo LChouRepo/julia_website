@@ -41,6 +41,10 @@ export default function HomeConcertsPreview({
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 4)
 
+  // Hide the Concerts preview entirely when there are no upcoming events.
+  // It auto-reappears as soon as a future event is added via the CMS.
+  if (upcoming.length === 0) return null
+
   const hasBg = Boolean(bgImage)
 
   return (
@@ -116,12 +120,6 @@ export default function HomeConcertsPreview({
               </div>
             )
           })}
-
-          {upcoming.length === 0 && (
-            <p className={`py-8 text-sm ${hasBg ? "text-white/80" : "text-neutral-500"}`}>
-              {lang === "de" ? "Noch keine Termine angekündigt." : "No upcoming events yet."}
-            </p>
-          )}
         </div>
       </div>
     </section>

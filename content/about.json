@@ -55,14 +55,6 @@
   ],
   "prizes": [
     {
-      "year": "2025",
-      "competition": "Cooper International Violin Competition",
-      "result": {
-        "en": "2nd Prize",
-        "de": "2. Preis"
-      }
-    },
-    {
       "year": "2024",
       "competition": "2nd Stuttgart International Violin Competition",
       "result": {
@@ -71,11 +63,11 @@
       }
     },
     {
-      "year": "2023",
-      "competition": "Zhuhai Mozart International Competition",
+      "year": "2025",
+      "competition": "Cooper International Violin Competition",
       "result": {
-        "en": "Top Award",
-        "de": "Top Award"
+        "en": "2nd Prize",
+        "de": "2. Preis"
       }
     },
     {
@@ -87,11 +79,11 @@
       }
     },
     {
-      "year": "2021",
-      "competition": "Dubai International Classical Strings Competition",
+      "year": "2023",
+      "competition": "Zhuhai Mozart International Competition",
       "result": {
-        "en": "Finalist, youngest participant",
-        "de": "Finalistin, jüngste Teilnehmerin"
+        "en": "Top Award",
+        "de": "Top Award"
       }
     },
     {
@@ -100,6 +92,14 @@
       "result": {
         "en": "3rd Prize",
         "de": "3. Preis"
+      }
+    },
+    {
+      "year": "2021",
+      "competition": "Dubai International Classical Strings Competition",
+      "result": {
+        "en": "Finalist, youngest participant",
+        "de": "Finalistin, jüngste Teilnehmerin"
       }
     },
     {

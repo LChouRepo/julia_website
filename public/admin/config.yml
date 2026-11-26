@@ -47,7 +47,7 @@ collections:
               - { label: "Text", name: "text", widget: "object", fields: [{ label: "English", name: "en", widget: "text" }, { label: "Deutsch", name: "de", widget: "text", required: false }] }
           - { label: "Biography photo", name: "bioImage", widget: "image" }
           - { label: "Biography PDF (download button)", name: "pressKit", widget: "file" }
-          - label: "Prizes (most recent first)"
+          - label: "Prizes (in order of importance)"
             name: "prizes"
             widget: "list"
             summary: "{{fields.year}} · {{fields.competition}}"

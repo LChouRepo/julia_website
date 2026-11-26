@@ -9,11 +9,17 @@ const u = UI[lang], h = u.home
 // the ink violin's four pegs lead out to the four pages
 const ly = { G: -112, D: -206, A: -214, E: -122 }
 const callouts = PAGES.map(p => { const g = V.PEGS.find(q => q.n === p.string), s = g.s
-  return { ...p, s, y: g.y, peg: V.peg(s, g.y), lead: `M${s * 41},${g.y} L${s * 62},${g.y} L${s * 96},${ly[p.string]}`, lx: s * 100, ly: ly[p.string], anchor: s > 0 ? 'start' : 'end' } })
+  return { ...p, s, y: g.y, peg: V.peg(s, g.y), lead: `M${s * 35},${g.y} L${s * 62},${g.y} L${s * 96},${ly[p.string]}`, lx: s * 100, ly: ly[p.string], anchor: s > 0 ? 'start' : 'end' } })
 // three photos taken from the gallery, so deleting one in /admin never leaves a broken image here
 const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(p => p.image)
 ---
 <Base lang={lang} page="home" title="Julia-Xiaozhuo Wang · Violin" desc={u.meta.home}>
+  <!-- landing intro (desktop, motion allowed, once per visit): one ink line draws the violin, breaks into points, the points become her photograph -->
+  <script is:inline>if (matchMedia('(prefers-reduced-motion: no-preference) and (min-width: 861px)').matches) {
+    document.documentElement.classList.add('intro')
+    history.scrollRestoration = 'manual'   // the intro always starts from the top, even on reload
+  }</script>
+  <div class="intro-run">
   <section class="table">
     <div class="t-text">
       <span class="eyebrow"><i></i>{h.eyebrow}</span>
@@ -22,7 +28,7 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
       <div class="ctas"><a class="pill dark" href={path(lang, 'media') + '#videos'}>{h.watch}</a><a class="pill line" href={path(lang, 'contact')}>{h.booking}</a></div>
     </div>
     <svg class="t-draw" id="tdraw" viewBox="-150 -240 300 610" role="img" aria-label={h.drawingLabel}>
-      <path class="ink" d={OUTLINE} /><path class="cav" d={V.CAVITY} />
+      <path class="ink" d={OUTLINE} /><path class="cav" d={V.CAVITY} /><path class="oneline" />
       {callouts.map(c => (
         <a href={path(lang, c.key)} class="call">
           <path class="pegfill" d={c.peg} /><path class="lead" d={c.lead} />
@@ -32,7 +38,10 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
     </svg>
     <Print class="t-print" src={settings.heroImage} alt={u.alt.withViolin} tag={`${u.plate} 01 · Julia-Xiaozhuo Wang`} eager />
     <div class="readout">{h.readout}</div>
+    <span class="oneline-tip" aria-hidden="true"></span>
+    <div class="oneline-cue" aria-hidden="true"><i>{h.introLine}</i>{h.introCue}</div>
   </section>
+  </div>
 
   <section class="band">
     <div class="label">{h.watchLabel}</div>

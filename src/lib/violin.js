@@ -35,18 +35,21 @@ const VIOLIN = (() => {
   const NECK = `M-13.5,0 L-11.5,${NUT} L11.5,${NUT} L13.5,0`
   // pegbox and scroll from the front (re-drawn from the reference close-up): two cheeks that narrow upward
   // around a dark peg cavity, then the scroll head with its two volute "ears" and the fluted spine
-  const PEGBOX = `M-12,${NUT} L-9.5,-184 C-13,-185 -19.5,-189 -20.5,-197 C-21.5,-206 -17,-213 -10.5,-214 C-9,-221 -5.5,-227 0,-228 C5.5,-227 9,-221 10.5,-214 C17,-213 21.5,-206 20.5,-197 C19.5,-189 13,-185 9.5,-184 L12,${NUT} Z`
+  const PEGBOX = `M-12,${NUT} L-9.5,-184 C-13,-185 -19.5,-189 -20.5,-197 C-21.5,-206 -17,-213 -10.5,-214 C-10,-220.5 -6,-225 0,-225.5 C6,-225 10,-220.5 10.5,-214 C17,-213 21.5,-206 20.5,-197 C19.5,-189 13,-185 9.5,-184 L12,${NUT} Z`
   const CAVITY = `M-3.6,${NUT - 3} L3.6,${NUT - 3} L3,-181 Q0,-183.5 -3,-181 Z`
-  // carving: volute turns on each ear, the eye, the two flutes along the spine, the throat under the head
-  const ear = s => `M${10.5 * s},-214 C${17 * s},-213 ${21.5 * s},-206 ${20.5 * s},-197 M${11 * s},-209 C${16 * s},-208.5 ${18 * s},-204 ${17.5 * s},-198.5 C${17 * s},-194 ${13.5 * s},-191.5 ${11 * s},-192.5 M${12.6 * s},-203.5 a2.4,2.4 0 1,${s > 0 ? 1 : 0} ${2.2 * s},3.4 `
-  const SCROLL = ear(1) + ear(-1) + 'M-3.2,-186 C-3.4,-205 -3,-219 -1.2,-226 M3.2,-186 C3.4,-205 3,-219 1.2,-226 M-9.5,-184 C-5,-187.5 5,-187.5 9.5,-184'
+  // carving: a volute spiral in each ear (1.6 turns into the eye), the two flutes along the spine, the throat under the head
+  const spiral = side => { let d = ''
+    for (let i = 0; i <= 48; i++) { const t = i / 48, a = -2.2 + t * 6.283 * 1.6, r = 5.6 * (1 - .78 * t)
+      d += (i ? ' L' : 'M') + `${(side * (15 + Math.cos(a) * r)).toFixed(2)},${(-199.5 + Math.sin(a) * r).toFixed(2)}` }
+    return d + ' ' }
+  const SCROLL = spiral(1) + spiral(-1) + 'M-3,-186 C-3.2,-204 -2.8,-216 -1,-223 M3,-186 C3.2,-204 2.8,-216 1,-223 M-9.5,-184 C-5,-187.5 5,-187.5 9.5,-184'
   // pegs: G and D on the left (bass side), E and A on the right; staggered, each with collar, shaft and a pear-shaped thumb piece
   const PEGS = [{ s: -1, y: -144, n: 'G' }, { s: -1, y: -167, n: 'D' }, { s: 1, y: -178, n: 'A' }, { s: 1, y: -155, n: 'E' }]
-  const peg = (s, y) => `M${11 * s},${y - 3.4} L${13.5 * s},${y - 3.4} L${13.5 * s},${y + 3.4} L${11 * s},${y + 3.4} Z `
-    + `M${13.5 * s},${y - 2.1} L${21 * s},${y - 2.4} L${21 * s},${y + 2.4} L${13.5 * s},${y + 2.1} Z `
-    + `M${21 * s},${y - 4.6} C${25 * s},${y - 5.2} ${28 * s},${y - 8.2} ${33 * s},${y - 8} C${38.5 * s},${y - 7.8} ${40 * s},${y - 4} ${40 * s},${y} C${40 * s},${y + 4} ${38.5 * s},${y + 7.8} ${33 * s},${y + 8} C${28 * s},${y + 8.2} ${25 * s},${y + 5.2} ${21 * s},${y + 4.6} Z`
+  const peg = (s, y) => `M${11 * s},${y - 3} L${13 * s},${y - 3} L${13 * s},${y + 3} L${11 * s},${y + 3} Z `
+    + `M${13 * s},${y - 1.8} L${18.5 * s},${y - 2} L${18.5 * s},${y + 2} L${13 * s},${y + 1.8} Z `
+    + `M${18.5 * s},${y - 3.8} C${21.5 * s},${y - 4.3} ${23.5 * s},${y - 6.6} ${27.5 * s},${y - 6.5} C${32 * s},${y - 6.3} ${33.5 * s},${y - 3.2} ${33.5 * s},${y} C${33.5 * s},${y + 3.2} ${32 * s},${y + 6.3} ${27.5 * s},${y + 6.5} C${23.5 * s},${y + 6.6} ${21.5 * s},${y + 4.3} ${18.5 * s},${y + 3.8} Z`
   const PEG_D = PEGS.map(p => peg(p.s, p.y)).join(' ')
-  const PEG_EYE = PEGS.map(({ s, y }) => `M${34.5 * s},${y} m-1.6,0 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0 `).join('')
+  const PEG_EYE = PEGS.map(({ s, y }) => `M${28.5 * s},${y} m-1.6,0 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0 `).join('')
   const TAILPIECE = `M-19,${TAIL_TOP} Q0,${TAIL_TOP - 4} 19,${TAIL_TOP} L12,${TAIL_BOT} Q0,${TAIL_BOT + 5} -12,${TAIL_BOT} Z`
   const CHINREST = 'M-18,300 C-40,294 -72,297 -85,312 C-93,322 -89,339 -71,345 C-50,352 -8,350 9,342 C21,336 23,320 13,311 C5,304 -5,303 -18,300 Z'
   const BRIDGE_D = `M-21,${BRIDGE - 2.5} Q0,${BRIDGE - 5} 21,${BRIDGE - 2.5} L21,${BRIDGE + 2.5} L-21,${BRIDGE + 2.5} Z`

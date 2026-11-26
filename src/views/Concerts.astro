@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro'
 import Peg from '../components/Peg.astro'
-import HallDrawing from '../components/HallDrawing.astro'
 import { UI, path } from '../lib/i18n.js'
 import { about, upcoming, settings, t } from '../lib/content.js'
 const { lang } = Astro.props
@@ -14,11 +13,11 @@ const S = about.stages
     <div><div class="k"><Peg />{c.kicker}</div><h1>{c.title}</h1></div>
     <p>{c.intro}</p>
   </header>
-  {settings.concertsImage ? (
+  {settings.concertsImage && (
     <figure class="hall">
       <img src={settings.concertsImage} alt={t(settings.concertsCaption, lang)} loading="eager" />
       {t(settings.concertsCaption, lang) && <figcaption>{t(settings.concertsCaption, lang)}</figcaption>}
-    </figure>) : <HallDrawing />}
+    </figure>)}
   <section class="band" id="upcoming">
     <div class="label">{c.upcoming}</div>
     <div id="events">

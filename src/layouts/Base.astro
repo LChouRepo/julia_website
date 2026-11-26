@@ -23,6 +23,7 @@ const email = settings.contactEmail
   <meta property="og:image" content={new URL(settings.heroImage, Astro.site)} />
   <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Spectral:ital,wght@0,200;0,300;1,200;1,300&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Music&text=%F0%9D%84%9E&display=block" rel="stylesheet" />
   <script is:inline>document.documentElement.classList.add('js')
     // Netlify Identity invite / password links land on the homepage: load the widget only then, so /admin logins keep working
     if (/(invite|recovery|confirmation|email_change)_token/.test(location.hash)) { var s = document.createElement('script'); s.src = 'https://identity.netlify.com/v1/netlify-identity-widget.js'; s.onload = function () { if (/(invite|confirmation)_token/.test(location.hash)) netlifyIdentity.on('login', function () { location.href = '/admin/' }) }; document.head.appendChild(s) }</script>
@@ -31,11 +32,12 @@ const email = settings.contactEmail
   <a class="skip" href="#main">{u.nav.skip}</a>
   <nav aria-label={u.mainNav}>
     <a class="mark" href={path(lang)} aria-current={here === 'home' ? 'page' : undefined}>
-      <svg viewBox="-22 -230 44 104" aria-hidden="true"><path d={`${V.PEGBOX} ${V.SCROLL}`} /></svg><span>Julia-Xiaozhuo Wang</span>
+      <svg viewBox="-35 -228 70 98" aria-hidden="true"><path d={`${V.PEGBOX} ${V.SCROLL} ${V.PEG_D}`} /><path class="cav" d={V.CAVITY} /></svg><span>Julia-Xiaozhuo Wang</span>
     </a>
     <span class="links">
-      {PAGES.map(p => <a href={path(lang, p.key)} aria-current={here === p.key ? 'page' : undefined}><Peg /><span>{u.nav[p.key]}</span><small>{p.string}</small></a>)}
+      {PAGES.map(p => <a href={path(lang, p.key)} data-string={p.string} aria-current={here === p.key ? 'page' : undefined}><Peg /><span>{u.nav[p.key]}</span><small>{p.string}</small></a>)}
     </span>
+    <svg class="nav-staff" aria-hidden="true"></svg>
     <span class="right">
       <a class="lang" href={altPath(other)} hreflang={other} lang={other}>{u.nav.other}</a>
       <a class="pill dark" href={path(lang, 'contact')}>{u.nav.booking}</a>

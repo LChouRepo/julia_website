@@ -19,7 +19,6 @@ const u = UI[lang], c = u.contact
         <dl>
           <dt>{c.email}</dt><dd><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></dd>
           {settings.instagram && <><dt>Instagram</dt><dd><a href={settings.instagram}>{settings.instagram.replace(/^https?:\/\/(www\.)?/, '')}</a></dd></>}
-          <dt>{c.based}</dt><dd>{c.basedIn}</dd>
         </dl>
       </div>
       <div>

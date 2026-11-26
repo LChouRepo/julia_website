@@ -284,3 +284,12 @@ nav .links a span{font-size:16px}
 
 /* phones without JS: the menu button cannot open, so show the plain links instead */
 @media (max-width:860px){html:not(.js) nav{flex-wrap:wrap;gap:6px}html:not(.js) nav .links{display:flex;flex-wrap:wrap;gap:0}html:not(.js) nav .links a{padding:4px 8px}html:not(.js) nav .menu{display:none}}
+
+/* titles and the name in Cinzel (the artist's chosen title face); reading text stays in Archivo Narrow, long quotes in Spectral */
+h1,h2,.table h1,.pagehead h1,.letter h2,.darkroom h2,.plate h2,nav .mark span,footer .mark,.prose h3,.cols h4,.video h3,.empty h3,.sent h3,
+.ledger b,td.n,details.rep summary b,.prizes b,.event .d,.hm-list a span,.t-draw a text.big{font-family:Cinzel,serif;font-weight:400;letter-spacing:.01em}
+h1,.table h1,.pagehead h1{font-size:clamp(40px,5vw,84px);line-height:1.02}
+.letter h2{font-size:clamp(28px,3.4vw,54px);line-height:1.25}
+.plate h2,.darkroom h2{font-size:clamp(32px,3.6vw,58px)}
+nav .mark span{font-size:18px}
+.prose h3{font-size:24px}

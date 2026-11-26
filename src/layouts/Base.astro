@@ -22,7 +22,7 @@ const email = settings.contactEmail
   <meta property="og:title" content={title} /><meta property="og:description" content={desc} />
   <meta property="og:image" content={new URL(settings.heroImage, Astro.site)} />
   <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Spectral:ital,wght@0,200;0,300;1,200;1,300&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
   <script is:inline>document.documentElement.classList.add('js')
     // Netlify Identity invite / password links land on the homepage: load the widget only then, so /admin logins keep working
     if (/(invite|recovery|confirmation|email_change)_token/.test(location.hash)) { var s = document.createElement('script'); s.src = 'https://identity.netlify.com/v1/netlify-identity-widget.js'; s.onload = function () { if (/(invite|confirmation)_token/.test(location.hash)) netlifyIdentity.on('login', function () { location.href = '/admin/' }) }; document.head.appendChild(s) }</script>

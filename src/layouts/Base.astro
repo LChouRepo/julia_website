@@ -4,7 +4,7 @@ import V from '../lib/violin.js'
 import Peg from '../components/Peg.astro'
 import { UI, PAGES, path } from '../lib/i18n.js'
 import { settings } from '../lib/content.js'
-const { lang = 'en', page = 'home', title, desc } = Astro.props
+const { lang = 'en', page = 'home', title, desc, noindex = false } = Astro.props
 const u = UI[lang], other = u.nav.otherLang
 const here = page
 const altPath = (l) => path(l, page === 'home' ? '' : page)
@@ -17,6 +17,7 @@ const email = settings.contactEmail
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={desc} />
+  {noindex && <meta name="robots" content="noindex" />}
   <link rel="alternate" hreflang="en" href={new URL(altPath('en'), Astro.site)} />
   <link rel="alternate" hreflang="de" href={new URL(altPath('de'), Astro.site)} />
   <meta property="og:title" content={title} /><meta property="og:description" content={desc} />
@@ -52,7 +53,7 @@ const email = settings.contactEmail
       <a href={altPath(other)} hreflang={other} lang={other}><span>{u.nav.other}</span></a>
     </div>
   </div>
-  <main id="main"><slot /></main>
+  <main id="main" tabindex="-1"><slot /></main>
   <section class="close">
     <footer>
       <div><div class="mark">Julia-Xiaozhuo Wang</div><small>{u.footer.tagline}</small><a class="lang" href={altPath(other)} hreflang={other} lang={other} style="display:block;margin-top:14px">{u.nav.other}</a></div>

@@ -13,7 +13,7 @@ if (lenis) { lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t => leni
 
 /* phone menu: the pegbox, four pegs = four pages */
 const menu = $('#headmenu'), btn = $('nav .menu')
-const setMenu = open => { menu.classList.toggle('open', open); btn.setAttribute('aria-expanded', String(open)); open ? lenis?.stop() : lenis?.start(); if (open) $('.hm-list a', menu)?.focus() }
+const setMenu = open => { menu.classList.toggle('open', open); $$('main, footer').forEach(el => { el.inert = open }); btn.setAttribute('aria-expanded', String(open)); open ? lenis?.stop() : lenis?.start(); if (open) $('.hm-list a', menu)?.focus() }
 btn?.addEventListener('click', () => setMenu(true))
 $('.x', menu)?.addEventListener('click', () => { setMenu(false); btn.focus() })
 addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); btn.focus() } })
@@ -33,15 +33,19 @@ if (events.length) {
 $$('.frame[data-yt] .play').forEach(a => a.addEventListener('click', e => {
   const f = a.closest('.frame'); if (!f.dataset.yt) return
   e.preventDefault()
-  f.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${f.dataset.yt}?autoplay=1" title="${a.getAttribute('aria-label')}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`
+  const fr = document.createElement('iframe')
+  fr.src = `https://www.youtube-nocookie.com/embed/${f.dataset.yt}?autoplay=1`; fr.title = a.getAttribute('aria-label')
+  fr.allow = 'autoplay; encrypted-media; picture-in-picture'; fr.allowFullscreen = true
+  f.replaceChildren(fr); fr.focus()
 }))
 const lb = $('dialog.lb')
 if (lb) {
   $$('.gallery .photo').forEach(a => a.addEventListener('click', e => {
     e.preventDefault(); $('img', lb)?.remove()
-    const im = new Image(); im.src = a.dataset.full; im.alt = $('img', a).alt; lb.prepend(im); lb.showModal()
+    const im = new Image(); im.src = a.dataset.full; im.alt = $('img', a).alt; lb.prepend(im); lb.showModal(); lenis?.stop()
   }))
   lb.addEventListener('click', () => lb.close())
+  lb.addEventListener('close', () => lenis?.start())
 }
 
 /* contact: post to Netlify Forms, show the thank-you state in place */
@@ -57,7 +61,7 @@ if (form) {
     try {
       const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() })
       if (!r.ok) throw new Error(String(r.status))
-      form.hidden = true; sent.style.display = 'block'
+      form.hidden = true; sent.style.display = 'block'; $('h3', sent)?.focus()
     } catch { err.textContent = form.dataset.errSend; b.disabled = false; b.textContent = label }
   })
 }
@@ -112,7 +116,7 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
 
   // paper settles onto the table
   $$('[data-in="paper"]').forEach(g => once(g, gsap.timeline({ paused: true })
-    .from(g.children, { y: -40, rotation: i => (i % 2 ? 5 : -5), opacity: 0, duration: .75, stagger: .07, ease: 'back.out(1.6)' })))
+    .from(g.querySelector('.gcol') ? $$('.photo', g) : g.children, { y: -40, /* in the gallery the prints drop, not whole columns */ rotation: i => (i % 2 ? 5 : -5), opacity: 0, duration: .75, stagger: .07, ease: 'back.out(1.6)' })))
   $$('.prose .print, .direct .print').forEach(p => once(p, gsap.timeline({ paused: true })
     .from(p, { y: -36, rotation: '+=6', opacity: 0, duration: .8, ease: 'back.out(1.5)' })))
 
@@ -171,6 +175,7 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
    the header staff and its notes, the rest gather into the red pin. A print drifts down from the top right like falling paper,
    and the pin strikes it: the print jolts, swings on the pin and comes to rest. */
 function landingIntro (tdraw) {
+  window.__introRunning = true
   const phone = innerWidth <= 860   // phones: a short timed version over the normal layout; the violin settles into its faint corner
   scrollTo(0, 0); lenis?.scrollTo(0, { immediate: true })   // everything below is measured from the opening frame
   const NS = 'http://www.w3.org/2000/svg', run = $('.intro-run'), line = $('.oneline', tdraw), ink = $('.ink', tdraw), tip = $('.oneline-tip', run)
@@ -230,16 +235,27 @@ function landingIntro (tdraw) {
 
   const S = { draw: 0 }
   let shown = -1
-  gsap.ticker.add(() => {
+  let last = ''
+  const tick = () => {
+    const key = `${M.F}|${M.J}|${S.draw}`; if (key === last) return; last = key   // nothing moved: skip the frame
     place()
     const n = Math.round(S.draw * (pts.length - 1))
     if (n !== shown) { line.setAttribute('d', n > 0 ? d.slice(0, at[n]) : ''); shown = n }
     if (S.draw > 0 && S.draw < 1) { const q = new DOMPoint(...pts[n]).matrixTransform(line.getScreenCTM()); tip.style.transform = `translate(${q.x}px,${q.y}px)`; tip.style.opacity = 1 } else tip.style.opacity = 0
-  })
+  }
+  gsap.ticker.add(tick)
 
   const tl = phone
     ? gsap.timeline({ delay: .3, onComplete: () => { document.documentElement.style.overflow = '' } })
     : gsap.timeline({ scrollTrigger: { trigger: run, start: 'top top', end: 'bottom bottom', scrub: 1 } })
+  const startW = innerWidth
+  addEventListener('resize', function bail () {
+    if (Math.abs(innerWidth - startW) < 2) return                                  // phones fire resize when the address bar moves; only a real width change counts
+    removeEventListener('resize', bail); tl.scrollTrigger?.kill(); tl.kill(); gsap.ticker.remove(tick); fly.remove(); tip.style.opacity = 0
+    gsap.set([tdraw, ink, $('.cav', tdraw), line, print, pin, ...$$('.call', tdraw), '.table .t-text', '.table .readout'], { clearProps: 'all' })
+    gsap.set(navStaff, { clearProps: '--staff,--notes' }); line.setAttribute('d', '')
+    document.documentElement.classList.remove('intro'); document.documentElement.style.overflow = ''; scrollTo(0, 0); ScrollTrigger.refresh()
+  })
   if (phone) { tl.timeScale(1.6); const skip = () => tl.timeScale(8); addEventListener('touchstart', skip, { once: true }); addEventListener('wheel', skip, { once: true }) }
   tl.to(S, { draw: 1, duration: 2.6, ease: 'none' }, 0)
     .to('.oneline-cue', { opacity: 0, duration: .3 }, .3)
@@ -263,8 +279,8 @@ function landingIntro (tdraw) {
     .to(head, { attr: { cy: PIN[1] }, duration: .15, ease: 'power2.in' }, 5.25)           // strike, landing the instant the print does
     .set(pin, { opacity: 1 }, 5.4).set(head, { opacity: 0 }, 5.4)
     .to(M, { J: 1, duration: 1.1, ease: 'none' }, 5.4)                  // the print jolts, swings on the pin, and is still
-    .fromTo('.table .t-text', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .5 }, 5.75)
-    .to($$('.call', tdraw), { opacity: 1, duration: .4, stagger: .1 }, 5.85)
+    .fromTo('.table .t-text', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .5 }, 5.75)
+    .fromTo($$('.call', tdraw), { autoAlpha: 0 }, { autoAlpha: 1, duration: .4, stagger: .1 }, 5.85)
     .to('.table .readout', { opacity: .75, duration: .4 }, 6.1)
     .to({}, { duration: .5 })
 }

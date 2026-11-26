@@ -15,7 +15,7 @@ const u = UI[lang], c = u.contact
   <section class="band">
     <div class="contact">
       <div class="direct">
-        <Print src={settings.contactImage} alt={u.alt.withViolin} tag={`${u.plate} 08`} style="width:min(100%,420px);transform:rotate(-1.2deg)" />
+        {settings.contactImage && <Print src={settings.contactImage} alt={u.alt.withViolin} tag={`${u.plate} 08`} style="width:min(100%,420px);transform:rotate(-1.2deg)" />}
         <dl>
           <dt>{c.email}</dt><dd><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></dd>
           {settings.instagram && <><dt>Instagram</dt><dd><a href={settings.instagram}>{settings.instagram.replace(/^https?:\/\/(www\.)?/, '')}</a></dd></>}
@@ -41,7 +41,7 @@ const u = UI[lang], c = u.contact
           <p class="err" role="alert"></p>
           <div><button class="pill dark" type="submit">{c.send}</button></div>
         </form>
-        <div class="sent" role="status"><h3>{u.thanks.title}</h3><p style="margin-top:12px;font-size:18px">{u.thanks.text}</p></div>
+        <div class="sent" role="status"><h3 tabindex="-1">{u.thanks.title}</h3><p style="margin-top:12px;font-size:18px">{u.thanks.text}</p></div>
       </div>
     </div>
   </section>

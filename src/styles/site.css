@@ -164,8 +164,10 @@ details.rep li{font-size:16px;line-height:1.5;padding:4px 0;break-inside:avoid}
 .video .play:hover i{transform:scale(1.08)}
 .video h3{font-family:Spectral,serif;font-weight:300;font-size:26px;margin-top:18px;line-height:1.2}
 .video p{font-size:15px;opacity:.7;margin-top:6px}
-.gallery{columns:3;column-gap:2.4vw}
-.gallery .photo{display:block;width:100%;margin:0 0 2.4vw;padding:10px 10px 30px;background:#f7f4ee;border:0;cursor:zoom-in;box-shadow:0 14px 30px -18px rgba(40,30,10,.45);position:relative;text-align:left;transition:transform .4s}
+.gallery{display:flex;gap:2.4vw;align-items:flex-start}
+.gcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:2.4vw}
+.g2{display:none}
+.gallery .photo{display:block;width:100%;margin:0;padding:10px 10px 30px;background:#f7f4ee;border:0;cursor:zoom-in;box-shadow:0 14px 30px -18px rgba(40,30,10,.45);position:relative;text-align:left;transition:transform .4s}
 .gallery .photo:nth-child(3n+1){transform:rotate(-.8deg)}.gallery .photo:nth-child(3n+2){transform:rotate(.6deg)}
 .gallery .photo:hover{transform:rotate(0) translateY(-4px)}
 .gallery img{display:block;width:100%;height:auto}
@@ -206,7 +208,7 @@ form.booking .err{color:var(--red);font-size:13px;min-height:1em}
   nav .links{display:none}
   .pagehead{grid-template-columns:1fr;padding-top:110px;gap:18px}
   .prose{grid-template-columns:1fr}.prose .side{position:static}
-  .cols{grid-template-columns:1fr 1fr}.videos{grid-template-columns:1fr}.gallery{columns:2}
+  .cols{grid-template-columns:1fr 1fr}.videos{grid-template-columns:1fr}.g3{display:none}.g2{display:flex}
   .empty,.contact,form.booking .two{grid-template-columns:1fr}
   .event{grid-template-columns:90px 1fr;row-gap:6px}.event .where{grid-column:2}.event .pill{grid-column:2;justify-self:start}
   details.rep ul{columns:1;padding-left:0}
@@ -318,6 +320,7 @@ html.intro .oneline-tip{display:block;position:fixed;left:0;top:0;width:7px;heig
 html.intro .oneline-cue{display:block;position:absolute;left:4vw;bottom:6vh;font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.7}
 html.intro .oneline-cue i{display:block;font:300 22px/1.2 Spectral,serif;letter-spacing:0;text-transform:none;margin-bottom:4px}
 html.intro .table .t-text,html.intro .table .t-print,html.intro .table .readout{opacity:0}
+html.intro .table .t-text,html.intro .t-draw .call{visibility:hidden}
 
 /* header staff: the four open strings G D A E, one under each page; the current page's note is red */
 .nav-staff{position:absolute;left:0;top:100%;width:100%;height:40px;overflow:visible;pointer-events:none}
@@ -356,3 +359,23 @@ html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
   .wire:before{left:0;right:auto;width:calc(3 * 74vw + 2 * 18px + 8vw);top:14px}
   .wire figure{flex:0 0 74vw;width:74vw;scroll-snap-align:center}
 }
+/* home darkroom on desktop: three prints share the row (the generic .print width made each one hero-sized and pushed the third off screen) */
+@media (min-width:861px){.wire>.print{width:auto;flex:1 1 0;min-width:0}}
+
+/* polish pass (2026-11-26) */
+/* gallery: a print never splits across two columns (Safari/iPad showed a grey sliver where one did) */
+/* small text meets AA contrast on the sand paper (was .55–.6 opacity, about 4.2:1) */
+.label,.direct dt,footer small,nav .links a small{opacity:.72}
+.copy{opacity:.72}
+::placeholder{color:#5c5a55;opacity:1}
+/* labels no smaller than 12px */
+.gallery small,.wire figcaption{font-size:12px}
+/* touch targets: the phone menu button and footer links are at least 44px tall */
+@media (max-width:860px){
+  nav .menu{min-height:44px;min-width:44px;padding:0 6px}
+  footer a{display:flex;align-items:center;min-height:40px;width:fit-content}
+}
+main:focus{outline:none}
+.sent h3:focus{outline:none}
+/* tilted prints may lean past the page edge; clip it rather than let the page scroll sideways (clip keeps sticky working) */
+main{overflow-x:clip}

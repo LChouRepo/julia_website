@@ -18,6 +18,7 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
   <script is:inline>if (matchMedia('(prefers-reduced-motion: no-preference)').matches) {
     document.documentElement.classList.add('intro')
     history.scrollRestoration = 'manual'   // the intro always starts from the top, even on reload
+    setTimeout(function () { if (!window.__introRunning) document.documentElement.classList.remove('intro') }, 3000)   // script never started: show the page as is
   }</script>
   <div class="intro-run">
   <section class="table">

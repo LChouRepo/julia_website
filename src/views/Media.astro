@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro'
+import Peg from '../components/Peg.astro'
+import { UI, path } from '../lib/i18n.js'
+import { videos, photos, t, youtubeId, imageSize } from '../lib/content.js'
+const { lang } = Astro.props
+const u = UI[lang], m = u.media
+const shots = photos.map((p, i) => ({ p, i, size: imageSize(p.image) }))
+const columns = n => {
+  const cols = Array.from({ length: n }, () => ({ h: 0, items: [] }))
+  for (const s of shots) { const c = cols.reduce((a, b) => (b.h < a.h ? b : a)); c.items.push(s); c.h += (s.size.height / s.size.width || 1.3) + .12 }
+  return cols.map(c => c.items)
+}
+---
+<Base lang={lang} page="media" title={`${u.nav.media} · Julia-Xiaozhuo Wang`} desc={u.meta.media}>
+  <header class="pagehead">
+    <div><div class="k"><Peg />{m.kicker}</div><h1>{m.title}</h1></div>
+  </header>
+  <section class="band" id="videos">
+    <div class="videos">
+      {videos.map(v => { const id = youtubeId(v.video); return (
+        <div class="video" id={`v-${v.slug}`}>
+          <div class="frame" data-yt={id}>
+            <img src={v.cover} alt="" loading="lazy" />
+            <a class="play" href={v.video} target="_blank" rel="noopener" aria-label={`${m.play}: ${t(v.title, lang)}`}><i></i></a>
+          </div>
+          <h3>{t(v.title, lang)}</h3><p>{t(v.subtitle, lang)}</p>
+        </div>) })}
+    </div>
+  </section>
+  <section class="band" id="gallery">
+    <div class="label">{m.gallery}</div>
+    {/* each photo goes to the shortest column, decided here from its real shape: no browser has to break columns (Safari got that wrong) */}
+    {[3, 2].map(n => (
+      <div class={`gallery g${n}`} data-in="paper">
+        {columns(n).map(col => (
+          <div class="gcol">
+            {col.map(({ p, i, size }) => (
+              <a class="photo" href={p.image} data-full={p.image}>
+                <img src={p.image} {...size} alt={t(p.title, lang) || m.photo(i + 1)} loading="lazy" decoding="async" />
+                <small>{u.no} {i + 1}{p.credit && ` · © ${p.credit}`}</small>
+              </a>))}
+          </div>))}
+      </div>))}
+    <p class="note">{m.press} <a href={path(lang, 'contact')}>{m.pressLink}</a>.</p>
+  </section>
+  <dialog class="lb" aria-label={m.gallery}><button>{m.close}</button></dialog>
+</Base>

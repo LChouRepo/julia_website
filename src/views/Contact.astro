@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro'
+import Print from '../components/Print.astro'
+import Peg from '../components/Peg.astro'
+import { UI, path } from '../lib/i18n.js'
+import { settings } from '../lib/content.js'
+const { lang } = Astro.props
+const u = UI[lang], c = u.contact
+---
+<Base lang={lang} page="contact" title={`${u.nav.contact} · Julia-Xiaozhuo Wang`} desc={u.meta.contact}>
+  <header class="pagehead">
+    <div><div class="k"><Peg />{c.kicker}</div><h1 set:html={c.title} /></div>
+    <p>{c.intro}</p>
+  </header>
+  <section class="band">
+    <div class="contact">
+      <div class="direct">
+        {settings.contactImage && <Print src={settings.contactImage} alt={u.alt.withViolin} tag={`${u.plate} 08`} style="width:min(100%,420px);transform:rotate(-1.2deg)" />}
+        <dl>
+          <dt>{c.email}</dt><dd><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></dd>
+          {settings.instagram && <><dt>Instagram</dt><dd><a href={settings.instagram}>{settings.instagram.replace(/^https?:\/\/(www\.)?/, '')}</a></dd></>}
+        </dl>
+      </div>
+      <div>
+        <!-- Netlify detects this form at deploy time ("contact" form, same fields as before). Without JS it posts and lands on the thanks page. -->
+        <form class="booking" name="contact" method="POST" action={path(lang, 'thanks')} data-netlify="true" netlify-honeypot="bot-field"
+          data-err-mail={c.errMail} data-err-field={c.errField("{f}")} data-err-send={`${c.errSend} ${settings.contactEmail}.`} data-sending={c.sending} data-lang={lang}>
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hp"><label>{c.honeypot} <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+          <div class="two">
+            <label>{c.name}<input name="name" autocomplete="name" required /></label>
+            <label>{c.mail}<input name="email" type="email" autocomplete="email" required /></label>
+          </div>
+          <div class="two">
+            <label>{c.subject}<select name="subject">{c.subjects.map(s => <option>{s}</option>)}</select></label>
+            <label>{c.org}<input name="organisation" autocomplete="organization" /></label>
+          </div>
+          <label>{c.message}<textarea name="message" required placeholder={c.placeholder}></textarea></label>
+          <input type="hidden" name="language" value={lang} />
+          <p class="err" role="alert"></p>
+          <div><button class="pill dark" type="submit">{c.send}</button></div>
+        </form>
+        <div class="sent" role="status"><h3 tabindex="-1">{u.thanks.title}</h3><p style="margin-top:12px;font-size:18px">{u.thanks.text}</p></div>
+      </div>
+    </div>
+  </section>
+</Base>

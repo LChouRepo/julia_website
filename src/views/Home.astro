@@ -15,7 +15,9 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
 ---
 <Base lang={lang} page="home" title={`Julia-Xiaozhuo Wang · ${lang === "de" ? "Violine" : "Violin"}`} desc={u.meta.home}>
   <!-- landing intro (desktop, motion allowed, once per visit): one ink line draws the violin, breaks into points, the points become her photograph -->
-  <script is:inline>if (matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+  <script is:inline>var replay = /[?&]intro\b/.test(location.search), seen = false
+  try { seen = localStorage.getItem('introSeen') === '1' } catch (e) {}
+  if ((replay || !seen) && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
     document.documentElement.classList.add('intro')
     history.scrollRestoration = 'manual'   // the intro always starts from the top, even on reload
     setTimeout(function () { if (!window.__introRunning) document.documentElement.classList.remove('intro') }, 3000)   // script never started: show the page as is

@@ -56,7 +56,7 @@ const email = settings.contactEmail
   <main id="main" tabindex="-1"><slot /></main>
   <section class="close">
     <footer>
-      <div><div class="mark">Julia-Xiaozhuo Wang</div><small>{u.footer.tagline}</small><a class="lang" href={altPath(other)} hreflang={other} lang={other} style="display:block;margin-top:14px">{u.nav.other}</a></div>
+      <div><div class="mark">Julia-Xiaozhuo Wang</div><small>{u.footer.tagline}</small><a class="lang" href={altPath(other)} hreflang={other} lang={other} style="display:block;margin-top:14px">{u.nav.other}</a><a class="replay" href={path(lang) + '?intro'}>{u.footer.replay}</a></div>
       <div><h4>{u.nav.about}</h4><a href={path(lang, 'about') + '#biography'}>{u.footer.bio}</a><a href={path(lang, 'about') + '#prizes'}>{u.footer.prizes}</a><a href={path(lang, 'about') + '#repertoire'}>{u.footer.rep}</a></div>
       <div><h4>{u.nav.media}</h4><a href={path(lang, 'media') + '#videos'}>{u.footer.videos}</a><a href={path(lang, 'media') + '#gallery'}>{u.footer.gallery}</a></div>
       <div><h4>{u.nav.concerts}</h4><a href={path(lang, 'concerts')}>{u.footer.upcoming}</a><a href={path(lang, 'concerts') + '#stages'}>{u.footer.stages}</a></div>

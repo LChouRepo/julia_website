@@ -175,6 +175,7 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
    the header staff and its notes, the rest gather into the red pin. A print drifts down from the top right like falling paper,
    and the pin strikes it: the print jolts, swings on the pin and comes to rest. */
 function landingIntro (tdraw) {
+  const seen = () => { try { localStorage.setItem('introSeen', '1') } catch {} }   // first visit only; the footer link replays it
   window.__introRunning = true
   const phone = innerWidth <= 860   // phones: a short timed version over the normal layout; the violin settles into its faint corner
   scrollTo(0, 0); lenis?.scrollTo(0, { immediate: true })   // everything below is measured from the opening frame
@@ -246,8 +247,8 @@ function landingIntro (tdraw) {
   gsap.ticker.add(tick)
 
   const tl = phone
-    ? gsap.timeline({ delay: .3, onComplete: () => { document.documentElement.style.overflow = '' } })
-    : gsap.timeline({ scrollTrigger: { trigger: run, start: 'top top', end: 'bottom bottom', scrub: 1 } })
+    ? gsap.timeline({ delay: .3, onComplete: () => { document.documentElement.style.overflow = ''; seen() } })
+    : gsap.timeline({ scrollTrigger: { trigger: run, start: 'top top', end: 'bottom bottom', scrub: 1, onLeave: seen } })
   const startW = innerWidth
   addEventListener('resize', function bail () {
     if (Math.abs(innerWidth - startW) < 2) return                                  // phones fire resize when the address bar moves; only a real width change counts

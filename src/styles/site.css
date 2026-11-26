@@ -380,3 +380,4 @@ main:focus{outline:none}
 /* tilted prints may lean past the page edge; clip it rather than let the page scroll sideways (clip keeps sticky working) */
 main{overflow-x:clip}
 .prizes em{font-style:normal;opacity:.7}
+footer .replay{display:block;margin-top:6px;font-size:13px;opacity:.72;text-decoration:underline;text-underline-offset:3px}

@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro'
+import Peg from '../components/Peg.astro'
+import { UI, path } from '../lib/i18n.js'
+import { about, upcoming, t } from '../lib/content.js'
+const { lang } = Astro.props
+const u = UI[lang], c = u.concerts
+const loc = lang === 'de' ? 'de-AT' : 'en-GB'
+const S = about.stages
+---
+<Base lang={lang} page="concerts" title={`${u.nav.concerts} · Julia-Xiaozhuo Wang`} desc={u.meta.concerts}>
+  <header class="pagehead">
+    <div><div class="k"><Peg />{c.kicker}</div><h1>{c.title}</h1></div>
+    <p>{c.intro}</p>
+  </header>
+  <section class="band" id="upcoming">
+    <div class="label">{c.upcoming}</div>
+    <div id="events">
+      <div class="empty" hidden={upcoming.length > 0}>
+          <div><h3>{c.emptyTitle}</h3><p>{c.emptyText}</p>
+            <div class="ctas"><a class="pill dark" href={path(lang, 'contact')}>{c.invite}</a><a class="pill line" href={path(lang, 'media') + '#videos'}>{u.home.watch}</a></div></div>
+          <div><svg class="staff" viewBox="0 0 600 120" aria-hidden="true">{[0, 1, 2, 3, 4].map(i => <line x1="0" x2="600" y1={20 + i * 20} y2={20 + i * 20} />)}<ellipse class="note" cx="430" cy="50" rx="11" ry="8" transform="rotate(-22 430 50)" /></svg></div>
+        </div>
+      {upcoming.map(e => { const d = new Date(e.date), tz = { timeZone: 'Europe/Vienna' }; return (
+        <article class="event" data-date={d.toISOString()}>
+          <div class="d">{d.toLocaleDateString(loc, { day: '2-digit', month: 'short', ...tz })}<small>{d.toLocaleDateString(loc, { year: 'numeric', ...tz })} · {d.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit', ...tz })}</small></div>
+          <div><h3>{t(e.title, lang)}</h3><p>{t(e.programme, lang)}</p></div>
+          <div class="where"><p>{t(e.venue, lang)}<br />{e.city}</p></div>
+          {e.ticketUrl && <a class="pill line" href={e.ticketUrl} target="_blank" rel="noopener">{c.tickets}</a>}
+        </article>) })}
+    </div>
+  </section>
+  <section class="band" id="stages">
+    <div class="label">{c.stages}</div>
+    <div class="cols">
+      <div><h4>{c.orchestras}</h4><ul>{S.orchestras.map(x => <li>{x}</li>)}</ul></div>
+      <div><h4>{c.conductors}</h4><ul>{S.conductors.map(x => <li>{x}</li>)}</ul></div>
+      <div><h4>{c.festivals}</h4><ul>{S.festivals.map(x => <li>{x}</li>)}</ul></div>
+      <div><h4>{c.tv}</h4><ul>{S.tvChamber.map(x => <li>{x}</li>)}</ul></div>
+    </div>
+  </section>
+</Base>

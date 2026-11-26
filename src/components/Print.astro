@@ -1,0 +1,9 @@
+---
+// A photograph pinned to the drafting paper. The image is shown as shot; only a paper veil fades off when it comes into view.
+const { src, alt, tag = '', class: cls = '', style = '', eager = false, fit = '' } = Astro.props
+---
+<figure class={`print ${cls}`} style={style}>
+  <span class="pin"></span>
+  <span class="ph"><img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" style={fit} /></span>
+  {tag && <span class="tag">{tag}</span>}
+</figure>

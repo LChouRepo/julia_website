@@ -1,0 +1,66 @@
+---
+import '../styles/site.css'
+import V from '../lib/violin.js'
+import Peg from '../components/Peg.astro'
+import { UI, PAGES, path } from '../lib/i18n.js'
+import { settings } from '../lib/content.js'
+const { lang = 'en', page = 'home', title, desc } = Astro.props
+const u = UI[lang], other = u.nav.otherLang
+const here = page
+const altPath = (l) => path(l, page === 'home' ? '' : page)
+const email = settings.contactEmail
+---
+<!doctype html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={desc} />
+  <link rel="alternate" hreflang="en" href={new URL(altPath('en'), Astro.site)} />
+  <link rel="alternate" hreflang="de" href={new URL(altPath('de'), Astro.site)} />
+  <meta property="og:title" content={title} /><meta property="og:description" content={desc} />
+  <meta property="og:image" content={new URL(settings.heroImage, Astro.site)} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;1,200;1,300&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script is:inline>document.documentElement.classList.add('js')
+    // Netlify Identity invite / password links land on the homepage: load the widget only then, so /admin logins keep working
+    if (/(invite|recovery|confirmation|email_change)_token/.test(location.hash)) { var s = document.createElement('script'); s.src = 'https://identity.netlify.com/v1/netlify-identity-widget.js'; s.onload = function () { if (/(invite|confirmation)_token/.test(location.hash)) netlifyIdentity.on('login', function () { location.href = '/admin/' }) }; document.head.appendChild(s) }</script>
+</head>
+<body class="paper" data-page={page}>
+  <a class="skip" href="#main">{u.nav.skip}</a>
+  <nav aria-label={u.mainNav}>
+    <a class="mark" href={path(lang)} aria-current={here === 'home' ? 'page' : undefined}>
+      <svg viewBox="-22 -230 44 104" aria-hidden="true"><path d={`${V.PEGBOX} ${V.SCROLL}`} /></svg><span>Julia-Xiaozhuo Wang</span>
+    </a>
+    <span class="links">
+      {PAGES.map(p => <a href={path(lang, p.key)} aria-current={here === p.key ? 'page' : undefined}><Peg /><span>{u.nav[p.key]}</span><small>{p.string}</small></a>)}
+    </span>
+    <span class="right">
+      <a class="lang" href={altPath(other)} hreflang={other} lang={other}>{u.nav.other}</a>
+      <a class="pill dark" href={path(lang, 'contact')}>{u.nav.booking}</a>
+      <button class="menu" aria-expanded="false" aria-controls="headmenu">{u.nav.menu}</button>
+    </span>
+  </nav>
+  <div class="headmenu" id="headmenu" role="dialog" aria-label={u.nav.menu}>
+    <button class="x">{u.nav.close}</button>
+    <svg viewBox="-44 -232 88 104" aria-hidden="true"><path class="ink" d={`${V.PEGBOX} ${V.SCROLL} ${V.PEG_D}`} /><path class="cav" d={V.CAVITY} /></svg>
+    <div class="hm-list">
+      {PAGES.map(p => <a href={path(lang, p.key)} aria-current={here === p.key ? 'page' : undefined}><Peg /><span>{u.nav[p.key]}</span><small>{p.string}</small></a>)}
+      <a href={altPath(other)} hreflang={other} lang={other}><span>{u.nav.other}</span></a>
+    </div>
+  </div>
+  <main id="main"><slot /></main>
+  <section class="close">
+    <footer>
+      <div><div class="mark">Julia-Xiaozhuo Wang</div><small>{u.footer.tagline}</small><a class="lang" href={altPath(other)} hreflang={other} lang={other} style="display:block;margin-top:14px">{u.nav.other}</a></div>
+      <div><h4>{u.nav.about}</h4><a href={path(lang, 'about') + '#biography'}>{u.footer.bio}</a><a href={path(lang, 'about') + '#prizes'}>{u.footer.prizes}</a><a href={path(lang, 'about') + '#repertoire'}>{u.footer.rep}</a></div>
+      <div><h4>{u.nav.media}</h4><a href={path(lang, 'media') + '#videos'}>{u.footer.videos}</a><a href={path(lang, 'media') + '#gallery'}>{u.footer.gallery}</a></div>
+      <div><h4>{u.nav.concerts}</h4><a href={path(lang, 'concerts')}>{u.footer.upcoming}</a><a href={path(lang, 'concerts') + '#stages'}>{u.footer.stages}</a></div>
+      <div><h4>{u.nav.contact}</h4><a href={path(lang, 'contact')}>{u.footer.booking}</a><a href={`mailto:${email}`}>{email}</a>{settings.instagram && <a href={settings.instagram}>Instagram</a>}</div>
+    </footer>
+    <div class="copy">© Julia-Xiaozhuo Wang</div>
+  </section>
+  <script>import '../scripts/site.js'</script>
+</body>
+</html>

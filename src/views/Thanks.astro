@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro'
+import { UI, path } from '../lib/i18n.js'
+const { lang } = Astro.props
+const u = UI[lang]
+---
+<Base lang={lang} page="thanks" title={`${u.thanks.title} · Julia-Xiaozhuo Wang`} desc={u.thanks.text}>
+  <header class="pagehead"><div><h1>{u.thanks.title}</h1></div><p>{u.thanks.text}</p></header>
+  <section class="band"><a class="pill line" href={path(lang)}>{u.thanks.back}</a></section>
+</Base>

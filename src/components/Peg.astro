@@ -1,0 +1,5 @@
+---
+import V from '../lib/violin.js'
+const { class: cls = 'peg' } = Astro.props
+---
+<svg class={cls} viewBox="10 -9 32 18" aria-hidden="true"><path d={V.peg(1, 0)} /><circle cx="34.5" cy="0" r="1.6" /></svg>

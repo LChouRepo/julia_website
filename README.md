@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# juliaxiaozhuowang.com
 
-## Getting Started
+Official website of violinist Julia-Xiaozhuo Wang. Static site built with Astro, deployed on Netlify.
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # writes dist/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things are
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| What | Where |
+|---|---|
+| Text, photos, videos, concerts | `content/*.json` (edited through `/admin`) |
+| Interface text (EN / DE) | `src/lib/i18n.js` |
+| Pages | `src/views/*.astro` (one per page, renders EN or DE); routes in `src/pages/` and `src/pages/de/` |
+| Look | `src/styles/site.css` |
+| Motion, menu, form | `src/scripts/site.js` (GSAP, Lenis) |
+| Violin drawing | `src/lib/violin.js` (outline traced from a CC0 photo, Wikimedia Commons "Violin VL100.png") |
+| Editor config | `public/admin/config.yml` (Decap CMS, Netlify Identity) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Editing content
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Log in at `/admin`. Every text has an English and a German field; an empty German field falls back to English.
+Concerts appear on the Concerts page once their date is set; a past concert drops off at the next deploy.
+The contact form is the Netlify form `contact`; messages arrive in the Netlify dashboard under Forms.

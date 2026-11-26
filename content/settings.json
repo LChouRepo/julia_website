@@ -6,18 +6,14 @@
   "tagline": {
     "en": "Playing the violin is translation — a direct, human language.",
     "de": "Geige spielen ist Übersetzung — eine direkte, menschliche Sprache."
-
-  },
-  "homeHello": {
-    "en": "",
-    "de": ""
   },
   "contactEmail": "mingchu.breakaleg@gmail.com",
   "instagram": "",
   "facebook": "",
-  "heroImage": "",
-  "aboutImage": "",
-  "concertsImage": "",
-  "contactImage": "",
-  "galleryHero": ""
+  "heroImage": "/images/hero.jpg",
+  "contactImage": "/images/contact.JPG",
+  "story": {
+    "en": "I grew up listening to CDs and moving from place to place, at nine to Shanghai and at twelve to Vienna. Music has been the one constant through all these changes.",
+    "de": "Ich bin mit CDs aufgewachsen und bin oft umgezogen – mit neun nach Shanghai, mit zwölf nach Wien. Musik war das Einzige, das sich nie verändert hat."
+  }
 }

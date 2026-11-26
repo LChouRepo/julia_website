@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro'
+import Print from '../components/Print.astro'
+import V, { OUTLINE } from '../lib/violin.js'
+import { UI, PAGES, path } from '../lib/i18n.js'
+import { settings, about, videos, photos, t } from '../lib/content.js'
+const { lang } = Astro.props
+const u = UI[lang], h = u.home
+// the ink violin's four pegs lead out to the four pages
+const ly = { G: -112, D: -206, A: -214, E: -122 }
+const callouts = PAGES.map(p => { const g = V.PEGS.find(q => q.n === p.string), s = g.s
+  return { ...p, s, y: g.y, peg: V.peg(s, g.y), lead: `M${s * 41},${g.y} L${s * 62},${g.y} L${s * 96},${ly[p.string]}`, lx: s * 100, ly: ly[p.string], anchor: s > 0 ? 'start' : 'end' } })
+// three photos taken from the gallery, so deleting one in /admin never leaves a broken image here
+const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(p => p.image)
+---
+<Base lang={lang} page="home" title="Julia-Xiaozhuo Wang · Violin" desc={u.meta.home}>
+  <section class="table">
+    <div class="t-text">
+      <span class="eyebrow"><i></i>{h.eyebrow}</span>
+      <h1>Julia-<br />Xiaozhuo<br />Wang</h1>
+      <p class="lede">{t(settings.tagline, lang)}</p>
+      <div class="ctas"><a class="pill dark" href={path(lang, 'media') + '#videos'}>{h.watch}</a><a class="pill line" href={path(lang, 'contact')}>{h.booking}</a></div>
+    </div>
+    <svg class="t-draw" id="tdraw" viewBox="-150 -240 300 610" role="img" aria-label={h.drawingLabel}>
+      <path class="ink" d={OUTLINE} /><path class="cav" d={V.CAVITY} />
+      {callouts.map(c => (
+        <a href={path(lang, c.key)} class="call">
+          <path class="pegfill" d={c.peg} /><path class="lead" d={c.lead} />
+          <text class="big" x={c.lx} y={c.ly + 3} text-anchor={c.anchor}>{u.nav[c.key]}</text>
+          <text x={c.lx} y={c.ly + 16} text-anchor={c.anchor} opacity=".6">{u.string(c.string)}</text>
+        </a>))}
+    </svg>
+    <Print class="t-print" src={settings.heroImage} alt={u.alt.withViolin} tag={`${u.plate} 01 · Julia-Xiaozhuo Wang`} eager />
+    <div class="readout">{h.readout}</div>
+  </section>
+
+  <section class="band">
+    <div class="label">{h.story}</div>
+    <p class="quote" data-scrub="words"><span>{t(settings.story, lang)}</span><cite>Julia-Xiaozhuo Wang</cite></p>
+    <div class="ctas"><a class="pill line" href={path(lang, 'about')}>{h.readBio}</a></div>
+  </section>
+
+  <section class="band">
+    <div class="label">{h.watchLabel}</div>
+    <div class="videos">
+      {videos.slice(0, 2).map(v => (
+        <div class="video"><div class="frame"><img src={v.cover} alt="" loading="lazy" /><a class="play" href={path(lang, 'media') + '#v-' + v.slug} aria-label={`${u.media.play}: ${t(v.title, lang)}`}><i></i></a></div>
+          <h3>{t(v.title, lang)}</h3><p>{t(v.subtitle, lang)}</p></div>))}
+    </div>
+  </section>
+
+  <section class="darkroom">
+    <div class="top">
+      <div><h2 set:html={h.laureate} /><p class="q">{h.laureateSub}</p></div>
+      <div class="wire" data-in="paper">
+        {wire.map((src, i) => <figure class="print"><span class="ph"><img src={src} alt={u.alt.portrait} loading="lazy" /></span><figcaption>{u.plate} 0{i + 2}</figcaption></figure>)}
+      </div>
+    </div>
+    <div class="prizes">
+      {about.prizes.slice(0, 4).map((p, i) => <div><b>{p.year}</b><span>{i === 0 && <i></i>}{p.competition}, {t(p.result, lang)}</span></div>)}
+    </div>
+  </section>
+
+  <section class="letter">
+    <div class="label">{h.letterLabel}</div>
+    <h2 set:html={h.letter.replace('{contact}', path(lang, 'contact'))} />
+    <div class="ctas"><a class="pill dark" href={path(lang, 'contact')}>{h.openForm}</a><a class="pill line" href={path(lang, 'concerts')}>{h.seeConcerts}</a></div>
+  </section>
+</Base>

@@ -298,6 +298,6 @@ nav .mark span{font-size:18px}
 .hall{margin:0 0 4vh;position:relative}
 .hall img{display:block;width:100%;height:min(20vw,44vh);object-fit:cover;object-position:50% 30%}
 .hall figcaption{padding:12px 4vw 0;font-size:13px;opacity:.65}
-.empty[hidden]{display:none}
+.empty[hidden],form.booking[hidden]{display:none}
 @media (max-width:860px){.event{grid-template-columns:1fr;row-gap:4px}.event .d{font-size:26px}.event .d small{display:inline;margin-left:10px}.event .where,.event .pill{grid-column:1}}
 @media (max-width:860px){.hall img{height:38vw;object-position:58% 30%}}

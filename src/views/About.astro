@@ -36,7 +36,7 @@ const F = V.F_R.centre
 
   <section class="band" id="prizes">
     <div class="label">{a.prizes}</div>
-    <ol class="ledger">{about.prizes.map(p => <li><b>{p.year}</b><span>{p.competition}</span><em>{t(p.result, lang)}</em></li>)}</ol>
+    <ol class="ledger">{/* newest first; within a year, the order set in the CMS (importance) */}{[...about.prizes].sort((x, y) => y.year - x.year).map(p => <li><b>{p.year}</b><span>{p.competition}</span><em>{t(p.result, lang)}</em></li>)}</ol>
   </section>
 
   <section class="band" id="teachers">

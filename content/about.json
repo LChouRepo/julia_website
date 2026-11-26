@@ -18,8 +18,8 @@
         "de": "Wettbewerbe"
       },
       "text": {
-        "en": "Her rise is marked by competition results that began early: third prize at the Wieniawski-Lipinski Violin Competition and, as the youngest participant, second prize at the Karol Szymanowski & Heinrich Ernst International Violin Competition in 2021, the same year she became the youngest finalist of the Dubai International Classical Strings Competition. First prize at the Grumiaux International Violin Competition followed in 2022 and the Top Award at the Zhuhai Mozart International Competition in 2023.",
-        "de": "Ihr Aufstieg ist von frühen Wettbewerbserfolgen geprägt: 2021 der 3. Preis beim Wieniawski-Lipinski Violin Competition und – als jüngste Teilnehmerin – der 2. Preis beim Karol Szymanowski & Heinrich Ernst International Violin Competition sowie die Finalteilnahme beim Dubai International Classical Strings Competition. 2022 folgte der 1. Preis beim Grumiaux International Violin Competition, 2023 der Top Award beim Zhuhai Mozart International Competition."
+        "en": "Her rise is marked by competition results that began early. In 2021 she won third prize at the Wieniawski-Lipinski Violin Competition and, as the youngest participant, second prize at the Karol Szymanowski & Heinrich Ernst International Violin Competition. In 2022 she became the youngest finalist of the Dubai International Classical Strings Competition and won first prize at the Grumiaux International Violin Competition, followed by the Top Award at the Zhuhai Mozart International Competition in 2023.",
+        "de": "Ihr Aufstieg ist von frühen Wettbewerbserfolgen geprägt. 2021 gewann sie den 3. Preis beim Wieniawski-Lipinski Violin Competition und – als jüngste Teilnehmerin – den 2. Preis beim Karol Szymanowski & Heinrich Ernst International Violin Competition. 2022 erreichte sie als jüngste Finalistin das Finale des Dubai International Classical Strings Competition und gewann den 1. Preis beim Grumiaux International Violin Competition; 2023 folgte der Top Award beim Zhuhai Mozart International Competition."
       }
     },
     {
@@ -95,7 +95,7 @@
       }
     },
     {
-      "year": "2021",
+      "year": "2022",
       "competition": "Dubai International Classical Strings Competition",
       "result": {
         "en": "Finalist, youngest participant",

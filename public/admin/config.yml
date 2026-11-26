@@ -19,7 +19,6 @@ collections:
         fields:
           - { label: "Site title", name: "siteTitle", widget: "object", fields: [{ label: "English", name: "en", widget: "string" }, { label: "Deutsch", name: "de", widget: "string", required: false }] }
           - { label: "Tagline (home, under the name)", name: "tagline", widget: "object", fields: [{ label: "English", name: "en", widget: "string" }, { label: "Deutsch", name: "de", widget: "string", required: false }] }
-          - { label: "My story (home, 1–2 sentences)", name: "story", widget: "object", fields: [{ label: "English", name: "en", widget: "text" }, { label: "Deutsch", name: "de", widget: "text", required: false }] }
           - { label: "Home photo (pinned print)", name: "heroImage", widget: "image" }
           - { label: "Contact page photo", name: "contactImage", widget: "image", required: false }
           - { label: "Contact email", name: "contactEmail", widget: "string" }

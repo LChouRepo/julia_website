@@ -35,12 +35,6 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
   </section>
 
   <section class="band">
-    <div class="label">{h.story}</div>
-    <p class="quote" data-scrub="words"><span>{t(settings.story, lang)}</span><cite>Julia-Xiaozhuo Wang</cite></p>
-    <div class="ctas"><a class="pill line" href={path(lang, 'about')}>{h.readBio}</a></div>
-  </section>
-
-  <section class="band">
     <div class="label">{h.watchLabel}</div>
     <div class="videos">
       {videos.slice(0, 2).map(v => (

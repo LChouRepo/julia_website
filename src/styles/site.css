@@ -179,7 +179,7 @@ dialog.lb button{position:fixed;top:18px;right:22px;background:none;border:0;col
 .empty p{margin-top:16px;font-size:18px;line-height:1.6;max-width:44ch}
 .staff{width:100%;height:auto}
 .staff line{stroke:var(--ink);stroke-width:1;opacity:.5;vector-effect:non-scaling-stroke}
-.event{display:grid;grid-template-columns:130px 1fr 1fr auto;gap:2vw;align-items:center;padding:22px 0;border-top:1px solid rgba(24,24,27,.22)}
+.event{display:grid;grid-template-columns:130px 1fr 1fr 120px;gap:2vw;align-items:center;padding:22px 0;border-top:1px solid rgba(24,24,27,.22)}
 .event .d{font-family:Spectral,serif;font-weight:300;font-size:34px;line-height:1}
 .event .d small{display:block;font:500 13px "Archivo Narrow";letter-spacing:.12em;margin-top:6px;opacity:.65}
 .event h3{font-size:19px;font-weight:500}
@@ -296,7 +296,7 @@ nav .mark span{font-size:18px}
 
 /* concerts: one wide photograph of a real hall, edge to edge */
 .hall{margin:0 0 4vh;position:relative}
-.hall img{display:block;width:100%;aspect-ratio:2/1;max-height:76vh;object-fit:cover;object-position:50% 60%}
+.hall img{display:block;width:100%;height:min(50vw,78vh);object-fit:cover;object-position:50% 55%}
 .hall figcaption{padding:12px 4vw 0;font-size:13px;opacity:.65}
 .empty[hidden]{display:none}
 @media (max-width:860px){.event{grid-template-columns:1fr;row-gap:4px}.event .d{font-size:26px}.event .d small{display:inline;margin-left:10px}.event .where,.event .pill{grid-column:1}}

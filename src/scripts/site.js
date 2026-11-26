@@ -92,7 +92,7 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
     .from(p, { y: -36, rotation: '+=6', opacity: 0, duration: .8, ease: 'back.out(1.5)' })))
 
   // video covers open from the left
-  $$('.video .frame').forEach((f, i) => once(f, gsap.timeline({ paused: true, delay: (i % 2) * .08 })
+  $$('.video .frame, .hall').forEach((f, i) => once(f, gsap.timeline({ paused: true, delay: (i % 2) * .08 })
     .fromTo(f, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: .9, ease: 'power3.inOut' })
     .from($('img', f), { scale: 1.08, duration: 1.1, ease: 'power2.out' }, 0)))
 

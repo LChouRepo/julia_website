@@ -21,6 +21,8 @@ collections:
           - { label: "Tagline (home, under the name)", name: "tagline", widget: "object", fields: [{ label: "English", name: "en", widget: "string" }, { label: "Deutsch", name: "de", widget: "string", required: false }] }
           - { label: "Home photo (pinned print)", name: "heroImage", widget: "image" }
           - { label: "Contact page photo", name: "contactImage", widget: "image", required: false }
+          - { label: "Concerts page photo (wide)", name: "concertsImage", widget: "image", required: false }
+          - { label: "Concerts photo caption", name: "concertsCaption", widget: "object", required: false, fields: [{ label: "English", name: "en", widget: "string", required: false }, { label: "Deutsch", name: "de", widget: "string", required: false }] }
           - { label: "Contact email", name: "contactEmail", widget: "string" }
           - { label: "Instagram URL (shown only when filled)", name: "instagram", widget: "string", required: false }
           - { label: "Facebook URL", name: "facebook", widget: "string", required: false }

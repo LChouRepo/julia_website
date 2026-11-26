@@ -11,5 +11,10 @@
   "instagram": "",
   "facebook": "",
   "heroImage": "/images/hero.jpg",
-  "contactImage": "/images/contact.JPG"
+  "contactImage": "/images/contact.JPG",
+  "concertsImage": "/uploads/concerts-hall.jpg",
+  "concertsCaption": {
+    "en": "Final of the 2nd Stuttgart International Violin Competition, 2024",
+    "de": "Finale des 2. Internationalen Violinwettbewerbs Stuttgart, 2024"
+  }
 }

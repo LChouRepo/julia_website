@@ -171,6 +171,7 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
    the header staff and its notes, the rest gather into the red pin. A print drifts down from the top right like falling paper,
    and the pin strikes it: the print jolts, swings on the pin and comes to rest. */
 function landingIntro (tdraw) {
+  const phone = innerWidth <= 860   // phones: a short timed version over the normal layout; the violin settles into its faint corner
   scrollTo(0, 0); lenis?.scrollTo(0, { immediate: true })   // everything below is measured from the opening frame
   const NS = 'http://www.w3.org/2000/svg', run = $('.intro-run'), line = $('.oneline', tdraw), ink = $('.ink', tdraw), tip = $('.oneline-tip', run)
   const print = $('.t-print', run), pin = $('.pin', print)
@@ -194,7 +195,9 @@ function landingIntro (tdraw) {
   print.classList.add('developed')
   gsap.set(print, { opacity: 1, transformOrigin: '50% 0%', x: 0, y: 0, rotation: 2 })   // it hangs from the pin, so it swings about the pin
   const pr = pin.getBoundingClientRect(), PIN = [pr.left + pr.width / 2, pr.top + pr.height / 2], R = print.getBoundingClientRect()
-  const r0 = tdraw.getBoundingClientRect(), top = $('nav').getBoundingClientRect().bottom + 48, bot = innerHeight - 24, k0 = (bot - top) / r0.height
+  const r0 = tdraw.getBoundingClientRect(), top = $('nav').getBoundingClientRect().bottom + (phone ? 24 : 48), bot = innerHeight - (phone ? 60 : 24)
+  const k0 = Math.min((bot - top) / r0.height, (phone ? .9 : 2) * innerWidth / r0.width)
+  if (phone) { gsap.set(tdraw, { opacity: 1 }); document.documentElement.style.overflow = 'hidden' }   // hold the page still while it plays (a tap skips)
   gsap.set(tdraw, { x: innerWidth / 2 - (r0.left + r0.width / 2), y: (top + bot) / 2 - (r0.top + r0.height / 2), scale: k0 })
 
   // the print's motion, one function of two progress values: the fall (F) and the swing after the pin goes in (J)
@@ -217,7 +220,7 @@ function landingIntro (tdraw) {
   drags.sort((a, b) => b[2] - a[2])
   const pick = (i) => drags[i % drags.length]
   const mk = ([a, b]) => { const l = document.createElementNS(NS, 'line'); l.dataset.a = a; l.dataset.b = b; for (const k of ['x1', 'y1', 'x2', 'y2']) l.setAttribute(k, 0); fly.appendChild(l); return l }
-  const staffL = [0, 1, 2, 3, 4].map(i => mk(pick(i))), noteL = [5, 6, 7, 8].map(i => mk(pick(i))), pinL = drags.slice(9).map(mk)
+  const staffL = [0, 1, 2, 3, 4].map(i => mk(pick(i))), noteL = [5, 6, 7, 8].map(i => mk(pick(i))), pinL = (phone ? drags : drags.slice(9)).map(mk)
   const head = document.createElementNS(NS, 'circle'); head.setAttribute('class', 'pinhead'); head.setAttribute('cx', PIN[0]); head.setAttribute('cy', PIN[1] - 26); head.setAttribute('r', 0); fly.appendChild(head)
   const sc = (l, k) => { const [x, y] = l.dataset[k].split(',').map(Number), q = new DOMPoint(x, y).matrixTransform(ink.getScreenCTM()); return q }
   const from = l => ({ x1: () => sc(l, 'a').x, y1: () => sc(l, 'a').y, x2: () => sc(l, 'b').x, y2: () => sc(l, 'b').y })
@@ -234,7 +237,10 @@ function landingIntro (tdraw) {
     if (S.draw > 0 && S.draw < 1) { const q = new DOMPoint(...pts[n]).matrixTransform(line.getScreenCTM()); tip.style.transform = `translate(${q.x}px,${q.y}px)`; tip.style.opacity = 1 } else tip.style.opacity = 0
   })
 
-  const tl = gsap.timeline({ scrollTrigger: { trigger: run, start: 'top top', end: 'bottom bottom', scrub: 1 } })
+  const tl = phone
+    ? gsap.timeline({ delay: .3, onComplete: () => { document.documentElement.style.overflow = '' } })
+    : gsap.timeline({ scrollTrigger: { trigger: run, start: 'top top', end: 'bottom bottom', scrub: 1 } })
+  if (phone) { tl.timeScale(1.6); const skip = () => tl.timeScale(8); addEventListener('touchstart', skip, { once: true }); addEventListener('wheel', skip, { once: true }) }
   tl.to(S, { draw: 1, duration: 2.6, ease: 'none' }, 0)
     .to('.oneline-cue', { opacity: 0, duration: .3 }, .3)
     .to(tdraw, { x: 0, y: 0, scale: 1, duration: .9, ease: 'power2.inOut' }, 2.8)        // the drawing slides into its place
@@ -242,14 +248,15 @@ function landingIntro (tdraw) {
   tl.set([ink, $('.cav', tdraw), fly], { opacity: 1 }, 3.75)                               // the clean outline takes over in one frame (no crossfade dip)…
     .set(line, { opacity: 0 }, 3.76)                                                      // …and only the drag strokes are left over
     .to(M, { F: 1, duration: 1.5, ease: 'none' }, 3.9)                   // the print drifts down from the top right
-  if (navStaff && innerWidth > 860) {
+  if (phone) tl.to(tdraw, { opacity: .3, duration: .6 }, 4.1)                            // on phones the drawing steps back to a faint corner mark
+  if (navStaff && !phone) {
     staffL.forEach((l, i) => tl.fromTo(l, { attr: from(l) }, { immediateRender: false, attr: { x1: () => navStaff.getBoundingClientRect().left + staffX[0], x2: () => navStaff.getBoundingClientRect().left + staffX[1], y1: () => staffTop() + TOP + i * GAP, y2: () => staffTop() + TOP + i * GAP }, duration: .9, ease: 'power3.inOut' }, 4.3 + i * .06))
     noteL.forEach((l, i) => tl.fromTo(l, { attr: from(l) }, { immediateRender: false, attr: { x1: () => notes()[i][0] - 3.6, x2: () => notes()[i][0] + 3.6, y1: () => notes()[i][1], y2: () => notes()[i][1] }, duration: .9, ease: 'power3.inOut' }, 4.5 + i * .06))
     tl.fromTo(navStaff, { '--staff': 0 }, { '--staff': 1, duration: .3 }, 5.25)
       .to(staffL, { opacity: 0, duration: .2 }, 5.3)
       .fromTo(navStaff, { '--notes': 0 }, { '--notes': 1, duration: .4, ease: 'back.out(2)' }, 5.45)
       .to(noteL, { opacity: 0, duration: .15 }, 5.45)
-  } else gsap.set([...staffL, ...noteL], { display: 'none' })
+  } else gsap.set([...staffL, ...noteL], { display: 'none' })   // phones send every stroke to the pin instead
   pinL.forEach((l, i) => tl.fromTo(l, { attr: from(l) }, { immediateRender: false, attr: { x1: PIN[0], x2: PIN[0], y1: PIN[1] - 26, y2: PIN[1] - 26 }, stroke: '#B91C1C', duration: .7, ease: 'power3.in' }, 4.35 + i * .01))
   tl.to(head, { attr: { r: 7 }, duration: .2, ease: 'back.out(2)' }, 5.0)               // the gathered strokes roll up into the pin
     .to(pinL, { opacity: 0, duration: .12 }, 5.1)

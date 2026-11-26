@@ -236,7 +236,8 @@ dialog.lb{margin:auto}
 .t-draw a:hover .pegfill,.t-draw a:focus .pegfill{fill:var(--red)}
 .t-draw .pegfill{fill:transparent;transition:fill .3s}
 .t-print{width:100%;max-width:500px;margin-left:-6vw;margin-top:22vh;transform:rotate(2deg);z-index:2}
-.table .readout{position:absolute;left:4vw;bottom:24px;max-width:32vw}   /* under the name column, clear of the photograph */
+@media (min-width:861px){.table .readout{position:absolute;left:4vw;bottom:24px;max-width:32vw}}   /* under the name column, clear of the photograph */
+@media (max-width:860px){.table .readout{position:static;max-width:none;margin:4px 0 0}}
 /* darkroom: develop in from the paper instead of a hard cut */
 .darkroom{background:linear-gradient(var(--sand) 0,#8a8273 12vh,#3a3631 26vh,var(--dark) 38vh)}
 .darkroom{padding-top:34vh}
@@ -305,9 +306,12 @@ nav .mark span{font-size:18px}
 
 /* landing intro: only when the page opted in (html.intro); otherwise these layers stay hidden */
 .t-draw .oneline,.oneline-tip,.oneline-cue{display:none}
-html.intro .intro-run{height:480vh;position:relative}
-html.intro .intro-run>.table{position:sticky;top:0;height:100vh;min-height:0}
-html.intro .t-draw{position:relative;z-index:3}
+@media (min-width:861px){
+  html.intro .intro-run{height:480vh;position:relative}
+  html.intro .intro-run>.table{position:sticky;top:0;height:100vh;min-height:0}
+  html.intro .t-draw{position:relative;z-index:3}
+}
+@media (max-width:860px){html.intro .t-draw{z-index:3}html.intro .oneline-cue{display:none!important}}
 html.intro .t-draw .oneline{display:block;fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 html.intro .t-draw .ink,html.intro .t-draw .cav,html.intro .t-draw .call{opacity:0}
 html.intro .oneline-tip{display:block;position:fixed;left:0;top:0;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 5px rgba(24,24,27,.07);opacity:0;pointer-events:none;z-index:5}
@@ -344,3 +348,11 @@ html.intro .nav-staff{--staff:0;--notes:0}
 
 /* no native scrollbar; the page still scrolls by wheel, keys and touch */
 html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
+
+/* home darkroom on phones: the three prints become an album you swipe through, one centred at a time */
+@media (max-width:860px){
+  .wire{overflow-x:auto;scroll-snap-type:x mandatory;gap:18px;margin:0 -4vw;padding:30px 4vw 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .wire::-webkit-scrollbar{display:none}
+  .wire:before{left:0;right:auto;width:calc(3 * 74vw + 2 * 18px + 8vw);top:14px}
+  .wire figure{flex:0 0 74vw;width:74vw;scroll-snap-align:center}
+}

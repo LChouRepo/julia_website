@@ -63,7 +63,8 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
       </div>
     </div>
     <div class="prizes">
-      {about.prizes.slice(0, 4).map((p, i) => <div><b>{p.year}</b><span>{i === 0 && <i></i>}{p.competition}<br /><em>{t(p.result, lang)}</em></span></div>)}
+      {/* the four most important results, newest first; the red dot stays on the most important one */}
+      {about.prizes.slice(0, 4).map((p, k) => ({ ...p, top: k === 0 })).sort((a, b) => b.year - a.year).map(p => <div><b>{p.year}</b><span>{p.top && <i></i>}{p.competition}<br /><em>{t(p.result, lang)}</em></span></div>)}
     </div>
   </section>
 

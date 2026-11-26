@@ -1,0 +1,53 @@
+---
+// An ink drawing of a full concert hall, seen from the back of the stalls: rows of seats as arcs of small heads,
+// two balconies, the stage with one music stand and a chair in a vermilion pool of light. Pure SVG, no photo.
+const W = 1600, H = 560, cx = W / 2
+const stage = { y: 250, w: 520, d: 46 }                 // back edge of the stage, width, depth
+const rows = []
+for (let r = 0; r < 11; r++) {                           // stalls: rows get wider and lower toward the viewer
+  const t = r / 10, y = stage.y + stage.d + 34 + t * t * 250 + t * 26, half = 300 + t * 560, sag = 10 + t * 34
+  const n = Math.round(22 + t * 40), size = 3.2 + t * 6
+  const heads = []
+  for (let i = 0; i <= n; i++) { const u = i / n, x = cx - half + u * half * 2, yy = y + Math.sin(Math.PI * u) * sag * -1 + sag
+    heads.push({ x: x + ((r * 7 + i * 13) % 5 - 2) * size * .12, y: yy, s: size * (0.9 + ((i * 31 + r) % 7) / 30) }) }
+  rows.push({ y, half, sag, heads, size })
+}
+const balcony = s => { const x0 = cx + s * 380, x1 = cx + s * 790
+  return { rail: `M${x0},150 C${x0 + s * 140},160 ${x1 - s * 120},190 ${x1},214`, front: `M${x0},178 C${x0 + s * 140},188 ${x1 - s * 120},218 ${x1},244`,
+    heads: Array.from({ length: 26 }, (_, i) => { const u = i / 25; return { x: x0 + s * (u * (x1 - x0) * s), y: 146 + u * u * 60 + u * 4 } }) } }
+const balconies = [balcony(-1), balcony(1)]
+---
+<figure class="hall hall-ink" aria-label="Ink drawing of a full concert hall seen from the back of the audience">
+  <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" role="img">
+    <!-- walls and ceiling lines converging on the stage -->
+    <g class="ink thin">
+      {[[0, 40], [0, 120], [W, 40], [W, 120]].map(([x, y]) => <path d={`M${x},${y} L${x ? cx + 300 : cx - 300},${stage.y - 120}`} />)}
+      <path d={`M${cx - 300},${stage.y - 120} L${cx + 300},${stage.y - 120}`} />
+      {Array.from({ length: 13 }, (_, i) => cx - 300 + i * 50).map(x => <path d={`M${x},${stage.y - 120} L${x},${stage.y}`} />)}
+    </g>
+    <!-- stage -->
+    <g class="ink">
+      <path d={`M${cx - stage.w / 2},${stage.y} L${cx + stage.w / 2},${stage.y} L${cx + stage.w / 2 + 70},${stage.y + stage.d} L${cx - stage.w / 2 - 70},${stage.y + stage.d} Z`} />
+      <path d={`M${cx - stage.w / 2 - 70},${stage.y + stage.d} L${cx - stage.w / 2 - 70},${stage.y + stage.d + 14} L${cx + stage.w / 2 + 70},${stage.y + stage.d + 14} L${cx + stage.w / 2 + 70},${stage.y + stage.d}`} />
+    </g>
+    <ellipse class="pool" cx={cx} cy={stage.y + stage.d * .55} rx="120" ry="16" />
+    <g class="ink">
+      <path d={`M${cx - 30},${stage.y + 30} L${cx - 30},${stage.y - 8} M${cx - 44},${stage.y - 8} L${cx - 16},${stage.y - 14} L${cx - 16},${stage.y - 4} L${cx - 44},${stage.y + 2} Z M${cx - 40},${stage.y + 30} L${cx - 20},${stage.y + 30}`} />
+      <path d={`M${cx + 14},${stage.y + 30} L${cx + 14},${stage.y + 4} L${cx + 38},${stage.y + 4} L${cx + 38},${stage.y + 30} M${cx + 14},${stage.y + 4} L${cx + 14},${stage.y - 18} L${cx + 36},${stage.y - 16} L${cx + 38},${stage.y + 4}`} />
+    </g>
+    <!-- balconies, full -->
+    {balconies.map(b => <g><path class="ink" d={b.rail} /><path class="ink thin" d={b.front} />{b.heads.map(h => <circle class="head far" cx={h.x} cy={h.y} r="4.2" />)}</g>)}
+    <!-- stalls, every seat taken -->
+    {rows.map(r => <g class="row">{r.heads.map(h => <path class="head" d={`M${h.x - h.s},${h.y + h.s * 1.6} C${h.x - h.s},${h.y - h.s * 1.1} ${h.x + h.s},${h.y - h.s * 1.1} ${h.x + h.s},${h.y + h.s * 1.6}`} />)}</g>)}
+  </svg>
+  <figcaption><slot /></figcaption>
+</figure>
+<style>
+  .hall-ink svg{display:block;width:100%;height:min(34vw,60vh)}
+  .hall-ink .ink{fill:none;stroke:var(--ink);stroke-width:1.1;vector-effect:non-scaling-stroke}
+  .hall-ink .thin{stroke-width:.6;opacity:.55}
+  .hall-ink .head{fill:none;stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.8}
+  .hall-ink .head.far{fill:none;opacity:.5}
+  .hall-ink .pool{fill:var(--red);opacity:.18}
+  @media (max-width:860px){.hall-ink svg{height:52vw}}
+</style>

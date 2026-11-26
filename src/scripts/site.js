@@ -126,6 +126,14 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
       .to({}, { duration: .4 })
   }
 
+  // concerts: the drawn hall fills up, back rows first
+  const hall = $('.hall-ink')
+  if (hall) once(hall, gsap.timeline({ paused: true })
+    .from($$('.ink', hall), { opacity: 0, duration: .6, stagger: .05 })
+    .from($('.pool', hall), { scale: 0, transformOrigin: '50% 50%', duration: .7, ease: 'power3.out' }, .3)
+    .from($$('.head.far', hall), { opacity: 0, duration: .3, stagger: .01 }, .4)
+    .from($$('.row', hall), { opacity: 0, y: 6, duration: .4, stagger: .07, ease: 'power2.out' }, .5))
+
   // concerts: the staff is ruled, a note lands
   $$('.staff').forEach(st => once(st, gsap.timeline({ paused: true })
     .from($$('line', st), { attr: { x2: 0 }, duration: .9, stagger: .09, ease: 'power2.inOut' })

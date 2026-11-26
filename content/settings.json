@@ -12,9 +12,9 @@
   "facebook": "",
   "heroImage": "/images/hero.jpg",
   "contactImage": "/images/contact.JPG",
-  "concertsImage": "/uploads/concerts-hall.jpg",
+  "concertsImage": "",
   "concertsCaption": {
-    "en": "The hall of the 2nd Stuttgart International Violin Competition, February 2024",
-    "de": "Der Saal des 2. Internationalen Violinwettbewerbs Stuttgart, Februar 2024"
+    "en": "",
+    "de": ""
   }
 }

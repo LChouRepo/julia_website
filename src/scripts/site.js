@@ -154,6 +154,8 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
       .to(ring, { strokeDashoffset: 0, duration: .8, ease: 'power1.inOut' }, 3.4)
       .from(wide ? $$('.plate .reps details') : [], { x: 30, opacity: 0, duration: .6, stagger: .15 }, 3.4)
       .to({}, { duration: .4 })
+    // opening a repertoire list makes the plate taller: re-measure, or the pinned space stays at the old height and the footer draws over the list
+    $$('.plate details').forEach(d => d.addEventListener('toggle', () => ScrollTrigger.refresh()))
   }
 
   // concerts: the drawn hall fills up, back rows first

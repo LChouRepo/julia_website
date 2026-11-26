@@ -379,3 +379,4 @@ main:focus{outline:none}
 .sent h3:focus{outline:none}
 /* tilted prints may lean past the page edge; clip it rather than let the page scroll sideways (clip keeps sticky working) */
 main{overflow-x:clip}
+.prizes em{font-style:normal;opacity:.7}

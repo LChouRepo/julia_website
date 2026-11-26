@@ -167,7 +167,8 @@ details.rep li{font-size:16px;line-height:1.5;padding:4px 0;break-inside:avoid}
 .gallery{display:flex;gap:2.4vw;align-items:flex-start}
 .gcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:2.4vw}
 .g2{display:none}
-.gallery .photo{display:block;width:100%;margin:0;padding:10px 10px 30px;background:#f7f4ee;border:0;cursor:zoom-in;box-shadow:0 14px 30px -18px rgba(40,30,10,.45);position:relative;text-align:left;transition:transform .4s}
+.gallery .photo{display:block;width:100%;margin:0;padding:10px 10px 30px;background:#f7f4ee;border:0;cursor:zoom-in;box-shadow:0 14px 30px -18px rgba(40,30,10,.45);position:relative;text-align:left}
+.gallery .photo:hover{transition:transform .4s}   /* only the hover eases; a transition on every transform fought the drop-in */
 .gallery .photo:nth-child(3n+1){transform:rotate(-.8deg)}.gallery .photo:nth-child(3n+2){transform:rotate(.6deg)}
 .gallery .photo:hover{transform:rotate(0) translateY(-4px)}
 .gallery img{display:block;width:100%;height:auto}

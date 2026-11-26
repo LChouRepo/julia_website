@@ -116,7 +116,8 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
 
   // paper settles onto the table
   $$('[data-in="paper"]').forEach(g => once(g, gsap.timeline({ paused: true })
-    .from(g.querySelector('.gcol') ? $$('.photo', g) : g.children, { y: -40, /* in the gallery the prints drop, not whole columns */ rotation: i => (i % 2 ? 5 : -5), opacity: 0, duration: .75, stagger: .07, ease: 'back.out(1.6)' })))
+    .fromTo(g.querySelector('.gcol') ? $$('.photo', g) : g.children, { y: -40, rotation: i => (i % 2 ? 5 : -5), opacity: 0 },   // gallery: the prints drop, not whole columns
+      { y: 0, rotation: 0, opacity: 1, duration: .75, stagger: .07, ease: 'back.out(1.6)', clearProps: 'transform,opacity' })))   // then hand the tilt back to the stylesheet
   $$('.prose .print, .direct .print').forEach(p => once(p, gsap.timeline({ paused: true })
     .from(p, { y: -36, rotation: '+=6', opacity: 0, duration: .8, ease: 'back.out(1.5)' })))
 

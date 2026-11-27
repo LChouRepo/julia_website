@@ -1,6 +1,17 @@
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "dist"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+# old addresses from the previous site
+[[redirects]]
+  from = "/releases/*"
+  to = "/media/"
+  status = 301
+[[redirects]]
+  from = "/events/*"
+  to = "/concerts/"
+  status = 301
+[[redirects]]
+  from = "/contact/thanks"
+  to = "/thanks/"
+  status = 301

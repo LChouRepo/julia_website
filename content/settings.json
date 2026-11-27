@@ -6,18 +6,15 @@
   "tagline": {
     "en": "Playing the violin is translation — a direct, human language.",
     "de": "Geige spielen ist Übersetzung — eine direkte, menschliche Sprache."
-
-  },
-  "homeHello": {
-    "en": "",
-    "de": ""
   },
   "contactEmail": "mingchu.breakaleg@gmail.com",
   "instagram": "",
   "facebook": "",
-  "heroImage": "",
-  "aboutImage": "",
+  "heroImage": "/images/hero.jpg",
+  "contactImage": "/images/contact.JPG",
   "concertsImage": "",
-  "contactImage": "",
-  "galleryHero": ""
+  "concertsCaption": {
+    "en": "",
+    "de": ""
+  }
 }

@@ -91,7 +91,7 @@ drawStaff(); document.fonts?.ready.then(drawStaff); addEventListener('resize', d
 
 /* home: hovering (or focusing) a peg rings its string, turns the peg and shows a preview of the page it leads to. Mouse and keyboard only. */
 const strNav = $('.strings-nav')
-if (strNav && matchMedia('(hover:hover) and (pointer:fine)').matches) {
+if (strNav && innerWidth > 860) {
   const svg = $('#tdraw', strNav)
   let current = null, closeT
   const open = key => {
@@ -103,6 +103,14 @@ if (strNav && matchMedia('(hover:hover) and (pointer:fine)').matches) {
   $$('.call', svg).forEach(a => { a.addEventListener('mouseenter', () => open(a.dataset.key)); a.addEventListener('focus', () => open(a.dataset.key)) })
   $$('.sn-panel', strNav).forEach(p => p.addEventListener('mouseenter', () => clearTimeout(closeT)))
   strNav.addEventListener('mouseleave', () => { closeT = setTimeout(() => open(null), 250) })
+  // touch screens have no hover: the first tap on a peg opens its panel, a second tap follows the link
+  // (a tap also fires mouseenter, which would already open the panel, so remember whether it was open before the finger came down)
+  let touch = false, wasOpen = false
+  $$('.call', svg).forEach(a => {
+    const down = e => { touch = e.type === 'touchstart' || e.pointerType !== 'mouse'; wasOpen = current === a.dataset.key }
+    a.addEventListener('pointerdown', down); a.addEventListener('touchstart', down, { passive: true })
+    a.addEventListener('click', e => { if (touch && !wasOpen) { e.preventDefault(); open(a.dataset.key) } })
+  })
 }
 
 /* motion: each block enters the way its material would; one scroll-driven narrative on About */
@@ -201,6 +209,8 @@ function landingIntro (tdraw) {
   const seen = () => { try { localStorage.setItem('introSeen', '1') } catch {} }   // first visit only; the footer link replays it
   window.__introRunning = true
   const phone = innerWidth <= 860                // phones: the same film, timed (a tap fast-forwards), no header staff to land on
+  const timed = phone || matchMedia('(pointer: coarse)').matches   // touch screens (tablets too): a swipe flings past a scroll-driven film, so it plays by itself
+  if (timed) document.documentElement.classList.add('intro-timed')
   scrollTo(0, 0); lenis?.scrollTo(0, { immediate: true })
   const run = $('.intro-run'), heroImg = $('.plate-photo img', run), marks = $$('.plate-photo .mk', run), h1 = $('.table h1', run)
   const W = innerWidth, H = innerHeight, RED = '#B91C1C', INK = '#18181B', PAPER = '#F7F3EA'
@@ -219,14 +229,14 @@ function landingIntro (tdraw) {
       <filter id="ffocus" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur class="fblur" stdDeviation="0"/></filter>
       <filter id="fsoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation=".9"/></filter>
 </defs>
-    <g mask="url(#fmask)"><image class="fphoto" href="${img}" preserveAspectRatio="none" filter="url(#ffocus)"/>
-      <g class="fh"><path d="${FHOLE}" fill="none" stroke="#000" stroke-opacity=".5" class="fshadow" filter="url(#fsoft)"/></g></g>
+    <g mask="url(#fmask)"><image class="fphoto" href="${img}" preserveAspectRatio="none"/><image class="fsoft" preserveAspectRatio="none"/>
+      <g class="fh"><path d="${FHOLE}" fill="none" stroke="#000" stroke-opacity=".5" class="fshadow" /></g></g>
     <g class="fh"><path d="${FHOLE}" fill="none" stroke="${INK}" class="fcut"/></g><circle class="ftip" r="3.4" fill="${RED}" opacity="0"/></svg>
     <button class="snd" type="button" aria-pressed="false">${de ? 'Ton' : 'Sound'}</button>`
-  const cv = document.createElement('canvas'), g = cv.getContext('2d'), dpr = Math.min(devicePixelRatio, 2)
+  const cv = document.createElement('canvas'), g = cv.getContext('2d'), dpr = Math.min(devicePixelRatio, matchMedia('(pointer: coarse)').matches ? 1.25 : 2)
   cv.width = W * dpr; cv.height = H * dpr; stage.prepend(cv); document.body.appendChild(stage)
   const fh = $$('.fh', stage), cut = $('.fcut', stage), hole = $('.fhfill', stage), shadow = $('.fshadow', stage)
-  const fill = $('.ffill', stage), photo = $('.fphoto', stage), blur = $('.fblur', stage), tipDot = $('.ftip', stage), snd = $('.snd', stage)
+  const soft = $('.fsoft', stage), fill = $('.ffill', stage), photo = $('.fphoto', stage), blur = $('.fblur', stage), tipDot = $('.ftip', stage), snd = $('.snd', stage)
   const CUT = cut.getTotalLength()
   cut.setAttribute('stroke-width', 1.1 / s0); cut.style.strokeDasharray = CUT; shadow.setAttribute('stroke-width', 3.2 / s0)
 
@@ -359,7 +369,7 @@ function landingIntro (tdraw) {
     cut.style.strokeDashoffset = CUT * (1 - S.cut); cut.style.opacity = S.cut > 0 ? Math.max(0, 1 - (S.push - 1) / 2) : 0
     hole.style.opacity = S.open; shadow.style.opacity = S.open * Math.max(0, 1 - (S.push - 1) / 6)
     fill.setAttribute('r', (S.fill * Math.hypot(W, H) * .55).toFixed(1))   // an iris opening from the hole, not a cross-fade
-    blur.setAttribute('stdDeviation', (14 * (1 - S.focus)).toFixed(2))
+    soft.style.opacity = 1 - S.focus                                                   // out of focus = a tiny copy stretched up; no per-frame blur filter (it stutters on iPad)
     if (S.cut > 0 && S.cut < 1) { const q = cut.getPointAtLength(CUT * S.cut).matrixTransform(cut.getCTM()); tipDot.setAttribute('cx', q.x); tipDot.setAttribute('cy', q.y); tipDot.setAttribute('opacity', 1) } else tipDot.setAttribute('opacity', 0)
     flyNotes()
     // the name rings like a string, then comes to rest
@@ -370,7 +380,8 @@ function landingIntro (tdraw) {
   function placePhoto () {
     const iw = heroImg.naturalWidth || 1983, ih = heroImg.naturalHeight || 793, k = Math.max(W / iw, H / ih), w = iw * k, h = ih * k
     const [px, py] = getComputedStyle(heroImg).objectPosition.split(' ').map(v => parseFloat(v) / 100)
-    photo.setAttribute('x', (W - w) * px); photo.setAttribute('y', (H - h) * py); photo.setAttribute('width', w); photo.setAttribute('height', h)
+    for (const im of [photo, soft]) { im.setAttribute('x', (W - w) * px); im.setAttribute('y', (H - h) * py); im.setAttribute('width', w); im.setAttribute('height', h) }
+    try { const c = document.createElement('canvas'); c.width = 40; c.height = Math.round(40 * ih / iw); c.getContext('2d').drawImage(heroImg, 0, 0, c.width, c.height); soft.setAttribute('href', c.toDataURL('image/jpeg', .7)) } catch {}
   }
   // each note leaves the point where the hair met its string and lands on its place on the header staff
   const noteTarget = i => { const n = navStaff && !phone ? $$('.nt', navStaff)[i] : null; if (!n) return [W * (.3 + i * .13), -20]; const b = n.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2] }
@@ -401,10 +412,10 @@ function landingIntro (tdraw) {
   gsap.ticker.add(frame); gsap.ticker.add(pointer)
 
   placePhoto(); heroImg.complete || heroImg.addEventListener('load', placePhoto, { once: true })
-  if (phone) document.documentElement.style.overflow = 'hidden'
+  if (timed) document.documentElement.style.overflow = 'hidden'
 
   const end = () => { document.documentElement.style.overflow = ''; seen() }
-  const tl = phone
+  const tl = timed
     ? gsap.timeline({ delay: .3, onComplete: end })
     : gsap.timeline({ scrollTrigger: { trigger: run, start: 'top top', end: 'bottom bottom', scrub: 1, onLeave: seen } })
   const startW = innerWidth
@@ -412,10 +423,10 @@ function landingIntro (tdraw) {
     tl.scrollTrigger?.kill(); tl.kill(); gsap.ticker.remove(frame); gsap.ticker.remove(pointer); stage.remove(); ac?.close()
     gsap.set([...marks, heroImg, '.table .t-text', '.table .readout', ...letters], { clearProps: 'all' })
     gsap.set(navStaff, { clearProps: '--staff,--notes' })
-    document.documentElement.classList.remove('intro'); document.documentElement.style.overflow = ''; scrollTo(0, 0); ScrollTrigger.refresh()
+    document.documentElement.classList.remove('intro', 'intro-timed'); document.documentElement.style.overflow = ''; scrollTo(0, 0); ScrollTrigger.refresh()
   }
   addEventListener('resize', function bail () { if (Math.abs(innerWidth - startW) < 2) return; removeEventListener('resize', bail); finish() })
-  if (phone) {
+  if (timed) {
     tl.timeScale(1.15)
     const skip = e => { if (e.target.closest?.('.snd')) return; tl.timeScale(8); removeEventListener('touchstart', skip); removeEventListener('wheel', skip) }
     addEventListener('touchstart', skip); addEventListener('wheel', skip)

@@ -310,18 +310,17 @@ nav .mark span{font-size:18px}
 /* landing intro: only when the page opted in (html.intro); otherwise these layers stay hidden */
 .t-draw .oneline,.oneline-tip,.oneline-cue{display:none}
 @media (min-width:861px){
-  html.intro .intro-run{height:600vh;position:relative}
+  html.intro .intro-run{height:560vh;position:relative}
   html.intro .intro-run>.table{position:sticky;top:0;height:100vh;min-height:0}
   html.intro .t-draw{position:relative;z-index:3}
 }
 @media (max-width:860px){html.intro .t-draw{z-index:3}html.intro .oneline-cue{display:none!important}}
 html.intro .t-draw .oneline{display:block;fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-html.intro .t-draw .ink,html.intro .t-draw .cav,html.intro .t-draw .call{opacity:0}
 html.intro .oneline-tip{display:block;position:fixed;left:0;top:0;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 5px rgba(24,24,27,.07);opacity:0;pointer-events:none;z-index:5}
 html.intro .oneline-cue{display:block;position:absolute;left:4vw;bottom:6vh;font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.7}
 html.intro .oneline-cue i{display:block;font:300 22px/1.2 Spectral,serif;letter-spacing:0;text-transform:none;margin-bottom:4px}
 html.intro .table .t-text,html.intro .table .t-print,html.intro .table .readout{opacity:0}
-html.intro .table .t-text,html.intro .t-draw .call{visibility:hidden}
+html.intro .table .t-text{visibility:hidden}
 
 /* header staff: the four open strings G D A E, one under each page; the current page's note is red */
 .nav-staff{position:absolute;left:0;top:100%;width:100%;height:40px;overflow:visible;pointer-events:none}
@@ -389,8 +388,126 @@ footer .replay{display:block;margin-top:6px;font-size:13px;opacity:.72;text-deco
 .dstage canvas{cursor:pointer}
 .table h1 .l{display:inline-block}
 html.intro .t-draw .ink{opacity:1}
-/* version A+B: the sound switch, quiet until you want it */
-.dstage .snd{position:absolute;right:4vw;bottom:5vh;pointer-events:auto;font:500 12px "Archivo Narrow",sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);background:none;border:1px solid rgba(24,24,27,.35);border-radius:999px;padding:10px 16px 10px 34px;min-height:40px;cursor:pointer;position:absolute}
+
+/* ---------- landing: her photograph as a full-screen drafting plate (frame C) ---------- */
+.table.hero-plate{display:block;padding:0;min-height:0;height:100vh;height:100svh;overflow:hidden}
+.plate-photo{position:absolute;inset:0;margin:0}
+.plate-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:20% 50%}
+.plate-photo .mk{position:absolute;pointer-events:none}
+.plate-photo .crop{width:22px;height:22px;border:0 solid var(--ink)}
+.plate-photo .crop.tl{top:100px;left:3vw;border-width:1px 0 0 1px}.plate-photo .crop.tr{top:100px;right:3vw;border-width:1px 1px 0 0}
+.plate-photo .crop.bl{bottom:3.2vh;left:3vw;border-width:0 0 1px 1px}.plate-photo .crop.br{bottom:3.2vh;right:3vw;border-width:0 1px 1px 0}
+.plate-photo .reg{top:54%;width:16px;height:16px;border:1px solid var(--ink);border-radius:50%}
+.plate-photo .reg:before,.plate-photo .reg:after{content:"";position:absolute;background:var(--ink)}
+.plate-photo .reg:before{left:7px;top:-6px;width:1px;height:26px}.plate-photo .reg:after{top:7px;left:-6px;width:26px;height:1px}
+.plate-photo .reg.l{left:calc(3vw - 8px)}.plate-photo .reg.r{right:calc(3vw - 8px)}
+.plate-photo .sheet{top:104px;right:calc(3vw + 34px);font:500 11px "Archivo Narrow",sans-serif;letter-spacing:.24em}
+.plate-photo .dim{left:calc(3vw + 40px);right:calc(3vw + 40px);bottom:calc(3.2vh + 10px);height:1px;background:linear-gradient(90deg,var(--ink) calc(22% - 76px),transparent calc(22% - 76px) calc(22% + 76px),var(--ink) calc(22% + 76px));transform-origin:50% 50%}
+.plate-photo .dim:before,.plate-photo .dim:after{content:"";position:absolute;top:-5px;width:1px;height:11px;background:var(--ink)}
+.plate-photo .dim:before{left:0}.plate-photo .dim:after{right:0}
+.plate-photo .dim span{position:absolute;left:22%;top:-8px;transform:translateX(-50%);padding:0 10px;font:500 11px "Archivo Narrow",sans-serif;letter-spacing:.24em;line-height:16px}
+.plate-photo .stamp{right:calc(3vw + 34px);bottom:calc(3.2vh + 34px);font:600 12px "Archivo Narrow",sans-serif;letter-spacing:.3em;color:var(--red);border:1.5px solid var(--red);padding:4px 10px 4px 13px;transform:rotate(-4deg);mix-blend-mode:multiply}
+.hero-plate .t-text{position:absolute;left:calc(3vw + 34px);top:calc(50% + 20px);transform:translateY(-52%);max-width:min(34vw,520px);z-index:2}
+.hero-plate .readout{position:absolute;left:calc(3vw + 34px);top:104px;bottom:auto;max-width:40vw;z-index:2}   /* the plate's header line, opposite SHEET 1 / 4 */
+.strings-nav{display:flex;justify-content:center;padding:5vh 4vw 4vh}
+.strings-nav .t-draw{height:min(80vh,780px);width:auto;margin:0;position:static;opacity:1}
+html.intro .plate-photo .mk,html.intro .plate-photo img{opacity:0}
+@media (max-width:860px){
+  /* phones: the photograph fills the first screen with nothing over her face; the name follows on the paper */
+  .table.hero-plate{height:auto;overflow:visible}
+  .plate-photo{position:relative;height:100vh;height:100svh}
+  .plate-photo img{object-position:47% 30%}
+  .plate-photo .crop.tl,.plate-photo .crop.tr{top:84px}
+  .plate-photo .sheet{top:88px}
+  .plate-photo .reg,.plate-photo .stamp{display:none}
+  .hero-plate .t-text,.hero-plate .readout{position:static;transform:none;max-width:none;padding:0 4vw}
+  .hero-plate .t-text{padding-top:40px}
+  .hero-plate .readout{padding-bottom:20px;margin-top:22px}
+  .strings-nav .t-draw{height:62vh;position:static;opacity:1;right:auto;top:auto}
+  .strings-nav .t-draw a{display:inline}
+}
+
+/* violin pegs: hovering a page's peg rings its string, turns the peg, runs the lead, and shows a small preview of the page */
+.strings-nav{position:relative}
+.t-draw .str .line{fill:none;stroke:transparent;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.t-draw .str .glow{fill:none;stroke:transparent;stroke-width:7;vector-effect:non-scaling-stroke}
+.t-draw .str.on .line{stroke:var(--red);animation:ring .07s linear infinite alternate}
+.t-draw .str.on .glow{stroke:rgba(185,28,28,.16);animation:ring .09s linear infinite alternate-reverse}
+@keyframes ring{from{transform:translateX(-.7px)}to{transform:translateX(.7px)}}
+.t-draw .call .pegfill{transform-box:fill-box;transform-origin:center}
+.t-draw .call.on .pegfill{fill:var(--red);animation:tune .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes tune{0%{transform:scaleY(1)}35%{transform:scaleY(.35)}100%{transform:scaleY(1)}}
+.t-draw .call.on .lead{stroke:var(--red);animation:march .6s linear infinite}
+@keyframes march{to{stroke-dashoffset:-8}}
+.t-draw .call.on text{fill:var(--red)}
+/* hero text: the tagline on one line; the dimension line runs only under the photograph half, so it never crosses the text */
+@media (min-width:861px){
+  .hero-plate .lede{white-space:nowrap;max-width:none}
+  .hero-plate .t-text{max-width:none}
+  .plate-photo .dim{left:50%}
+  .plate-photo .dim{background:linear-gradient(90deg,var(--ink) calc(30% - 76px),transparent calc(30% - 76px) calc(30% + 76px),var(--ink) calc(30% + 76px))}
+  .plate-photo .dim span{left:30%}
+}
+@media (min-width:861px){
+  .plate-photo .dim{background:linear-gradient(90deg,var(--ink) calc(78% - 70px),transparent calc(78% - 70px) calc(78% + 70px),var(--ink) calc(78% + 70px))}
+  .plate-photo .dim span{left:78%}                     /* the label sits on the grey backdrop, not on her */
+  .hero-plate .readout{top:132px}                       /* clear of the header staff */
+}
+
+/* ---------- strings-nav: the violin in the middle, each peg's page unfolds beside it ---------- */
+.strings-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:3vw;padding:6vh 4vw;min-height:100vh}
+.strings-nav .t-draw{grid-column:2;grid-row:1}
+.sn-side{grid-row:1;position:relative;align-self:stretch;display:grid;align-items:center}
+.sn-side.left{grid-column:1}.sn-side.right{grid-column:3}
+.sn-panel{grid-area:1/1;max-width:520px;width:100%}
+.sn-side.left .sn-panel{justify-self:end}
+.sp-k{display:flex;align-items:center;gap:10px;font:500 11px "Archivo Narrow",sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--red);margin-bottom:18px}
+.sp-k i{display:block;width:34px;border-top:1px solid currentColor}
+.sp-img{margin:0 0 18px}.sp-img img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.sp-t{font:300 18px/1.5 Spectral,serif;margin:0 0 16px}
+.sp-big{font:400 clamp(24px,2.3vw,34px)/1.15 Cinzel,serif;margin:0 0 14px}.sp-big span{font-size:.62em;opacity:.7}
+.sp-list{font-size:14px;opacity:.72;margin:0 0 18px}
+.sp-mail{margin:0 0 20px}.sp-mail small{display:block;font-size:12px;opacity:.7}.sp-mail a{font:300 20px Spectral,serif;color:var(--ink)}
+.sp-staff{display:block;width:100%;height:46px;margin-bottom:12px}
+.sp-staff line{stroke:var(--ink);stroke-width:.8;opacity:.5}.sp-staff ellipse{fill:var(--red)}
+.sp-videos{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.sp-video{display:block;color:var(--ink);text-decoration:none}
+.sp-frame{display:block;position:relative;overflow:hidden;margin-bottom:10px;background:#111}
+.sp-frame img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.sp-frame i{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:1px solid rgba(247,243,234,.95)}
+.sp-frame i:after{content:"";position:absolute;left:15px;top:12px;border-left:11px solid rgba(247,243,234,.95);border-top:7px solid transparent;border-bottom:7px solid transparent}
+.sp-video b{display:block;font:400 15px/1.3 Cinzel,serif}.sp-video small{display:block;font-size:12px;opacity:.65;margin-top:2px}
+.sp-go{display:inline-flex;align-items:center;gap:8px;font:500 14px "Archivo Narrow",sans-serif;color:var(--ink);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px}
+.sp-go:after{content:"";width:18px;border-top:1px solid currentColor}
+
+/* motion: a wipe that unfolds away from the violin (left panels to the left, right panels to the right), then the contents follow,
+   staggered. Transitions, so a quick move from one peg to the next retargets instead of restarting. */
+@media (hover:hover) and (pointer:fine) and (min-width:861px){
+  .sn-panel{--ease:cubic-bezier(.23,1,.32,1);visibility:hidden;pointer-events:none;transition:visibility 0s .28s}
+  .sn-panel.on{visibility:visible;pointer-events:auto;transition:visibility 0s}
+  .sn-panel>*{opacity:0;transform:translateX(var(--dx,0));transition:opacity .18s ease,transform .28s var(--ease)}
+  .sn-side.left .sn-panel>*{--dx:24px}.sn-side.right .sn-panel>*{--dx:-24px}
+  .sn-panel.on>*{opacity:1;transform:none;transition:opacity .24s ease,transform .28s var(--ease)}
+  .sn-panel.on>:nth-child(2){transition-delay:.04s}.sn-panel.on>:nth-child(3){transition-delay:.08s}.sn-panel.on>:nth-child(4){transition-delay:.12s}.sn-panel.on>:nth-child(5){transition-delay:.16s}
+  .sn-panel .sp-img,.sn-panel .sp-frame{clip-path:inset(0 0 0 0);transition:clip-path .3s var(--ease)}
+  .sn-side.left .sn-panel:not(.on) .sp-img,.sn-side.left .sn-panel:not(.on) .sp-frame{clip-path:inset(0 0 0 100%)}
+  .sn-side.right .sn-panel:not(.on) .sp-img,.sn-side.right .sn-panel:not(.on) .sp-staff{clip-path:inset(0 100% 0 0)}
+  .sn-panel .sp-staff{clip-path:inset(0 0 0 0);transition:clip-path .3s var(--ease)}
+  .sn-panel .sp-k i{transform-origin:var(--from,right);transform:scaleX(0);transition:transform .28s var(--ease)}
+  .sn-side.right .sn-panel .sp-k i{--from:left}
+  .sn-panel.on .sp-k i{transform:scaleX(1)}
+}
+@media (prefers-reduced-motion:reduce){.sn-panel>*{transform:none!important}.sn-panel .sp-img,.sn-panel .sp-frame,.sn-panel .sp-staff{clip-path:none!important}}
+/* touch and narrow screens: no hover, so every panel is simply there, under the violin */
+@media (max-width:860px),(hover:none){
+  .strings-nav{grid-template-columns:1fr;min-height:0;gap:40px}
+  .strings-nav .t-draw{grid-row:1;grid-column:1;justify-self:center}
+  .sn-side{grid-column:1!important;grid-row:auto;display:flex;flex-direction:column;gap:56px}
+  .sn-panel{max-width:none}
+}
+@media (min-width:861px){.strings-nav{height:100vh;min-height:0;padding:96px 4vw 3vh}.strings-nav .t-draw{height:calc(100vh - 130px)}}   /* the whole violin, labels included, sits below the header while it holds */
+/* the sound switch of the four-strings intro */
+.dstage .snd{position:absolute;right:4vw;bottom:5vh;pointer-events:auto;font:500 12px "Archivo Narrow",sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);background:none;border:1px solid rgba(24,24,27,.35);border-radius:999px;padding:10px 16px 10px 34px;min-height:40px;cursor:pointer}
 .dstage .snd:before{content:"";position:absolute;left:14px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;border:1px solid var(--ink)}
 .dstage .snd[aria-pressed="true"]{border-color:var(--red);color:var(--red)}
 .dstage .snd[aria-pressed="true"]:before{background:var(--red);border-color:var(--red)}

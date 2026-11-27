@@ -91,7 +91,7 @@ drawStaff(); document.fonts?.ready.then(drawStaff); addEventListener('resize', d
 
 /* home: hovering (or focusing) a peg rings its string, turns the peg and shows a preview of the page it leads to. Mouse and keyboard only. */
 const strNav = $('.strings-nav')
-if (strNav && matchMedia('(hover:hover) and (pointer:fine)').matches) {
+if (strNav && innerWidth > 860) {
   const svg = $('#tdraw', strNav)
   let current = null, closeT
   const open = key => {
@@ -103,6 +103,14 @@ if (strNav && matchMedia('(hover:hover) and (pointer:fine)').matches) {
   $$('.call', svg).forEach(a => { a.addEventListener('mouseenter', () => open(a.dataset.key)); a.addEventListener('focus', () => open(a.dataset.key)) })
   $$('.sn-panel', strNav).forEach(p => p.addEventListener('mouseenter', () => clearTimeout(closeT)))
   strNav.addEventListener('mouseleave', () => { closeT = setTimeout(() => open(null), 250) })
+  // touch screens have no hover: the first tap on a peg opens its panel, a second tap follows the link
+  // (a tap also fires mouseenter, which would already open the panel, so remember whether it was open before the finger came down)
+  let touch = false, wasOpen = false
+  $$('.call', svg).forEach(a => {
+    const down = e => { touch = e.type === 'touchstart' || e.pointerType !== 'mouse'; wasOpen = current === a.dataset.key }
+    a.addEventListener('pointerdown', down); a.addEventListener('touchstart', down, { passive: true })
+    a.addEventListener('click', e => { if (touch && !wasOpen) { e.preventDefault(); open(a.dataset.key) } })
+  })
 }
 
 /* motion: each block enters the way its material would; one scroll-driven narrative on About */
@@ -201,6 +209,8 @@ function landingIntro (tdraw) {
   const seen = () => { try { localStorage.setItem('introSeen', '1') } catch {} }   // first visit only; the footer link replays it
   window.__introRunning = true
   const phone = innerWidth <= 860                // phones: the same story, timed (a tap fast-forwards)
+  const timed = phone || matchMedia('(pointer: coarse)').matches   // touch screens (tablets too): a swipe flings past a scroll-driven film, so it plays by itself
+  if (timed) document.documentElement.classList.add('intro-timed')
   scrollTo(0, 0); lenis?.scrollTo(0, { immediate: true })
   const NS = 'http://www.w3.org/2000/svg', run = $('.intro-run'), heroImg = $('.plate-photo img', run), marks = $$('.plate-photo .mk', run)
   const h1 = $('.table h1', run)
@@ -208,16 +218,17 @@ function landingIntro (tdraw) {
 
   // the stage: a canvas for the instrument and bow, an svg for the f-hole and the photograph behind it
   const stage = document.createElement('div'); stage.className = 'dstage'; stage.setAttribute('aria-hidden', 'true')
-  const cv = document.createElement('canvas'), g = cv.getContext('2d'), dpr = Math.min(devicePixelRatio, 2)
+  const cv = document.createElement('canvas'), g = cv.getContext('2d'), dpr = Math.min(devicePixelRatio, matchMedia('(pointer: coarse)').matches ? 1.25 : 2)
   cv.width = W * dpr; cv.height = H * dpr
   const img = heroImg.currentSrc || heroImg.src
   stage.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs>
       <filter id="fblur" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="0"/></filter>
       <mask id="fmask" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
       <rect width="${W}" height="${H}" fill="#000"/><path id="fg" fill="#fff"/><rect id="ffill" width="${W}" height="${H}" fill="#fff" opacity="0"/></mask></defs>
-    <g mask="url(#fmask)"><g id="fpg" opacity="0"><image id="fphoto" href="${img}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/></g></g>
+    <g mask="url(#fmask)"><g id="fpg" opacity="0"><image id="fphoto" href="${img}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/><image id="fsoft" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="none"/></g></g>
     <path id="fline" fill="none" stroke="${INK}" stroke-width="1"/></svg>`
   stage.prepend(cv); document.body.appendChild(stage)
+  const soft = $('#fsoft', stage)
   const fg = $('#fg', stage), fline = $('#fline', stage), fpg = $('#fpg', stage), photo = $('#fphoto', stage), ffill = $('#ffill', stage), blur = $('feGaussianBlur', stage)
 
   // the violin in millimetres, from the site's own drawing (src/lib/violin.js): x across, z along the instrument
@@ -305,8 +316,9 @@ function landingIntro (tdraw) {
   // the instrument as a solid: shadow on the paper, ribs with hatching on the shaded side, the arched top with its
   // contours and purfling, the fingerboard and the bridge as blocks, and each string's shadow on what lies under it
   function instrument () {
-    g.save(); g.filter = 'blur(16px)'; g.fillStyle = 'rgba(40,30,10,.13)'
-    if (poly3(BODY.map(([x, , z]) => [x + 16, -RIB - .5, z + 12]))) g.fill(); g.restore()
+    g.save(); g.fillStyle = 'rgba(40,30,10,.05)'                                    // a soft shadow on the paper, built from offset fills (a canvas blur filter stutters on iPad)
+    for (const o of [6, 12, 18]) if (poly3(BODY.map(([x, , z]) => [x + o, -RIB - .5, z + o * .7]))) g.fill()
+    g.restore()
     g.strokeStyle = INK; g.lineWidth = .8; g.fillStyle = SHADE
     if (poly3(RIBS)) { g.fill(); g.stroke() }
     g.globalAlpha *= .45; g.lineWidth = .6; g.beginPath()
@@ -359,7 +371,8 @@ function landingIntro (tdraw) {
     const iw = heroImg.naturalWidth || 1983, ih = heroImg.naturalHeight || 793, k = Math.max(W / iw, H / ih), w = iw * k, h = ih * k
     const [px, py] = getComputedStyle(heroImg).objectPosition.split(' ').map(v => parseFloat(v) / 100)
     photo.setAttribute('preserveAspectRatio', 'none')
-    photo.setAttribute('x', (W - w) * px); photo.setAttribute('y', (H - h) * py); photo.setAttribute('width', w); photo.setAttribute('height', h)
+    for (const im of [photo, soft]) { im.setAttribute('x', (W - w) * px); im.setAttribute('y', (H - h) * py); im.setAttribute('width', w); im.setAttribute('height', h) }
+    try { const c = document.createElement('canvas'); c.width = 40; c.height = Math.round(40 * ih / iw); c.getContext('2d').drawImage(heroImg, 0, 0, c.width, c.height); soft.setAttribute('href', c.toDataURL('image/jpeg', .7)) } catch {}
   }
   // a note leaves the point where the bow met the string and lands on its place on the header staff (G under About … E under Contact)
   const noteTarget = i => { const n = navStaff && !phone ? $$('.nt', navStaff)[i] : null; if (!n) return [W * (.3 + i * .13), -20]; const b = n.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2] }
@@ -440,7 +453,7 @@ function landingIntro (tdraw) {
     const d = ok ? c.map(s => 'M' + s.map(p => scr(p).map(v => v.toFixed(1)).join(',')).join('L') + 'Z').join('') : ''
     fg.setAttribute('d', d); fline.setAttribute('d', d); fline.style.opacity = S.fade
     fpg.setAttribute('opacity', S.open)
-    if (S.blur > .1) { blur.setAttribute('stdDeviation', S.blur.toFixed(2)); photo.setAttribute('filter', 'url(#fblur)') } else photo.removeAttribute('filter')
+    soft.style.opacity = Math.min(1, S.blur / (phone ? 8 : 14))
     flyNotes(t)
     // the name rings like a string, then comes to rest
     const a = (1 - S.settle) * 7
@@ -466,10 +479,10 @@ function landingIntro (tdraw) {
   gsap.ticker.add(frame); gsap.ticker.add(pointer)
 
   placePhoto(); heroImg.complete || heroImg.addEventListener('load', placePhoto, { once: true })
-  if (phone) document.documentElement.style.overflow = 'hidden'
+  if (timed) document.documentElement.style.overflow = 'hidden'
 
   const end = () => { document.documentElement.style.overflow = ''; seen() }
-  const tl = phone
+  const tl = timed
     ? gsap.timeline({ delay: .4, onComplete: end })
     : gsap.timeline({ scrollTrigger: { trigger: run, start: 'top top', end: 'bottom bottom', scrub: 1, onLeave: seen } })
   const startW = innerWidth
@@ -478,9 +491,9 @@ function landingIntro (tdraw) {
     removeEventListener('resize', bail); tl.scrollTrigger?.kill(); tl.kill(); gsap.ticker.remove(frame); gsap.ticker.remove(pointer); stage.remove()
     gsap.set([...marks, heroImg, '.table .t-text', '.table .readout', ...letters], { clearProps: 'all' })
     gsap.set(navStaff, { clearProps: '--staff,--notes' })
-    document.documentElement.classList.remove('intro'); document.documentElement.style.overflow = ''; scrollTo(0, 0); ScrollTrigger.refresh()
+    document.documentElement.classList.remove('intro', 'intro-timed'); document.documentElement.style.overflow = ''; scrollTo(0, 0); ScrollTrigger.refresh()
   })
-  if (phone) { tl.timeScale(1.5); const skip = () => tl.timeScale(8); addEventListener('touchstart', skip, { once: true }); addEventListener('wheel', skip, { once: true }) }
+  if (timed) { tl.timeScale(1.5); const skip = () => tl.timeScale(8); addEventListener('touchstart', skip, { once: true }); addEventListener('wheel', skip, { once: true }) }
 
   tl.to('.oneline-cue', { opacity: 0, duration: .3 }, .2)
     .to(S, { note: 0, duration: .8 }, .3)                                                // the drafting notes fall away as the camera moves

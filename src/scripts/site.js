@@ -98,8 +98,10 @@ if (strNav && matchMedia('(hover:hover)').matches) {
     const show = () => {
       const box = strNav.getBoundingClientRect(), r = $('text.big', a).getBoundingClientRect(), left = a.querySelector('text.big').getAttribute('text-anchor') === 'end'
       const navB = $('nav').getBoundingClientRect().bottom + 50                          // never tucked under the header (or its staff)
-      peek.style.top = (Math.max(r.top + r.height / 2 - 60, navB) - box.top) + 'px'
+      const top = Math.max(r.top + r.height / 2 - 60, navB)
+      peek.style.top = (top - box.top) + 'px'; peek.style.setProperty('--lead', (r.top + r.height / 2 - top) + 'px')   // the leader always meets its label
       peek.style.left = (left ? r.left - box.left - 236 - 26 : r.right - box.left + 26) + 'px'
+      peek.classList.toggle('from-left', left); peek.classList.toggle('from-right', !left)
       a.classList.add('on'); str?.classList.add('on'); peek.classList.add('on')
     }
     const hide = () => { a.classList.remove('on'); str?.classList.remove('on'); peek.classList.remove('on') }

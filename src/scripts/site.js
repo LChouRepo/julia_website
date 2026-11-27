@@ -214,21 +214,11 @@ function landingIntro (tdraw) {
   stage.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs>
       <filter id="fblur" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="0"/></filter>
       <mask id="fmask" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
-      <rect width="${W}" height="${H}" fill="#000"/><path id="fg" fill="#fff"/><circle id="ffill" cx="0" cy="0" r="0" fill="#fff"/></mask></defs>
+      <rect width="${W}" height="${H}" fill="#000"/><path id="fg" fill="#fff"/><rect id="ffill" width="${W}" height="${H}" fill="#fff" opacity="0"/></mask></defs>
     <g mask="url(#fmask)"><g id="fpg" opacity="0"><image id="fphoto" href="${img}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/></g></g>
     <path id="fline" fill="none" stroke="${INK}" stroke-width="1"/></svg>`
   stage.prepend(cv); document.body.appendChild(stage)
   const fg = $('#fg', stage), fline = $('#fline', stage), fpg = $('#fpg', stage), photo = $('#fphoto', stage), ffill = $('#ffill', stage), blur = $('feGaussianBlur', stage)
-  // the plan: the site's front-view violin with the four page pegs, the same drawing as below the hero; the camera ends on it and dives into its f-hole
-  const planG = document.createElementNS(NS, 'g'); planG.setAttribute('class', 'plan')
-  planG.innerHTML = tdraw.innerHTML; $$('.str', planG).forEach(n => n.remove()); $$('a', planG).forEach(a => { a.removeAttribute('href'); a.setAttribute('tabindex', '-1') })
-  $('svg', stage).insertBefore(planG, fline)
-  const FHOLE2 = tdraw.dataset.fhole.split(/(?=M)/).slice(0, 3).join(' '), PV = [36.5, 189.5]
-  const PK = (phone ? .62 : .76) * H / 610, PX = W / 2, PY = H * (phone ? .5 : .54) - PK * 65   // drawing coords (y −240…370) to screen
-  const pivot = [PX + PK * PV[0], PY + PK * PV[1]]
-  const planTr = push => `translate(${pivot[0]},${pivot[1]}) scale(${PK * push}) translate(${-PV[0]},${-PV[1]})`
-  const planInk = $('.ink', planG), planLen = planInk.getTotalLength() * PK + 4, planCalls = $$('.call', planG)
-  planInk.style.strokeDasharray = planLen
 
   // the violin in millimetres, from the site's own drawing (src/lib/violin.js): x across, z along the instrument
   // (nut −132, bridge 190), y up off the top plate. Outlines are sampled once into 3D points.
@@ -270,17 +260,15 @@ function landingIntro (tdraw) {
 
   // the camera: four stations (position, look-at); S.cam runs 0→3 between them
   const AF = arch(36, 189)
-  const F = Math.min(W * 1.6, H * 1.1), NEAR = .8
-  // the last station looks straight down from the tail end, at exactly the plan drawing's scale and place, so the solid violin melts into it
-  const DIST = F / PK, ZC = (H / 2 - PY) / PK
   const KEYS = phone
-    ? [[[0, 50, -175], [0, 4, 240]], [[0, 56, 70], [0, 28, 260]], [[380, 300, 230], [0, 0, 170]], [[0, DIST, ZC + 4], [0, 0, ZC]]]
-    : [[[0, 42, -168], [0, -8, 250]], [[0, 52, 70], [0, 28, 260]], [[420, 260, 230], [0, 0, 170]], [[0, DIST, ZC + 4], [0, 0, ZC]]]
-  const S = { cam: 0, bow: -1.4, note: 1, open: 0, blur: phone ? 8 : 14, fade: 1, settle: 0, lift: 0, k0: 0, k1: 0, k2: 0, k3: 0, plan: 0, push: 1 }
+    ? [[[0, 50, -175], [0, 4, 240]], [[0, 56, 70], [0, 28, 260]], [[36, 136, 150], [36, AF, 189]], [[36, AF + 1.4, 189], [36, AF - 60, 189.4]]]
+    : [[[0, 42, -168], [0, -8, 250]], [[0, 52, 70], [0, 28, 260]], [[36, 106, 150], [36, AF, 189]], [[36, AF + 1.4, 189], [36, AF - 60, 189.4]]]
+  const F = Math.min(W * 1.6, H * 1.1), NEAR = .8
+  const S = { cam: 0, bow: -1.4, note: 1, open: 0, blur: phone ? 8 : 14, fade: 1, settle: 0, lift: 0, k0: 0, k1: 0, k2: 0, k3: 0 }
   const amp = [0, 0, 0, 0]
   let C, R, U, Fw
   function camera () {
-    const k = Math.min(KEYS.length - 2, Math.floor(S.cam)), t = S.cam - k, a = KEYS[k], b = KEYS[k + 1], mix = (p, q) => p.map((v, i) => v + (q[i] - v) * t)
+    const k = Math.min(2, Math.floor(S.cam)), t = S.cam - k, a = KEYS[k], b = KEYS[k + 1], mix = (p, q) => p.map((v, i) => v + (q[i] - v) * t)
     C = mix(a[0], b[0]); const T = mix(a[1], b[1]), d = T.map((v, i) => v - C[i]), m = Math.hypot(...d)
     Fw = d.map(v => v / m); const yaw = Math.atan2(Fw[0], Fw[2])
     R = [Math.cos(yaw), 0, -Math.sin(yaw)]
@@ -448,18 +436,9 @@ function landingIntro (tdraw) {
     }
     g.globalAlpha = 1
     // the right f-hole is cut in the svg: its outline in ink, and the photograph behind it
-    if (S.plan > .01) {
-      const tr = planTr(S.push)
-      fg.setAttribute('d', FHOLE2); fg.setAttribute('transform', tr); fline.setAttribute('d', FHOLE2); fline.setAttribute('transform', tr)
-      fline.setAttribute('vector-effect', 'non-scaling-stroke'); fline.style.opacity = S.plan * Math.max(0, 1 - (S.push - 1) / 3)
-      planG.setAttribute('transform', tr); planG.style.opacity = S.plan * Math.max(0, 1 - (S.push - 1) / 5)
-      planInk.style.strokeDashoffset = planLen * (1 - Math.min(1, S.plan * 1.4))
-    } else {
-      const c = FH.map(s => s.map(view)), ok = c.every(s => s.every(p => p[2] > NEAR))
-      const d = ok ? c.map(s => 'M' + s.map(p => scr(p).map(v => v.toFixed(1)).join(',')).join('L') + 'Z').join('') : ''
-      fg.removeAttribute('transform'); fline.removeAttribute('transform'); fg.setAttribute('d', d); fline.setAttribute('d', d); fline.style.opacity = S.fade
-      planG.style.opacity = 0
-    }
+    const c = FH.map(s => s.map(view)), ok = c.every(s => s.every(p => p[2] > NEAR))
+    const d = ok ? c.map(s => 'M' + s.map(p => scr(p).map(v => v.toFixed(1)).join(',')).join('L') + 'Z').join('') : ''
+    fg.setAttribute('d', d); fline.setAttribute('d', d); fline.style.opacity = S.fade
     fpg.setAttribute('opacity', S.open)
     if (S.blur > .1) { blur.setAttribute('stdDeviation', S.blur.toFixed(2)); photo.setAttribute('filter', 'url(#fblur)') } else photo.removeAttribute('filter')
     flyNotes(t)
@@ -511,23 +490,19 @@ function landingIntro (tdraw) {
   if (navStaff && !phone) tl.fromTo(navStaff, { '--notes': 0 }, { '--notes': 1, duration: .2 }, 2.85)
   tl.to(S, { lift: 1, duration: .95, ease: 'power2.inOut' }, 2.8)                        // the four strings peel off and straighten into the staff
   if (navStaff && !phone) tl.fromTo(navStaff, { '--staff': 0 }, { '--staff': 1, duration: .2 }, 3.6)
-  tl.to(S, { cam: 3, duration: 1.25, ease: 'power2.inOut' }, 2.85)                       // the camera swings round the side and comes to rest above the instrument…
-    .to(S, { fade: 0, duration: .35 }, 3.95)                                              // …where the solid violin melts into the drawing
-    .to(S, { plan: 1, duration: .45, ease: 'power1.inOut' }, 3.85)
-  planCalls.forEach((c, i) => tl.fromTo(c, { autoAlpha: 0 }, { autoAlpha: 1, duration: .25 }, 4.4 + i * .14)
-    .call(() => c.classList.add('on'), null, 4.4 + i * .14).call(() => c.classList.remove('on'), null, 4.75 + i * .14))   // the four pages, one peg at a time
-  tl.to(S, { open: 1, duration: .4, ease: 'power1.out' }, 5.0)                           // her photograph shows in the f-hole, out of focus
-    .to(S, { push: 34, duration: 1.25, ease: 'power3.in' }, 5.35)                         // the camera dives into the f-hole
-    .to(S, { blur: 0, duration: 1, ease: 'power2.in' }, 5.45)                             // and the photograph comes into focus
-    .set(ffill, { attr: { cx: pivot[0], cy: pivot[1] } }, 6.2)
-    .to(ffill, { attr: { r: Math.hypot(W, H) }, duration: .45, ease: 'power2.inOut' }, 6.15)   // an iris opens from the hole: no cross-fade
-    .set(heroImg, { opacity: 1 }, 6.6)                                                    // the page's own photograph, under the stage's identical one…
-    .to(stage, { opacity: 0, duration: .2 }, 6.65)                                        // nothing moves: they are the same picture
-    .fromTo(marks.filter(m => !m.matches('.dim,.stamp')), { opacity: 0, scale: .6 }, { opacity: 1, scale: 1, duration: .35, stagger: .05, ease: 'power3.out' }, 6.75)   // the plate is marked up
-    .fromTo($('.plate-photo .dim', run), { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: .55, ease: 'power3.inOut' }, 6.85)
-    .fromTo($('.plate-photo .stamp', run), { opacity: 0, scale: 1.7, rotation: -14 }, { opacity: 1, scale: 1, rotation: -4, duration: .22, ease: 'power4.in' }, 7.3)   // and stamped
-    .fromTo('.table .t-text', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .5 }, 6.95)
-    .to(S, { settle: 1, duration: 1.4, ease: 'power2.out' }, 6.95)                        // the name rings, then rests
-    .to('.table .readout', { opacity: .75, duration: .4 }, 7.4)
+  tl.to(S, { cam: 2, duration: 1, ease: 'power2.inOut' }, 2.75)                          // the camera rises and turns to the f-hole…
+    .to(S, { open: 1, duration: .6, ease: 'power1.out' }, 3.0)                            // …where she is, out of focus
+    .to(S, { cam: 3, duration: 1, ease: 'power2.in' }, 3.7)                               // the camera drops through the f-hole
+    .to(S, { blur: 0, duration: .9, ease: 'power2.in' }, 3.75)                            // and the photograph comes into focus
+    .to(ffill, { opacity: 1, duration: .15, ease: 'power1.in' }, 4.62)
+    .to(S, { fade: 0, duration: .15 }, 4.65)
+    .set(heroImg, { opacity: 1 }, 4.8)                                                   // the page's own photograph, under the stage's identical one…
+    .to(stage, { opacity: 0, duration: .2 }, 4.85)                                        // nothing moves: the stage's photograph and the page's are the same picture
+    .fromTo(marks.filter(m => !m.matches('.dim,.stamp')), { opacity: 0, scale: .6 }, { opacity: 1, scale: 1, duration: .35, stagger: .05, ease: 'power3.out' }, 4.95)   // the plate is marked up
+    .fromTo($('.plate-photo .dim', run), { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: .55, ease: 'power3.inOut' }, 5.05)
+    .fromTo($('.plate-photo .stamp', run), { opacity: 0, scale: 1.7, rotation: -14 }, { opacity: 1, scale: 1, rotation: -4, duration: .22, ease: 'power4.in' }, 5.5)   // and stamped
+    .fromTo('.table .t-text', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .5 }, 5.15)
+    .to(S, { settle: 1, duration: 1.4, ease: 'power2.out' }, 5.15)                        // the name rings, then rests
+    .to('.table .readout', { opacity: .75, duration: .4 }, 5.6)
   tl.to({}, { duration: .4 })
 }

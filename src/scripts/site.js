@@ -103,14 +103,7 @@ if (strNav && innerWidth > 860) {
   $$('.call', svg).forEach(a => { a.addEventListener('mouseenter', () => open(a.dataset.key)); a.addEventListener('focus', () => open(a.dataset.key)) })
   $$('.sn-panel', strNav).forEach(p => p.addEventListener('mouseenter', () => clearTimeout(closeT)))
   strNav.addEventListener('mouseleave', () => { closeT = setTimeout(() => open(null), 250) })
-  // touch screens have no hover: the first tap on a peg opens its panel, a second tap follows the link
-  // (a tap also fires mouseenter, which would already open the panel, so remember whether it was open before the finger came down)
-  let touch = false, wasOpen = false
-  $$('.call', svg).forEach(a => {
-    const down = e => { touch = e.type === 'touchstart' || e.pointerType !== 'mouse'; wasOpen = current === a.dataset.key }
-    a.addEventListener('pointerdown', down); a.addEventListener('touchstart', down, { passive: true })
-    a.addEventListener('click', e => { if (touch && !wasOpen) { e.preventDefault(); open(a.dataset.key) } })
-  })
+  // touch screens: a tap on a peg simply opens its page (the panels are a mouse-hover extra)
 }
 
 /* motion: each block enters the way its material would; one scroll-driven narrative on About */
@@ -128,7 +121,7 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
     const wide = innerWidth > 860
     // drawing starts as the band comes up the screen and finishes while it holds still at the top
     if (wide) ScrollTrigger.create({ trigger: '.strings-nav', start: 'top top', end: '+=160%', pin: true })   // it stays a good while, so the pegs can be explored
-    gsap.timeline({ scrollTrigger: wide ? { trigger: '.strings-nav', start: 'top 80%', end: () => '+=' + innerHeight * 1.3, scrub: .6 } : { trigger: tdraw, start: 'top 85%', end: 'bottom 60%', scrub: .6 } })
+    gsap.timeline({ scrollTrigger: wide ? { trigger: '.strings-nav', start: 'top 80%', end: () => '+=' + innerHeight * 1.3, scrub: .6 } : { trigger: tdraw, start: 'top 90%', end: 'top 25%', scrub: .6 } })
       .to(ink, { strokeDashoffset: 0, duration: 2.2, ease: 'none' }, 0)
       .to($('.cav', tdraw), { opacity: 1, duration: .3 }, 1.9)
       .to($$('.call', tdraw), { opacity: 1, duration: .4, stagger: .1 }, 2.0)

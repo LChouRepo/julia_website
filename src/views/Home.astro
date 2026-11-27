@@ -23,15 +23,28 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
     setTimeout(function () { if (!window.__introRunning) document.documentElement.classList.remove('intro') }, 3000)   // script never started: show the page as is
   }</script>
   <div class="intro-run">
-  <section class="table">
+  <section class="table hero-plate">
+    <figure class="plate-photo">
+      <img src={settings.heroImage} alt={u.alt.withViolin} loading="eager" fetchpriority="high" />
+      <span class="mk crop tl"></span><span class="mk crop tr"></span><span class="mk crop bl"></span><span class="mk crop br"></span>
+      <span class="mk reg l"></span><span class="mk reg r"></span>
+      <span class="mk sheet">{lang === 'de' ? 'BLATT 1 / 4' : 'SHEET 1 / 4'}</span>
+      <span class="mk dim"><span>{`${u.plate.toUpperCase()} 01 · 1:1`}</span></span>
+      <span class="mk stamp">{lang === 'de' ? 'VIOLINE' : 'VIOLIN'}</span>
+    </figure>
     <div class="t-text">
       <span class="eyebrow"><i></i>{h.eyebrow}</span>
       <h1>Julia-<br />Xiaozhuo<br />Wang</h1>
       <p class="lede">{t(settings.tagline, lang)}</p>
       <div class="ctas"><a class="pill dark" href={path(lang, 'media') + '#videos'}>{h.watch}</a><a class="pill line" href={path(lang, 'contact')}>{h.booking}</a></div>
     </div>
+    <div class="readout">{h.readout}</div>
+    <div class="oneline-cue" aria-hidden="true"><i>{h.introLine}</i>{h.introCue}</div>
+  </section>
+  </div>
+  <section class="strings-nav">
     <svg class="t-draw" id="tdraw" data-fhole={V.F_R.d} data-body={V.BODY} viewBox="-150 -240 300 610" role="img" aria-label={h.drawingLabel}>
-      <path class="ink" d={OUTLINE} /><path class="cav" d={V.CAVITY} /><path class="oneline" />
+      <path class="ink" d={OUTLINE} /><path class="cav" d={V.CAVITY} />
       {callouts.map(c => (
         <a href={path(lang, c.key)} class="call">
           <path class="pegfill" d={c.peg} /><path class="lead" d={c.lead} />
@@ -39,12 +52,7 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
           <text x={c.lx} y={c.ly + 16} text-anchor={c.anchor} opacity=".6">{u.string(c.string)}</text>
         </a>))}
     </svg>
-    <Print class="t-print" src={settings.heroImage} alt={u.alt.withViolin} tag={`${u.plate} 01 · Julia-Xiaozhuo Wang`} eager />
-    <div class="readout">{h.readout}</div>
-    <span class="oneline-tip" aria-hidden="true"></span>
-    <div class="oneline-cue" aria-hidden="true"><i>{h.introLine}</i>{h.introCue}</div>
   </section>
-  </div>
 
   <section class="band">
     <div class="label">{h.watchLabel}</div>

@@ -96,14 +96,14 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
   // home: the ink violin draws itself, then its pegs lead out to the pages
   const tdraw = $('#tdraw')
   if (tdraw && document.documentElement.classList.contains('intro')) landingIntro(tdraw)
-  else if (tdraw) {
+  else if (tdraw) gsap.from('.table .t-text > *', { opacity: 0, y: 20, duration: .7, stagger: .08, ease: 'power3.out', delay: .15 })
+  if (tdraw) {   // the violin below the photograph draws itself when it comes into view, then its pegs lead out to the pages
     const ink = $('.ink', tdraw), L = screenLen(ink)
     gsap.set(ink, { strokeDasharray: L, strokeDashoffset: L }); gsap.set([$('.cav', tdraw), ...$$('.call', tdraw)], { opacity: 0 })
-    gsap.timeline({ delay: .15 })
-      .from('.table .t-text > *', { opacity: 0, y: 20, duration: .7, stagger: .08, ease: 'power3.out' }, 0)
-      .to(ink, { strokeDashoffset: 0, duration: 2.6, ease: 'power1.inOut' }, 0)
-      .to($('.cav', tdraw), { opacity: 1, duration: .4 }, 1.8)
-      .to($$('.call', tdraw), { opacity: 1, duration: .5, stagger: .12 }, 2.3)
+    once(tdraw, gsap.timeline({ paused: true })
+      .to(ink, { strokeDashoffset: 0, duration: 2.2, ease: 'power1.inOut' }, 0)
+      .to($('.cav', tdraw), { opacity: 1, duration: .4 }, 1.5)
+      .to($$('.call', tdraw), { opacity: 1, duration: .5, stagger: .12 }, 1.9))
   }
 
   // titles rise out of a mask, line by line
@@ -173,24 +173,24 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
   if (form) once(form, gsap.timeline({ paused: true }).from($$('label', form), { y: 10, opacity: 0, duration: .5, stagger: .06, ease: 'power3.out' }))
 })
 
-/* landing intro, "3D camera": the camera lies on the fingerboard and looks down the four strings to the bridge, the violin
-   drawn in perspective in the site's ink. Scrolling dollies it along the strings; a bow crosses them by the bridge and they
-   ring; the camera rises, turns to the f-hole beside the bridge, where her photograph waits out of focus, and drops through
-   it as the picture sharpens; the photograph then settles into the pinned print. Click a string to hear it. */
+/* landing intro (version C, 3D): the camera looks down the four strings of a solid ink violin and dollies toward the bridge; a bow
+   crosses and each string throws a vermilion note up to its place on the header staff; the strings peel off and straighten into
+   the staff lines; the camera turns to the f-hole and drops through it, her photograph pulling into focus; the photograph stays,
+   full screen, and is marked up as a drafting plate (crop marks, registration targets, dimension line, stamp). */
 function landingIntro (tdraw) {
   const seen = () => { try { localStorage.setItem('introSeen', '1') } catch {} }   // first visit only; the footer link replays it
   window.__introRunning = true
   const phone = innerWidth <= 860                // phones: the same story, timed (a tap fast-forwards)
   scrollTo(0, 0); lenis?.scrollTo(0, { immediate: true })
-  const NS = 'http://www.w3.org/2000/svg', run = $('.intro-run'), print = $('.t-print', run), pin = $('.pin', print), ph = $('.ph', print)
-  const ink = $('.ink', tdraw), cav = $('.cav', tdraw), h1 = $('.table h1', run)
+  const NS = 'http://www.w3.org/2000/svg', run = $('.intro-run'), heroImg = $('.plate-photo img', run), marks = $$('.plate-photo .mk', run)
+  const h1 = $('.table h1', run)
   const W = innerWidth, H = innerHeight, INK = '#18181B', PAPER = '#F7F3EA'
 
   // the stage: a canvas for the instrument and bow, an svg for the f-hole and the photograph behind it
   const stage = document.createElement('div'); stage.className = 'dstage'; stage.setAttribute('aria-hidden', 'true')
   const cv = document.createElement('canvas'), g = cv.getContext('2d'), dpr = Math.min(devicePixelRatio, 2)
   cv.width = W * dpr; cv.height = H * dpr
-  const img = $('img', ph).currentSrc || $('img', ph).src
+  const img = heroImg.currentSrc || heroImg.src
   stage.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs>
       <filter id="fblur" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="0"/></filter>
       <mask id="fmask" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
@@ -244,7 +244,7 @@ function landingIntro (tdraw) {
     ? [[[0, 50, -175], [0, 4, 240]], [[0, 56, 70], [0, 28, 260]], [[36, 136, 150], [36, AF, 189]], [[36, AF + 1.4, 189], [36, AF - 60, 189.4]]]
     : [[[0, 42, -168], [0, -8, 250]], [[0, 52, 70], [0, 28, 260]], [[36, 106, 150], [36, AF, 189]], [[36, AF + 1.4, 189], [36, AF - 60, 189.4]]]
   const F = Math.min(W * 1.6, H * 1.1), NEAR = .8
-  const S = { cam: 0, bow: -1.4, note: 1, open: 0, blur: phone ? 8 : 14, fade: 1, shrink: 0, settle: 0 }
+  const S = { cam: 0, bow: -1.4, note: 1, open: 0, blur: phone ? 8 : 14, fade: 1, settle: 0, lift: 0, k0: 0, k1: 0, k2: 0, k3: 0 }
   const amp = [0, 0, 0, 0]
   let C, R, U, Fw
   function camera () {
@@ -334,6 +334,41 @@ function landingIntro (tdraw) {
     return [x0 + 22, x1 - 8]
   }
 
+  // the stage photograph is laid out exactly like the hero image (cover, at the hero's object-position), so the hand-off is invisible
+  function placePhoto () {
+    const iw = heroImg.naturalWidth || 1983, ih = heroImg.naturalHeight || 793, k = Math.max(W / iw, H / ih), w = iw * k, h = ih * k
+    const [px, py] = getComputedStyle(heroImg).objectPosition.split(' ').map(v => parseFloat(v) / 100)
+    photo.setAttribute('preserveAspectRatio', 'none')
+    photo.setAttribute('x', (W - w) * px); photo.setAttribute('y', (H - h) * py); photo.setAttribute('width', w); photo.setAttribute('height', h)
+  }
+  // a note leaves the point where the bow met the string and lands on its place on the header staff (G under About … E under Contact)
+  const noteTarget = i => { const n = navStaff && !phone ? $$('.nt', navStaff)[i] : null; if (!n) return [W * (.3 + i * .13), -20]; const b = n.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2] }
+  function flyNotes () {
+    NOTES.forEach((s, i) => {
+      const k = S['k' + i]; if (k <= 0 || k >= 1) return
+      const c = view(strAt(s, (ZB - NUT) / (BRIDGE - NUT))); if (c[2] < NEAR) return
+      const [x0, y0] = scr(c), [x1, y1] = noteTarget(i), e = k
+      const cx = (x0 + x1) / 2 + (i - 1.5) * 60, cy = Math.min(y0, y1) - 120                // a little arc, each note on its own path
+      const x = (1 - e) * (1 - e) * x0 + 2 * (1 - e) * e * cx + e * e * x1, y = (1 - e) * (1 - e) * y0 + 2 * (1 - e) * e * cy + e * e * y1
+      const r = 3.6 + 7 * Math.sin(Math.PI * e) * (1 - e * .6)
+      g.save(); g.globalAlpha = Math.min(1, k * 6) * (1 - Math.max(0, (k - .92) / .08))
+      g.translate(x, y); g.rotate(-.38); g.fillStyle = '#B91C1C'; g.beginPath(); g.ellipse(0, 0, r, r * .7, 0, 0, 7); g.fill(); g.restore()
+    })
+  }
+  // a string leaving the instrument: its visible part straightens into one line of the header staff (G the lowest)
+  function liftString (s, i) {
+    const pts = []
+    for (let j = 0; j <= 40; j++) { const c = view(strAt(s, j / 40)); if (c[2] > NEAR) pts.push(scr(c)) }
+    if (pts.length < 2) return
+    const e = S.lift, N = 40, staff = navStaff && !phone
+    const y = staff ? navStaff.getBoundingClientRect().top + TOP + (4 - i) * GAP : -20
+    const x0 = staff ? navStaff.getBoundingClientRect().left + staffX[0] : W * .2, x1 = staff ? navStaff.getBoundingClientRect().left + staffX[1] : W * .8
+    g.beginPath()
+    const at = u => { const f = u * (pts.length - 1), k = Math.min(pts.length - 2, Math.floor(f)), r = f - k; return [pts[k][0] + (pts[k + 1][0] - pts[k][0]) * r, pts[k][1] + (pts[k + 1][1] - pts[k][1]) * r] }
+    for (let j = 0; j <= N; j++) { const u = j / N, p = at(u), tx = x0 + (x1 - x0) * u
+      const x = p[0] + (tx - p[0]) * e, yy = p[1] + (y - p[1]) * e; j ? g.lineTo(x, yy) : g.moveTo(x, yy) }
+    g.strokeStyle = INK; g.lineWidth = 1.6 - e * .9; g.globalAlpha = S.fade * (1 - Math.max(0, (e - .9) / .1)); g.stroke(); g.globalAlpha = S.fade
+  }
   let lastBow = S.bow, t0 = performance.now()
   function frame () {
     const t = (performance.now() - t0) / 1000
@@ -357,6 +392,7 @@ function landingIntro (tdraw) {
       const speed = Math.abs(S.bow - lastBow); lastBow = S.bow
       const showBow = S.bow > -1.35 && S.bow < 1.35, bx = S.bow * 520, hair = showBow ? [bx - 278, bx + 292] : [0, -1]
       NOTES.forEach((s, i) => {
+        if (S.lift > 0) { liftString(s, i); return }
         const xb = strAt(s, (ZB - NUT) / (BRIDGE - NUT))[0]
         if (xb > hair[0] && xb < hair[1]) amp[i] = Math.min(1, amp[i] + speed * 16)
         amp[i] *= .965
@@ -385,10 +421,7 @@ function landingIntro (tdraw) {
     fg.setAttribute('d', d); fline.setAttribute('d', d); fline.style.opacity = S.fade
     fpg.setAttribute('opacity', S.open)
     if (S.blur > .1) { blur.setAttribute('stdDeviation', S.blur.toFixed(2)); photo.setAttribute('filter', 'url(#fblur)') } else photo.removeAttribute('filter')
-    // the photograph moves from full screen into the print's photo area
-    const r = ph.getBoundingClientRect(), e = S.shrink
-    photo.setAttribute('x', r.left * e); photo.setAttribute('y', r.top * e)
-    photo.setAttribute('width', W + (r.width - W) * e); photo.setAttribute('height', H + (r.height - H) * e)
+    flyNotes(t)
     // the name rings like a string, then comes to rest
     const a = (1 - S.settle) * 7
     letters.forEach((l, i) => { l.style.transform = a > .05 ? `translateY(${(Math.sin(t * 26 + i * .9) * a).toFixed(2)}px)` : '' })
@@ -412,8 +445,7 @@ function landingIntro (tdraw) {
   const pointer = () => { cv.style.pointerEvents = S.cam < .3 && !phone ? 'auto' : 'none' }
   gsap.ticker.add(frame); gsap.ticker.add(pointer)
 
-  gsap.set(print, { opacity: 0 }); gsap.set(pin, { opacity: 0 })
-  const L = screenLen(ink); gsap.set(ink, { strokeDasharray: L, strokeDashoffset: L, opacity: 0 }); gsap.set(cav, { opacity: 0 })
+  placePhoto(); heroImg.complete || heroImg.addEventListener('load', placePhoto, { once: true })
   if (phone) document.documentElement.style.overflow = 'hidden'
 
   const end = () => { document.documentElement.style.overflow = ''; seen() }
@@ -424,7 +456,7 @@ function landingIntro (tdraw) {
   addEventListener('resize', function bail () {
     if (Math.abs(innerWidth - startW) < 2) return
     removeEventListener('resize', bail); tl.scrollTrigger?.kill(); tl.kill(); gsap.ticker.remove(frame); gsap.ticker.remove(pointer); stage.remove()
-    gsap.set([print, pin, ink, cav, ...$$('.call', tdraw), '.table .t-text', '.table .readout', ...letters], { clearProps: 'all' })
+    gsap.set([...marks, heroImg, '.table .t-text', '.table .readout', ...letters], { clearProps: 'all' })
     gsap.set(navStaff, { clearProps: '--staff,--notes' })
     document.documentElement.classList.remove('intro'); document.documentElement.style.overflow = ''; scrollTo(0, 0); ScrollTrigger.refresh()
   })
@@ -433,25 +465,24 @@ function landingIntro (tdraw) {
   tl.to('.oneline-cue', { opacity: 0, duration: .3 }, .2)
     .to(S, { note: 0, duration: .8 }, .3)                                                // the drafting notes fall away as the camera moves
     .to(S, { cam: 1, duration: 2.5, ease: 'power1.inOut' }, 0)                           // the camera runs down the strings toward the bridge
-    .to(S, { bow: 1.4, duration: 1.7, ease: 'power1.inOut' }, 1.1)                       // one long down-bow by the bridge; the strings ring
-    .to(S, { cam: 2, duration: 1, ease: 'power2.inOut' }, 2.7)                           // the camera rises and turns to the f-hole…
-    .to(S, { open: 1, duration: .6, ease: 'power1.out' }, 3.0)                           // …where she is, out of focus
-    .to(S, { cam: 3, duration: 1, ease: 'power2.in' }, 3.65)                              // the camera drops through the f-hole
-    .to(S, { blur: 0, duration: .9, ease: 'power2.in' }, 3.7)                            // and the photograph comes into focus
-    .to(ffill, { opacity: 1, duration: .15, ease: 'power1.in' }, 4.58)
-    .to(S, { fade: 0, duration: .15 }, 4.6)
-    .to(S, { shrink: 1, duration: 1, ease: 'power3.inOut' }, 4.8)                        // the photograph settles where the print hangs
-    .to(print, { opacity: 1, duration: .25 }, 5.65)
-    .to(stage, { opacity: 0, duration: .2 }, 5.75)
-    .fromTo(pin, { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: .3, ease: 'back.out(3)' }, 5.8)
-    .fromTo('.table .t-text', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .5 }, 5.8)
-    .to(S, { settle: 1, duration: 1.4, ease: 'power2.out' }, 5.8)                        // the name rings, then rests
-    .set(ink, { opacity: 1 }, 5.9)                                                     // (hidden until then: its dash caps leave dots)
-    .to(ink, { strokeDashoffset: 0, duration: 1.2, ease: 'power1.inOut' }, 5.9)          // the homepage violin draws itself
-    .to(cav, { opacity: 1, duration: .3 }, 6.8)
-    .fromTo($$('.call', tdraw), { autoAlpha: 0 }, { autoAlpha: 1, duration: .4, stagger: .1 }, 6.9)
-    .to('.table .readout', { opacity: .75, duration: .4 }, 7.2)
-  if (navStaff && !phone) tl.fromTo(navStaff, { '--staff': 0 }, { '--staff': 1, duration: .4 }, 6.0)   // the header staff fades back in
-    .fromTo(navStaff, { '--notes': 0 }, { '--notes': 1, duration: .4, ease: 'back.out(2)' }, 6.3)
+    .to(S, { bow: 1.4, duration: 1.7, ease: 'power1.inOut' }, 1.1)                       // one long down-bow by the bridge; the strings ring…
+  NOTES.forEach((_, i) => tl.to(S, { ['k' + i]: 1, duration: .95, ease: 'power2.inOut' }, 1.55 + i * .12))   // …and each one throws its note up to the staff
+  if (navStaff && !phone) tl.fromTo(navStaff, { '--notes': 0 }, { '--notes': 1, duration: .2 }, 2.85)
+  tl.to(S, { lift: 1, duration: .95, ease: 'power2.inOut' }, 2.8)                        // the four strings peel off and straighten into the staff
+  if (navStaff && !phone) tl.fromTo(navStaff, { '--staff': 0 }, { '--staff': 1, duration: .2 }, 3.6)
+  tl.to(S, { cam: 2, duration: 1, ease: 'power2.inOut' }, 2.75)                          // the camera rises and turns to the f-hole…
+    .to(S, { open: 1, duration: .6, ease: 'power1.out' }, 3.0)                            // …where she is, out of focus
+    .to(S, { cam: 3, duration: 1, ease: 'power2.in' }, 3.7)                               // the camera drops through the f-hole
+    .to(S, { blur: 0, duration: .9, ease: 'power2.in' }, 3.75)                            // and the photograph comes into focus
+    .to(ffill, { opacity: 1, duration: .15, ease: 'power1.in' }, 4.62)
+    .to(S, { fade: 0, duration: .15 }, 4.65)
+    .set(heroImg, { opacity: 1 }, 4.8)                                                   // the page's own photograph, under the stage's identical one…
+    .to(stage, { opacity: 0, duration: .2 }, 4.85)                                        // nothing moves: the stage's photograph and the page's are the same picture
+    .fromTo(marks.filter(m => !m.matches('.dim,.stamp')), { opacity: 0, scale: .6 }, { opacity: 1, scale: 1, duration: .35, stagger: .05, ease: 'power3.out' }, 4.95)   // the plate is marked up
+    .fromTo($('.plate-photo .dim', run), { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: .55, ease: 'power3.inOut' }, 5.05)
+    .fromTo($('.plate-photo .stamp', run), { opacity: 0, scale: 1.7, rotation: -14 }, { opacity: 1, scale: 1, rotation: -4, duration: .22, ease: 'power4.in' }, 5.5)   // and stamped
+    .fromTo('.table .t-text', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .5 }, 5.15)
+    .to(S, { settle: 1, duration: 1.4, ease: 'power2.out' }, 5.15)                        // the name rings, then rests
+    .to('.table .readout', { opacity: .75, duration: .4 }, 5.6)
   tl.to({}, { duration: .4 })
 }

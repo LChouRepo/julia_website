@@ -316,12 +316,11 @@ nav .mark span{font-size:18px}
 }
 @media (max-width:860px){html.intro .t-draw{z-index:3}html.intro .oneline-cue{display:none!important}}
 html.intro .t-draw .oneline{display:block;fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-html.intro .t-draw .ink,html.intro .t-draw .cav,html.intro .t-draw .call{opacity:0}
 html.intro .oneline-tip{display:block;position:fixed;left:0;top:0;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 5px rgba(24,24,27,.07);opacity:0;pointer-events:none;z-index:5}
 html.intro .oneline-cue{display:block;position:absolute;left:4vw;bottom:6vh;font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.7}
 html.intro .oneline-cue i{display:block;font:300 22px/1.2 Spectral,serif;letter-spacing:0;text-transform:none;margin-bottom:4px}
 html.intro .table .t-text,html.intro .table .t-print,html.intro .table .readout{opacity:0}
-html.intro .table .t-text,html.intro .t-draw .call{visibility:hidden}
+html.intro .table .t-text{visibility:hidden}
 
 /* header staff: the four open strings G D A E, one under each page; the current page's note is red */
 .nav-staff{position:absolute;left:0;top:100%;width:100%;height:40px;overflow:visible;pointer-events:none}
@@ -389,3 +388,41 @@ footer .replay{display:block;margin-top:6px;font-size:13px;opacity:.72;text-deco
 .dstage canvas{cursor:pointer}
 .table h1 .l{display:inline-block}
 html.intro .t-draw .ink{opacity:1}
+
+/* ---------- landing: her photograph as a full-screen drafting plate (frame C) ---------- */
+.table.hero-plate{display:block;padding:0;min-height:0;height:100vh;height:100svh;overflow:hidden}
+.plate-photo{position:absolute;inset:0;margin:0}
+.plate-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:20% 50%}
+.plate-photo .mk{position:absolute;pointer-events:none}
+.plate-photo .crop{width:22px;height:22px;border:0 solid var(--ink)}
+.plate-photo .crop.tl{top:100px;left:3vw;border-width:1px 0 0 1px}.plate-photo .crop.tr{top:100px;right:3vw;border-width:1px 1px 0 0}
+.plate-photo .crop.bl{bottom:3.2vh;left:3vw;border-width:0 0 1px 1px}.plate-photo .crop.br{bottom:3.2vh;right:3vw;border-width:0 1px 1px 0}
+.plate-photo .reg{top:54%;width:16px;height:16px;border:1px solid var(--ink);border-radius:50%}
+.plate-photo .reg:before,.plate-photo .reg:after{content:"";position:absolute;background:var(--ink)}
+.plate-photo .reg:before{left:7px;top:-6px;width:1px;height:26px}.plate-photo .reg:after{top:7px;left:-6px;width:26px;height:1px}
+.plate-photo .reg.l{left:calc(3vw - 8px)}.plate-photo .reg.r{right:calc(3vw - 8px)}
+.plate-photo .sheet{top:104px;right:calc(3vw + 34px);font:500 11px "Archivo Narrow",sans-serif;letter-spacing:.24em}
+.plate-photo .dim{left:calc(3vw + 40px);right:calc(3vw + 40px);bottom:calc(3.2vh + 10px);height:1px;background:linear-gradient(90deg,var(--ink) calc(22% - 76px),transparent calc(22% - 76px) calc(22% + 76px),var(--ink) calc(22% + 76px));transform-origin:50% 50%}
+.plate-photo .dim:before,.plate-photo .dim:after{content:"";position:absolute;top:-5px;width:1px;height:11px;background:var(--ink)}
+.plate-photo .dim:before{left:0}.plate-photo .dim:after{right:0}
+.plate-photo .dim span{position:absolute;left:22%;top:-8px;transform:translateX(-50%);padding:0 10px;font:500 11px "Archivo Narrow",sans-serif;letter-spacing:.24em;line-height:16px}
+.plate-photo .stamp{right:calc(3vw + 34px);bottom:calc(3.2vh + 34px);font:600 12px "Archivo Narrow",sans-serif;letter-spacing:.3em;color:var(--red);border:1.5px solid var(--red);padding:4px 10px 4px 13px;transform:rotate(-4deg);mix-blend-mode:multiply}
+.hero-plate .t-text{position:absolute;left:calc(3vw + 34px);top:calc(50% + 20px);transform:translateY(-52%);max-width:min(34vw,520px);z-index:2}
+.hero-plate .readout{position:absolute;left:calc(3vw + 34px);top:104px;bottom:auto;max-width:40vw;z-index:2}   /* the plate's header line, opposite SHEET 1 / 4 */
+.strings-nav{display:flex;justify-content:center;padding:12vh 4vw 4vh}
+.strings-nav .t-draw{height:min(80vh,780px);width:auto;margin:0;position:static;opacity:1}
+html.intro .plate-photo .mk,html.intro .plate-photo img{opacity:0}
+@media (max-width:860px){
+  /* phones: the photograph fills the first screen with nothing over her face; the name follows on the paper */
+  .table.hero-plate{height:auto;overflow:visible}
+  .plate-photo{position:relative;height:100vh;height:100svh}
+  .plate-photo img{object-position:47% 30%}
+  .plate-photo .crop.tl,.plate-photo .crop.tr{top:84px}
+  .plate-photo .sheet{top:88px}
+  .plate-photo .reg,.plate-photo .stamp{display:none}
+  .hero-plate .t-text,.hero-plate .readout{position:static;transform:none;max-width:none;padding:0 4vw}
+  .hero-plate .t-text{padding-top:40px}
+  .hero-plate .readout{padding-bottom:20px;margin-top:22px}
+  .strings-nav .t-draw{height:62vh;position:static;opacity:1;right:auto;top:auto}
+  .strings-nav .t-draw a{display:inline}
+}

@@ -120,10 +120,11 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
   if (tdraw) {   // the violin below the photograph draws itself when it comes into view, then its pegs lead out to the pages
     const ink = $('.ink', tdraw), L = screenLen(ink)
     gsap.set(ink, { strokeDasharray: L, strokeDashoffset: L }); gsap.set([$('.cav', tdraw), ...$$('.call', tdraw)], { opacity: 0 })
-    once(tdraw, gsap.timeline({ paused: true })
-      .to(ink, { strokeDashoffset: 0, duration: 2.2, ease: 'power1.inOut' }, 0)
-      .to($('.cav', tdraw), { opacity: 1, duration: .4 }, 1.5)
-      .to($$('.call', tdraw), { opacity: 1, duration: .5, stagger: .12 }, 1.9))
+    // drawn by the scroll itself: it starts the moment the band peeks in and is complete by the time it is in view
+    gsap.timeline({ scrollTrigger: { trigger: '.strings-nav', start: 'top bottom', end: 'top 15%', scrub: .6 } })
+      .to(ink, { strokeDashoffset: 0, duration: 2.2, ease: 'none' }, 0)
+      .to($('.cav', tdraw), { opacity: 1, duration: .4 }, 1.6)
+      .to($$('.call', tdraw), { opacity: 1, duration: .5, stagger: .12 }, 1.7)
   }
 
   // titles rise out of a mask, line by line

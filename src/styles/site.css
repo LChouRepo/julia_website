@@ -484,7 +484,7 @@ html.intro .plate-photo .mk,html.intro .plate-photo img{opacity:0}
    staggered. Transitions, so a quick move from one peg to the next retargets instead of restarting. */
 @media (min-width:861px){
   html.js .sn-panel{--ease:cubic-bezier(.23,1,.32,1);visibility:hidden;pointer-events:none;transition:visibility 0s .28s}
-  .sn-panel.on{visibility:visible;pointer-events:auto;transition:visibility 0s}
+  html.js .sn-panel.on{visibility:visible;pointer-events:auto;transition:visibility 0s}
   .sn-panel>*{opacity:0;transform:translateX(var(--dx,0));transition:opacity .18s ease,transform .28s var(--ease)}
   .sn-side.left .sn-panel>*{--dx:24px}.sn-side.right .sn-panel>*{--dx:-24px}
   .sn-panel.on>*{opacity:1;transform:none;transition:opacity .24s ease,transform .28s var(--ease)}

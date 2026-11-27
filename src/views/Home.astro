@@ -14,12 +14,7 @@ const callouts = PAGES.map(p => { const g = V.PEGS.find(q => q.n === p.string), 
 const firstLine = s => (s || '').split(/(?<=\.)\s/)[0]
 const next = upcoming[0]
 const fmt = d => new Date(d).toLocaleDateString(lang === 'de' ? 'de-AT' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Vienna' })
-const peeks = {
-  about: { img: about.bioImage, text: firstLine(t(about.intro, lang)) },
-  media: { img: videos[0]?.cover, play: true, text: t(videos[0]?.title, lang) },
-  concerts: { text: next ? `${fmt(next.date)} · ${t(next.title, lang) || t(next.venue, lang) || ''}` : u.concerts.emptyTitle, staff: !next },
-  contact: { text: settings.contactEmail, sub: u.contact.email },
-}
+const sentences = (s, n) => (s || '').split(/(?<=\.)\s/).slice(0, n).join(' ')
 const strings = V.STRINGS.map(st => ({ n: st.n, d: `M${st.nut},${V.NUT} L${st.br},${V.BRIDGE} L${st.tp},${V.TAIL_TOP}` }))
 // three photos taken from the gallery, so deleting one in /admin never leaves a broken image here
 const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(p => p.image)
@@ -64,22 +59,44 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
           <text x={c.lx} y={c.ly + 16} text-anchor={c.anchor} opacity=".6">{u.string(c.string)}</text>
         </a>))}
     </svg>
-    {callouts.map(c => { const p = peeks[c.key]; return (
-      <div class="peek" data-for={c.key} aria-hidden="true">
-        {p.img && <span class="pk-img">{/* her photographs are shown as they are */}<img src={p.img} alt="" loading="lazy" />{p.play && <i class="pk-play"></i>}</span>}
-        {p.staff && <svg class="pk-staff" viewBox="0 0 200 40"><g>{[0, 1, 2, 3, 4].map(i => <line x1="0" x2="200" y1={6 + i * 7} y2={6 + i * 7} />)}</g><ellipse cx="150" cy="16" rx="5" ry="3.5" transform="rotate(-20 150 16)" /></svg>}
-        <span class="pk-k">{u.nav[c.key]} · {u.string(c.string)}</span>
-        {p.sub && <span class="pk-sub">{p.sub}</span>}
-        <span class="pk-t">{p.text}</span>
-      </div>) })}
-  </section>
-
-  <section class="band">
-    <div class="label">{h.watchLabel}</div>
-    <div class="videos">
-      {videos.slice(0, 2).map(v => (
-        <div class="video"><div class="frame"><img src={v.cover} alt="" loading="lazy" /><a class="play" href={path(lang, 'media') + '#v-' + v.slug} aria-label={`${u.media.play}: ${t(v.title, lang)}`}><i></i></a></div>
-          <h3>{t(v.title, lang)}</h3><p>{t(v.subtitle, lang)}</p></div>))}
+    {/* hovering a peg opens that page's panel: About and Media unfold to the left of the violin, Concerts and Contact to the right */}
+    <div class="sn-side left">
+      <article class="sn-panel" data-for="about">
+        <span class="sp-k"><i></i>{u.nav.about} · {u.string('G')}</span>
+        <figure class="sp-img"><img src={about.bioImage} alt={u.alt.playing} loading="lazy" /></figure>
+        <p class="sp-t">{sentences(t(about.intro, lang), 2)}</p>
+        <a class="sp-go" href={path(lang, 'about')}>{h.readBio}</a>
+      </article>
+      <article class="sn-panel" data-for="media">
+        <span class="sp-k"><i></i>{u.nav.media} · {u.string('D')}</span>
+        <div class="sp-videos">
+          {videos.slice(0, 2).map(v => (
+            <a class="sp-video" href={path(lang, 'media') + '#v-' + v.slug} aria-label={`${u.media.play}: ${t(v.title, lang)}`}>
+              <span class="sp-frame"><img src={v.cover} alt="" loading="lazy" /><i></i></span>
+              <b>{t(v.title, lang)}</b><small>{t(v.subtitle, lang)}</small>
+            </a>))}
+        </div>
+        <a class="sp-go" href={path(lang, 'media')}>{h.watch}</a>
+      </article>
+    </div>
+    <div class="sn-side right">
+      <article class="sn-panel" data-for="concerts">
+        <span class="sp-k"><i></i>{u.nav.concerts} · {u.string('A')}</span>
+        {next
+          ? <p class="sp-big">{fmt(next.date)}<br /><span>{t(next.title, lang)}</span></p>
+          : <><svg class="sp-staff" viewBox="0 0 300 46" aria-hidden="true">{[0, 1, 2, 3, 4].map(i => <line x1="0" x2="300" y1={6 + i * 8} y2={6 + i * 8} />)}<ellipse cx="236" cy="18" rx="6" ry="4.2" transform="rotate(-20 236 18)" /></svg>
+             <p class="sp-big">{u.concerts.emptyTitle}</p></>}
+        <p class="sp-t">{u.concerts.emptyText}</p>
+        <p class="sp-list">{about.stages.orchestras.slice(0, 3).join(' · ')}</p>
+        <a class="sp-go" href={path(lang, 'concerts')}>{h.seeConcerts}</a>
+      </article>
+      <article class="sn-panel" data-for="contact">
+        <span class="sp-k"><i></i>{u.nav.contact} · {u.string('E')}</span>
+        <p class="sp-big">{u.contact.title.replace('<br>', ' ')}</p>
+        <p class="sp-t">{u.contact.intro}</p>
+        <p class="sp-mail"><small>{u.contact.email}</small><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></p>
+        <a class="sp-go" href={path(lang, 'contact')}>{h.openForm}</a>
+      </article>
     </div>
   </section>
 

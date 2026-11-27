@@ -91,22 +91,18 @@ drawStaff(); document.fonts?.ready.then(drawStaff); addEventListener('resize', d
 
 /* home: hovering (or focusing) a peg rings its string, turns the peg and shows a preview of the page it leads to. Mouse and keyboard only. */
 const strNav = $('.strings-nav')
-if (strNav && matchMedia('(hover:hover)').matches) {
+if (strNav && matchMedia('(hover:hover) and (pointer:fine)').matches) {
   const svg = $('#tdraw', strNav)
-  $$('.call', svg).forEach(a => {
-    const peek = $(`.peek[data-for="${a.dataset.key}"]`, strNav), str = $(`.str[data-s="${a.dataset.s}"]`, svg)
-    const show = () => {
-      const box = strNav.getBoundingClientRect(), r = $('text.big', a).getBoundingClientRect(), left = a.querySelector('text.big').getAttribute('text-anchor') === 'end'
-      const navB = $('nav').getBoundingClientRect().bottom + 50                          // never tucked under the header (or its staff)
-      const top = Math.max(r.top + r.height / 2 - 60, navB)
-      peek.style.top = (top - box.top) + 'px'; peek.style.setProperty('--lead', (r.top + r.height / 2 - top) + 'px')   // the leader always meets its label
-      peek.style.left = (left ? r.left - box.left - 236 - 26 : r.right - box.left + 26) + 'px'
-      peek.classList.toggle('from-left', left); peek.classList.toggle('from-right', !left)
-      a.classList.add('on'); str?.classList.add('on'); peek.classList.add('on')
-    }
-    const hide = () => { a.classList.remove('on'); str?.classList.remove('on'); peek.classList.remove('on') }
-    a.addEventListener('mouseenter', show); a.addEventListener('focus', show); a.addEventListener('mouseleave', hide); a.addEventListener('blur', hide)
-  })
+  let current = null, closeT
+  const open = key => {
+    clearTimeout(closeT); if (current === key) return; current = key
+    $$('.call', svg).forEach(a => a.classList.toggle('on', a.dataset.key === key))
+    $$('.str', svg).forEach(s => s.classList.toggle('on', !!key && $(`.call[data-key="${key}"]`, svg)?.dataset.s === s.dataset.s))
+    $$('.sn-panel', strNav).forEach(p => p.classList.toggle('on', p.dataset.for === key))
+  }
+  $$('.call', svg).forEach(a => { a.addEventListener('mouseenter', () => open(a.dataset.key)); a.addEventListener('focus', () => open(a.dataset.key)) })
+  $$('.sn-panel', strNav).forEach(p => p.addEventListener('mouseenter', () => clearTimeout(closeT)))
+  strNav.addEventListener('mouseleave', () => { closeT = setTimeout(() => open(null), 250) })
 }
 
 /* motion: each block enters the way its material would; one scroll-driven narrative on About */
@@ -120,11 +116,14 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
   if (tdraw) {   // the violin below the photograph draws itself when it comes into view, then its pegs lead out to the pages
     const ink = $('.ink', tdraw), L = screenLen(ink)
     gsap.set(ink, { strokeDasharray: L, strokeDashoffset: L }); gsap.set([$('.cav', tdraw), ...$$('.call', tdraw)], { opacity: 0 })
-    // drawn by the scroll itself: it starts the moment the band peeks in and is complete by the time it is in view
-    gsap.timeline({ scrollTrigger: { trigger: '.strings-nav', start: 'top bottom', end: 'top 15%', scrub: .6 } })
+    // the band holds still while the violin draws itself with the scroll, then its four pegs appear
+    const wide = innerWidth > 860
+    // drawing starts as the band comes up the screen and finishes while it holds still at the top
+    if (wide) ScrollTrigger.create({ trigger: '.strings-nav', start: 'top top', end: '+=55%', pin: true })
+    gsap.timeline({ scrollTrigger: wide ? { trigger: '.strings-nav', start: 'top 80%', end: () => '+=' + innerHeight * 1.3, scrub: .6 } : { trigger: tdraw, start: 'top 85%', end: 'bottom 60%', scrub: .6 } })
       .to(ink, { strokeDashoffset: 0, duration: 2.2, ease: 'none' }, 0)
-      .to($('.cav', tdraw), { opacity: 1, duration: .4 }, 1.6)
-      .to($$('.call', tdraw), { opacity: 1, duration: .5, stagger: .12 }, 1.7)
+      .to($('.cav', tdraw), { opacity: 1, duration: .3 }, 1.9)
+      .to($$('.call', tdraw), { opacity: 1, duration: .4, stagger: .1 }, 2.0)
   }
 
   // titles rise out of a mask, line by line

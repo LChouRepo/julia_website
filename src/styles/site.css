@@ -472,3 +472,12 @@ html.intro .plate-photo .mk,html.intro .plate-photo img{opacity:0}
 .peek .pk-t{display:block;font:300 16px/1.35 Spectral,serif;color:var(--ink)}
 @media (hover:none),(max-width:860px){.peek{display:none}}
 @keyframes land{from{transform:translateY(-14px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* the plan drawing inside the intro: the same ink language as the homepage violin */
+.dstage .plan .ink{fill:none;stroke:var(--ink);stroke-width:1.1;vector-effect:non-scaling-stroke}
+.dstage .plan .cav{fill:var(--ink)}
+.dstage .plan .lead{fill:none;stroke:var(--ink);stroke-width:.8;vector-effect:non-scaling-stroke;stroke-dasharray:2 2}
+.dstage .plan .pegfill{fill:transparent;stroke:none;transition:fill .2s}
+.dstage .plan text{font:500 11px "Archivo Narrow";fill:var(--ink)}
+.dstage .plan text.big{font:300 17px Spectral,serif}
+.dstage .plan .call.on .pegfill{fill:var(--red)}.dstage .plan .call.on text{fill:var(--red)}.dstage .plan .call.on .lead{stroke:var(--red)}

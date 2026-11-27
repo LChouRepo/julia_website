@@ -205,11 +205,28 @@ function landingIntro (tdraw) {
   const sample = (d, n) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); $('defs', stage).appendChild(p)
     const L = p.getTotalLength(); return Array.from({ length: n }, (_, i) => { const q = p.getPointAtLength(L * i / n); return [q.x, q.y] }) }
   const plate = pts => pts.map(([x, z]) => [x, 0, z])
-  const FH = tdraw.dataset.fhole.split(/(?=M)/).slice(0, 3).map((d, i) => plate(sample(d, i ? 20 : 90)))   // right f-hole: outline + two eyes
+  const BODY = plate(sample(tdraw.dataset.body, 200))
+  // half-width of the body at each z (every 2 mm), from the outline: the arching is measured against it
+  const WZ = new Float32Array(180)
+  BODY.forEach((P, i) => { const Q = BODY[(i + 1) % BODY.length]     // walk every outline segment so no 2 mm band is skipped
+    const k0 = Math.ceil(Math.min(P[2], Q[2]) / 2), k1 = Math.floor(Math.max(P[2], Q[2]) / 2)
+    for (let k = Math.max(0, k0); k <= Math.min(179, k1); k++) { const u = Q[2] === P[2] ? 0 : (k * 2 - P[2]) / (Q[2] - P[2]); WZ[k] = Math.max(WZ[k], Math.abs(P[0] + (Q[0] - P[0]) * u)) } })
+  for (let pass = 0; pass < 3; pass++) for (let k = 1; k < 179; k++) WZ[k] = (WZ[k - 1] + 2 * WZ[k] + WZ[k + 1]) / 4   // smooth, so contours run clean
+  const wz = z => WZ[Math.max(0, Math.min(179, Math.round(z / 2)))] || 1
+  const ARCH = 15, gz = z => Math.pow(Math.sin(Math.PI * Math.max(0, Math.min(1, z / 356))), .55)
+  const we = z => Math.max(wz(z), 70)                                                     // the arch narrows only a little at the waist
+  const arch = (x, z) => Math.max(0, ARCH * gz(z) * (1 - Math.min(1, (x / we(z)) ** 2)))
+  const onTop = pts => pts.map(([x, z]) => [x, arch(x, z) + .15, z])
+  // a contour of the arching (all points at height h), as a closed loop: right side down, left side back up
+  const contour = h => { const R = [], L = []
+    for (let z = 1; z < 356; z += 1.5) { const A = ARCH * gz(z); if (A <= h) continue; const x = Math.min(wz(z) - 2.5, we(z) * Math.sqrt(1 - h / A)); R.push([x, h, z]); L.unshift([-x, h, z]) }
+    return R.concat(L) }
+  const CONTOURS = [4, 8, 11.5].map(contour), PURFLING = contour(.9)
+  const RIB = 30, RIBS = BODY.map(([x, , z]) => [x, -RIB, z])
+  const FH = tdraw.dataset.fhole.split(/(?=M)/).slice(0, 3).map((d, i) => onTop(sample(d, i ? 20 : 90)))   // right f-hole: outline + two eyes, cut into the arch
   const area = s => s.reduce((A, p, i) => { const q = s[(i + 1) % s.length]; return A + p[0] * q[2] - q[0] * p[2] }, 0)
   FH.forEach(s => { if (Math.sign(area(s)) !== Math.sign(area(FH[0]))) s.reverse() })   // one winding, so the eyes add to the cut instead of punching through it
   const FHL = FH.map(s => s.map(([x, y, z]) => [-x, y, z]))
-  const BODY = plate(sample(tdraw.dataset.body, 200))
   const NUT = -132, BRIDGE = 190, FB_END = 136
   const brY = x => 33 - (x / 20) ** 2 * 3                                     // the bridge's arched top
   const NOTES = [{ n: 'G', f: 196.00, w: .24, nut: -8.25, br: -17.25 }, { n: 'D', f: 293.66, w: .19, nut: -2.75, br: -5.75 },
@@ -219,12 +236,13 @@ function landingIntro (tdraw) {
   const FB = [[-12, NUT], [12, NUT], [21, FB_END - 4], [17, FB_END], [-17, FB_END], [-21, FB_END - 4]].map(([x, z]) => [x, fbY(z), z])
   const side = [[20, 29], [16.5, 22], [14, 17], [16, 12], [20.5, 4], [21, 0], [11, 0], [9, 5], [5, 8], [0, 9]]   // arched top down the waist to a foot and the arch between the feet
   const BR = [...Array.from({ length: 13 }, (_, i) => { const x = -20 + i * 40 / 12; return [x, brY(x), BRIDGE] }),
-    ...side.map(([x, y]) => [x, y, BRIDGE]), ...side.slice(0, -1).reverse().map(([x, y]) => [-x, y, BRIDGE])]
+    ...side.map(([x, y]) => [x, Math.max(y, arch(x, BRIDGE) - 1), BRIDGE]), ...side.slice(0, -1).reverse().map(([x, y]) => [-x, Math.max(y, arch(-x, BRIDGE) - 1), BRIDGE])]   // the feet stand on the arch
 
   // the camera: four stations (position, look-at); S.cam runs 0→3 between them
+  const AF = arch(36, 189)
   const KEYS = phone
-    ? [[[0, 44, -175], [0, 0, 240]], [[0, 50, 70], [0, 24, 260]], [[36, 130, 150], [36, 0, 189]], [[36, 1.4, 189], [36, -60, 189.4]]]
-    : [[[0, 34, -168], [0, -14, 250]], [[0, 46, 70], [0, 24, 260]], [[36, 100, 150], [36, 0, 189]], [[36, 1.4, 189], [36, -60, 189.4]]]
+    ? [[[0, 50, -175], [0, 4, 240]], [[0, 56, 70], [0, 28, 260]], [[36, 136, 150], [36, AF, 189]], [[36, AF + 1.4, 189], [36, AF - 60, 189.4]]]
+    : [[[0, 42, -168], [0, -8, 250]], [[0, 52, 70], [0, 28, 260]], [[36, 106, 150], [36, AF, 189]], [[36, AF + 1.4, 189], [36, AF - 60, 189.4]]]
   const F = Math.min(W * 1.6, H * 1.1), NEAR = .8
   const S = { cam: 0, bow: -1.4, note: 1, open: 0, blur: phone ? 8 : 14, fade: 1, shrink: 0, settle: 0 }
   const amp = [0, 0, 0, 0]
@@ -255,6 +273,47 @@ function landingIntro (tdraw) {
     const ls = l.filter((_, i) => keep[i]).map(scr), rs = r.filter((_, i) => keep[i]).map(scr).reverse()
     if (ls.length < 2) return
     g.beginPath(); [...ls, ...rs].forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); g.fill()
+  }
+  function poly3 (pts) {
+    const c = pts.map(view), out = []
+    for (let i = 0; i < c.length; i++) { const a = c[i], b = c[(i + 1) % c.length]
+      if (a[2] >= NEAR) out.push(a); if ((a[2] >= NEAR) !== (b[2] >= NEAR)) out.push(cut(a, b)) }
+    if (out.length < 3) return false
+    g.beginPath(); out.map(scr).forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); return true
+  }
+  const SHADE = '#E7DDC9', DARK = '#D9CDB4'
+  // the instrument as a solid: shadow on the paper, ribs with hatching on the shaded side, the arched top with its
+  // contours and purfling, the fingerboard and the bridge as blocks, and each string's shadow on what lies under it
+  function instrument () {
+    g.save(); g.filter = 'blur(16px)'; g.fillStyle = 'rgba(40,30,10,.13)'
+    if (poly3(BODY.map(([x, , z]) => [x + 16, -RIB - .5, z + 12]))) g.fill(); g.restore()
+    g.strokeStyle = INK; g.lineWidth = .8; g.fillStyle = SHADE
+    if (poly3(RIBS)) { g.fill(); g.stroke() }
+    g.globalAlpha *= .45; g.lineWidth = .6; g.beginPath()
+    BODY.forEach(([x, , z], i) => { if (i % 2 === 0 && x > 6) path3([[x, 0, z], [x, -RIB, z]]) }); g.stroke(); g.globalAlpha /= .45
+    g.lineWidth = .9; g.beginPath(); [24, 50, 76, 124, 150, 176].forEach(i => path3([BODY[i], RIBS[i]])); g.stroke()   // the corners and bouts, as edges
+    g.fillStyle = PAPER; g.lineWidth = 1.1; if (poly3(BODY)) { g.fill(); g.stroke() }
+    g.lineWidth = .6; g.beginPath(); path3(PURFLING, true); g.stroke()
+    g.globalAlpha *= .4; g.beginPath(); CONTOURS.forEach(c => path3(c, true)); g.stroke(); g.globalAlpha /= .4
+    g.lineWidth = 1; g.fillStyle = PAPER; g.beginPath(); FHL.forEach(s => path3(s, true)); g.stroke()
+    // fingerboard: a block 5 mm thick, sides in shade, top lit
+    const FBB = FB.map(([x, y, z]) => [x, y - 5, z])
+    g.fillStyle = DARK; g.lineWidth = .8
+    FB.forEach((p, i) => { const q = FB[(i + 1) % FB.length]; if (poly3([p, q, FBB[(i + 1) % FB.length], FBB[i]])) { g.fill(); g.stroke() } })
+    g.fillStyle = PAPER; if (poly3(FB)) { g.fill(); g.stroke() }
+    // bridge: two faces 4 mm apart joined along the arched top
+    const BRB = BR.map(([x, y, z]) => [x * .96, y, z + 4.2])
+    g.fillStyle = DARK; if (poly3(BRB)) { g.fill(); g.stroke() }
+    g.fillStyle = SHADE; for (let i = 0; i < 12; i++) if (poly3([BR[i], BR[i + 1], BRB[i + 1], BRB[i]])) { g.fill(); g.stroke() }
+    g.fillStyle = PAPER; if (poly3(BR)) { g.fill(); g.stroke() }
+    g.beginPath(); path3([[-12, 20.5, NUT], [12, 20.5, NUT]]); g.stroke()
+    // string shadows, thrown a little to the right onto the fingerboard or the top
+    g.strokeStyle = 'rgba(24,24,27,.16)'; g.lineWidth = 1.4; g.beginPath()
+    NOTES.forEach(s => {   // a shadow falls on the fingerboard, then drops onto the top: two separate runs, never one line between them
+      const on = [], off = []
+      for (let j = 0; j <= 40; j++) { const [x, , z] = strAt(s, j / 40), sx = x + 3; (z < FB_END ? on : off).push([sx, (z < FB_END ? fbY(z) : arch(sx, z)) + .2, z]) }
+      if (on.length > 1) path3(on); if (off.length > 1) path3(off) })
+    g.stroke(); g.strokeStyle = INK
   }
   const label = (P, txt, dx, dy) => { const c = view(P); if (c[2] < NEAR) return; const [x, y] = scr(c); g.fillText(txt, x + dx, y + dy) }
 
@@ -293,8 +352,7 @@ function landingIntro (tdraw) {
       }
       // the instrument: body outline, the left f-hole, fingerboard, bridge, nut, in a constant hairline like the rest of the site
       g.globalAlpha = S.fade; g.lineWidth = 1
-      g.beginPath(); path3(BODY, true); FHL.forEach(s => path3(s, true)); path3(FB, true); path3(BR, true)
-      path3([[-12, 20.5, NUT], [12, 20.5, NUT]]); g.stroke()
+      instrument()
       // strings: tapering bands in depth; a string the bow (or a click) sets going turns vermilion and blurs, like a long exposure
       const speed = Math.abs(S.bow - lastBow); lastBow = S.bow
       const showBow = S.bow > -1.35 && S.bow < 1.35, bx = S.bow * 520, hair = showBow ? [bx - 278, bx + 292] : [0, -1]

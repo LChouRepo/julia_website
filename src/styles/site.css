@@ -514,3 +514,4 @@ html.intro .plate-photo .mk,html.intro .plate-photo img{opacity:0}
 /* timed intro on touch screens: no long scroll track, the hero is simply the first screen */
 html.intro.intro-timed .intro-run{height:auto}
 html.intro.intro-timed .intro-run>.table{position:relative}
+@media (max-width:860px){.strings-nav .t-draw{pointer-events:auto}}   /* the old phone rule made the hero's faint violin inert; this one is the menu */

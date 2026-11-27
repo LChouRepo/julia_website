@@ -30,7 +30,7 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
       <p class="lede">{t(settings.tagline, lang)}</p>
       <div class="ctas"><a class="pill dark" href={path(lang, 'media') + '#videos'}>{h.watch}</a><a class="pill line" href={path(lang, 'contact')}>{h.booking}</a></div>
     </div>
-    <svg class="t-draw" id="tdraw" data-fhole={V.F_R.d} viewBox="-150 -240 300 610" role="img" aria-label={h.drawingLabel}>
+    <svg class="t-draw" id="tdraw" viewBox="-150 -240 300 610" role="img" aria-label={h.drawingLabel}>
       <path class="ink" d={OUTLINE} /><path class="cav" d={V.CAVITY} /><path class="oneline" />
       {callouts.map(c => (
         <a href={path(lang, c.key)} class="call">

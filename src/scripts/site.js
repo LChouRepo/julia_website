@@ -89,6 +89,24 @@ function drawStaff () {
 }
 drawStaff(); document.fonts?.ready.then(drawStaff); addEventListener('resize', drawStaff)
 
+/* home: hovering (or focusing) a peg rings its string, turns the peg and shows a preview of the page it leads to. Mouse and keyboard only. */
+const strNav = $('.strings-nav')
+if (strNav && matchMedia('(hover:hover)').matches) {
+  const svg = $('#tdraw', strNav)
+  $$('.call', svg).forEach(a => {
+    const peek = $(`.peek[data-for="${a.dataset.key}"]`, strNav), str = $(`.str[data-s="${a.dataset.s}"]`, svg)
+    const show = () => {
+      const box = strNav.getBoundingClientRect(), r = $('text.big', a).getBoundingClientRect(), left = a.querySelector('text.big').getAttribute('text-anchor') === 'end'
+      const navB = $('nav').getBoundingClientRect().bottom + 50                          // never tucked under the header (or its staff)
+      peek.style.top = (Math.max(r.top + r.height / 2 - 60, navB) - box.top) + 'px'
+      peek.style.left = (left ? r.left - box.left - 236 - 26 : r.right - box.left + 26) + 'px'
+      a.classList.add('on'); str?.classList.add('on'); peek.classList.add('on')
+    }
+    const hide = () => { a.classList.remove('on'); str?.classList.remove('on'); peek.classList.remove('on') }
+    a.addEventListener('mouseenter', show); a.addEventListener('focus', show); a.addEventListener('mouseleave', hide); a.addEventListener('blur', hide)
+  })
+}
+
 /* motion: each block enters the way its material would; one scroll-driven narrative on About */
 gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
   const once = (el, tl) => ScrollTrigger.create({ trigger: el, start: 'top 82%', once: true, onEnter: () => tl.play() })

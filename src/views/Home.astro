@@ -3,13 +3,24 @@ import Base from '../layouts/Base.astro'
 import Print from '../components/Print.astro'
 import V, { OUTLINE } from '../lib/violin.js'
 import { UI, PAGES, path } from '../lib/i18n.js'
-import { settings, about, videos, photos, t } from '../lib/content.js'
+import { settings, about, videos, photos, upcoming, t } from '../lib/content.js'
 const { lang } = Astro.props
 const u = UI[lang], h = u.home
 // the ink violin's four pegs lead out to the four pages
 const ly = { G: -112, D: -206, A: -214, E: -122 }
 const callouts = PAGES.map(p => { const g = V.PEGS.find(q => q.n === p.string), s = g.s
   return { ...p, s, y: g.y, peg: V.peg(s, g.y), lead: `M${s * 35},${g.y} L${s * 62},${g.y} L${s * 96},${ly[p.string]}`, lx: s * 100, ly: ly[p.string], anchor: s > 0 ? 'start' : 'end' } })
+// what each peg previews on hover: a picture or a line from the page it leads to
+const firstLine = s => (s || '').split(/(?<=\.)\s/)[0]
+const next = upcoming[0]
+const fmt = d => new Date(d).toLocaleDateString(lang === 'de' ? 'de-AT' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Vienna' })
+const peeks = {
+  about: { img: about.bioImage, text: firstLine(t(about.intro, lang)) },
+  media: { img: videos[0]?.cover, play: true, text: t(videos[0]?.title, lang) },
+  concerts: { text: next ? `${fmt(next.date)} · ${t(next.title, lang) || t(next.venue, lang) || ''}` : u.concerts.emptyTitle, staff: !next },
+  contact: { text: settings.contactEmail, sub: u.contact.email },
+}
+const strings = V.STRINGS.map(st => ({ n: st.n, d: `M${st.nut},${V.NUT} L${st.br},${V.BRIDGE} L${st.tp},${V.TAIL_TOP}` }))
 // three photos taken from the gallery, so deleting one in /admin never leaves a broken image here
 const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(p => p.image)
 ---
@@ -45,13 +56,22 @@ const wire = photos.filter(p => p.image !== settings.heroImage).slice(6, 9).map(
   <section class="strings-nav">
     <svg class="t-draw" id="tdraw" data-fhole={V.F_R.d} data-body={V.BODY} viewBox="-150 -240 300 610" role="img" aria-label={h.drawingLabel}>
       <path class="ink" d={OUTLINE} /><path class="cav" d={V.CAVITY} />
+      {strings.map(s => <g class="str" data-s={s.n}><path class="glow" d={s.d} /><path class="line" d={s.d} /></g>)}
       {callouts.map(c => (
-        <a href={path(lang, c.key)} class="call">
+        <a href={path(lang, c.key)} class="call" data-key={c.key} data-s={c.string}>
           <path class="pegfill" d={c.peg} /><path class="lead" d={c.lead} />
           <text class="big" x={c.lx} y={c.ly + 3} text-anchor={c.anchor}>{u.nav[c.key]}</text>
           <text x={c.lx} y={c.ly + 16} text-anchor={c.anchor} opacity=".6">{u.string(c.string)}</text>
         </a>))}
     </svg>
+    {callouts.map(c => { const p = peeks[c.key]; return (
+      <div class="peek" data-for={c.key} aria-hidden="true">
+        {p.img && <span class="pk-img">{/* her photographs are shown as they are */}<img src={p.img} alt="" loading="lazy" />{p.play && <i class="pk-play"></i>}</span>}
+        {p.staff && <svg class="pk-staff" viewBox="0 0 200 40"><g>{[0, 1, 2, 3, 4].map(i => <line x1="0" x2="200" y1={6 + i * 7} y2={6 + i * 7} />)}</g><ellipse cx="150" cy="16" rx="5" ry="3.5" transform="rotate(-20 150 16)" /></svg>}
+        <span class="pk-k">{u.nav[c.key]} · {u.string(c.string)}</span>
+        {p.sub && <span class="pk-sub">{p.sub}</span>}
+        <span class="pk-t">{p.text}</span>
+      </div>) })}
   </section>
 
   <section class="band">

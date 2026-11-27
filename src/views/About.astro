@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro'
+import Print from '../components/Print.astro'
+import Peg from '../components/Peg.astro'
+import V, { OUTLINE } from '../lib/violin.js'
+import { UI, path } from '../lib/i18n.js'
+import { about, t } from '../lib/content.js'
+const { lang } = Astro.props
+const u = UI[lang], a = u.about
+const F = V.F_R.centre
+---
+<Base lang={lang} page="about" title={`${u.nav.about} · Julia-Xiaozhuo Wang`} desc={u.meta.about}>
+  <header class="pagehead">
+    <div><div class="k"><Peg />{a.kicker}</div><h1 set:html={a.title} /></div>
+    <p>{t(about.intro, lang)}</p>
+  </header>
+
+  <section class="band" id="story">
+    <div class="prose">
+      <div class="side"><div class="label">{a.story}</div></div>
+      <div>
+        <p class="quote" style="font-size:clamp(24px,2.4vw,36px)">{lang === "de" ? "„" : "“"}{t(about.storyQuote, lang)}{lang === "de" ? "“" : "”"}</p>
+        <p style="margin-top:28px">{t(about.storyText, lang)}</p>
+      </div>
+      <Print src={about.storyImage} alt={u.alt.portrait} tag={`${u.plate} 06`} style="width:100%;align-self:start;transform:rotate(1.2deg)" />
+    </div>
+  </section>
+
+  <section class="band" id="biography">
+    <div class="prose">
+      <div class="side"><div class="label">{a.biography}</div><a class="pill line" href={about.pressKit} download style="font-size:14px;padding:9px 18px">{a.download}</a></div>
+      <div>{about.biography.map((b, i) => <><h3 style={i ? 'margin-top:34px' : ''}>{t(b.heading, lang)}</h3><p>{t(b.text, lang)}</p></>)}</div>
+      <Print src={about.bioImage} alt={u.alt.playing} tag={`${u.plate} 07`} style="width:100%;align-self:start;transform:rotate(-1deg)" />
+    </div>
+  </section>
+
+  <section class="band" id="prizes">
+    <div class="label">{a.prizes}</div>
+    <ol class="ledger">{/* newest first; within a year, the order set in the CMS (importance) */}{[...about.prizes].sort((x, y) => y.year - x.year).map(p => <li><b>{p.year}</b><span>{p.competition}</span><em>{t(p.result, lang)}</em></li>)}</ol>
+  </section>
+
+  <section class="band" id="teachers">
+    <div class="label">{a.teachers}</div>
+    <div class="cols">{about.teachers.map(g => <div><h4>{t(g.group, lang)}</h4><ul>{g.names.map(n => <li>{n}</li>)}</ul></div>)}</div>
+  </section>
+
+  <section class="plate" id="repertoire">
+    <svg id="draw" viewBox="-170 -245 340 620" role="img" aria-label={a.drawing}>
+      <path class="ink" d={OUTLINE} />
+      <g class="dims">
+        <line class="dim" x1="-86" x2="86" y1="64" y2="64" /><text x="92" y="67">{a.dims[0]}</text>
+        <line class="dim" x1="-57" x2="57" y1="153" y2="153" /><text x="63" y="156">{a.dims[1]}</text>
+        <line class="dim" x1="-106" x2="106" y1="272" y2="272" /><text x="112" y="275">{a.dims[2]}</text>
+        <line class="dim" x1="128" x2="128" y1="0" y2="356" /><text x="134" y="178" transform="rotate(90 134 178)">{a.dims[3]}</text>
+        {[[-214, 0], [-160, 1], [10, 2], [192, 4], [282, 5]].map(([y, i]) => <text x="-160" y={y}>{a.parts[i]}</text>)}
+        <text x="62" y="236">{a.parts[3]}</text>
+      </g>
+      <ellipse class="red ring" cx={F[0] + 2} cy={F[1]} rx="30" ry="50" transform={`rotate(-12 ${F[0]} ${F[1]})`} />
+    </svg>
+    <div>
+      <h2>{a.repertoire}</h2>
+      <p class="sub">{a.repSub}</p>
+      <div class="reps" style="margin-top:34px">
+        {about.repertoire.map(r => <details class="rep"><summary><b>{r.count}</b><span>{t(r.category, lang)}</span><i>{a.list}</i></summary><ul>{r.items.map(x => <li>{x}</li>)}</ul></details>)}
+      </div>
+    </div>
+  </section>
+</Base>

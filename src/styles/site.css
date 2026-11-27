@@ -1,0 +1,512 @@
+:root{--sand:#E8DCC4;--sand2:#DDCFB3;--ink:#18181B;--dark:#141413;--red:#B91C1C;--ivory:#F3F1EC}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--sand)}
+body{color:var(--ink);font-family:"Archivo Narrow",system-ui,sans-serif;font-size:16px;overflow-x:hidden}
+.paper{background-color:var(--sand);background-image:
+  repeating-linear-gradient(30deg,rgba(24,24,27,.045) 0 1px,transparent 1px 46px),
+  repeating-linear-gradient(-30deg,rgba(24,24,27,.045) 0 1px,transparent 1px 46px),
+  radial-gradient(120% 90% at 30% 20%,rgba(255,250,240,.55),transparent 60%)}
+a{color:inherit}
+nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:14px 4vw;font-size:15px;background:rgba(232,220,196,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid rgba(24,24,27,.08)}
+nav .mark{font-family:Spectral,serif;font-weight:300;font-size:21px;text-decoration:none}
+nav .links a{text-decoration:none;margin:0 14px;opacity:.8}
+nav .right{display:flex;align-items:center;gap:18px}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 24px;font:500 15px "Archivo Narrow";text-decoration:none;border:1px solid var(--ink);transition:background .3s,color .3s}
+.pill.dark{background:var(--ink);color:var(--ivory)}
+.pill.dark:hover{background:var(--red);border-color:var(--red)}
+.pill.line:hover{background:var(--ink);color:var(--ivory)}
+nav .menu{display:none;background:none;border:0;font:inherit;color:inherit}
+/* 1 · hero */
+.hero{min-height:100vh;display:grid;grid-template-columns:44fr 56fr;align-items:center;padding:110px 4vw 60px;position:relative;overflow:hidden}
+.hero .ghost{position:absolute;left:4vw;top:50%;height:120vh;transform:translateY(-50%) rotate(-8deg);opacity:.16;pointer-events:none}
+.hero .ghost path{fill:none;stroke:var(--ink);stroke-width:.7}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.35);border:1px solid rgba(24,24,27,.12)}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--red)}
+h1{font-family:Spectral,serif;font-weight:200;font-size:clamp(52px,7vw,118px);line-height:.95;letter-spacing:-.02em;margin:26px 0 22px}
+.lede{font-size:19px;max-width:30ch;line-height:1.5}
+.ctas{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.print{position:relative;justify-self:center;width:min(48vw,640px);background:#f7f4ee;padding:14px 14px 46px;box-shadow:0 1px 0 rgba(0,0,0,.08),0 30px 60px -20px rgba(40,30,10,.35);transform:rotate(1.2deg)}
+.print canvas{display:block;width:100%;height:auto;background:#f7f4ee}
+.print .tag{position:absolute;left:16px;bottom:15px;font-size:12px;letter-spacing:.06em;opacity:.7}
+.print .pin{position:absolute;top:-7px;left:50%;width:14px;height:14px;border-radius:50%;background:var(--red);box-shadow:0 2px 3px rgba(0,0,0,.35)}
+.readout{position:absolute;right:4vw;bottom:28px;font-size:13px;display:flex;align-items:center;gap:12px;opacity:.75}
+.readout:before{content:"";width:60px;height:1px;background:var(--ink)}
+.orch{position:absolute;left:4vw;bottom:28px;font-size:13px;opacity:.6;display:flex;gap:26px}
+/* 2 · drawing + repertoire */
+.plate{min-height:100vh;display:grid;grid-template-columns:42fr 58fr;gap:4vw;align-items:center;padding:12vh 4vw}
+.plate svg{width:100%;max-height:86vh}
+.plate svg .ink{fill:none;stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke}
+.plate svg .dim{stroke:var(--ink);stroke-width:.6;vector-effect:non-scaling-stroke;opacity:.7}
+.plate svg text{font-family:"Archivo Narrow";font-size:9px;fill:var(--ink)}
+.plate svg .red{fill:none;stroke:var(--red);stroke-width:1.4;vector-effect:non-scaling-stroke}
+h2{font-family:Spectral,serif;font-weight:200;font-size:clamp(40px,4.6vw,76px);line-height:1;letter-spacing:-.015em}
+.plate p.sub{margin-top:16px;font-size:17px;max-width:42ch;line-height:1.5}
+table{width:100%;border-collapse:collapse;margin-top:42px}
+td{padding:20px 0;border-top:1px solid rgba(24,24,27,.25);vertical-align:baseline}
+tr:last-child td{border-bottom:1px solid rgba(24,24,27,.25)}
+td.n{font-family:Spectral,serif;font-weight:200;font-size:56px;width:110px;line-height:1}
+td.k{font-size:19px;font-weight:500;width:34%}
+td.e{font-size:14px;opacity:.7;line-height:1.5}
+.note{margin-top:14px;font-size:12px;opacity:.6}
+/* 3 · darkroom band */
+.darkroom{background:var(--dark);color:var(--ivory);padding:16vh 4vw;position:relative;overflow:hidden}
+.darkroom:before{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 70% 30%,rgba(185,28,28,.10),transparent 70%);pointer-events:none}
+.darkroom .top{display:grid;grid-template-columns:1fr 1.1fr;gap:5vw;align-items:center}
+.darkroom h2{color:var(--ivory)}
+.darkroom .q{margin-top:18px;font-size:18px;opacity:.75;max-width:36ch;line-height:1.5}
+.wire{position:relative;display:flex;gap:2.4vw;padding-top:22px}
+.wire:before{content:"";position:absolute;left:-2vw;right:-4vw;top:8px;height:1px;background:rgba(243,241,236,.35)}
+.wire figure{flex:1;position:relative;background:#f2efe8;padding:7px 7px 26px}
+.wire figure:nth-child(1){transform:rotate(-1.5deg)}.wire figure:nth-child(3){transform:rotate(1.8deg)}
+.wire figure:before{content:"";position:absolute;top:-18px;left:50%;width:8px;height:22px;margin-left:-4px;background:#8b8679;border-radius:2px}
+.wire canvas{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#ddd}
+.wire figcaption{position:absolute;left:8px;bottom:6px;font-size:11px;color:#333}
+.wire svg{position:absolute;inset:-8% -10%;width:120%;height:116%;pointer-events:none;overflow:visible}
+.wire svg path{fill:none;stroke:var(--red);stroke-width:2.2;stroke-linecap:round}
+.prizes{margin-top:12vh;display:grid;grid-template-columns:repeat(4,1fr);gap:2vw}
+.prizes div{border-top:1px solid rgba(243,241,236,.25);padding-top:16px}
+.prizes b{display:block;font-family:Spectral,serif;font-weight:200;font-size:44px;line-height:1}
+.prizes span{display:block;margin-top:10px;font-size:15px;line-height:1.45;opacity:.85}
+.prizes i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);margin-right:8px;vertical-align:middle}
+/* 4 · close */
+.close{padding:16vh 4vw 6vh}
+.close .row{display:grid;grid-template-columns:1.2fr .8fr;gap:5vw;align-items:center}
+.close h2{font-size:clamp(48px,6vw,100px)}
+.close p{margin-top:18px;font-size:18px}
+footer{display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:3vw;margin-top:16vh;font-size:15px}
+footer .mark{font-family:Spectral,serif;font-weight:300;font-size:26px}
+footer h4{font-weight:500;font-size:15px;margin-bottom:12px}
+footer a{display:block;text-decoration:none;opacity:.7;margin:6px 0}
+footer small{display:block;margin-top:10px;opacity:.6}
+.copy{margin-top:8vh;font-size:12px;opacity:.55}
+@media (max-width:860px){
+  nav .links,nav .right a:not(.pill){display:none}nav .menu{display:block}nav .right .pill{display:none}
+  .hero{grid-template-columns:1fr;padding-top:96px;gap:40px}.print{width:100%;transform:none}.readout,.orch{position:static;margin-top:22px}
+  .plate,.darkroom .top,.close .row{grid-template-columns:1fr}.plate svg{max-height:70vh}
+  .prizes{grid-template-columns:1fr 1fr}footer{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== site shell (pages) ===== */
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:99;background:var(--ink);color:var(--ivory);padding:8px 12px}
+nav .mark{display:flex;align-items:center;gap:10px}
+nav .mark svg{width:25px;height:35px;overflow:visible}
+nav .mark svg .cav{fill:var(--ink);stroke:none}
+nav .mark svg path{fill:none;stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke}
+nav .links{display:flex;gap:6px}
+nav .links a{display:inline-flex;align-items:center;gap:9px;margin:0;padding:8px 12px;border-radius:999px;opacity:1}
+.peg{width:26px;height:16px;flex:none;overflow:visible;transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
+.peg path{fill:none;stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke}
+.peg circle{fill:var(--ink)}
+.peg text{font:600 7px "Archivo Narrow";fill:var(--ink);opacity:0}
+nav .links a span{opacity:.75;transition:opacity .2s}
+nav .links a:hover span,nav .links a[aria-current] span{opacity:1}
+nav .links a:hover .peg{transform:rotate(-24deg) scaleY(.7)}                /* turning the peg */
+nav .links a[aria-current] .peg path{fill:var(--red);stroke:var(--red)}
+nav .links a[aria-current] .peg circle{fill:var(--sand)}
+nav .links a[aria-current] .peg{transform:rotate(-24deg) scaleY(.7)}
+nav .links a small{font-size:10px;letter-spacing:.12em;opacity:.45;margin-left:-4px}
+/* mobile menu: the whole head, pegs are the links */
+.headmenu{position:fixed;inset:0;z-index:40;background:var(--sand);display:none;align-items:center;justify-content:center}
+.headmenu.open{display:flex;flex-direction:column;gap:5vh}
+.headmenu svg{width:min(36vw,200px);height:auto;max-height:34vh;overflow:visible}
+.headmenu svg .ink{fill:none;stroke:var(--ink);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.headmenu svg .cav{fill:var(--ink)}
+.headmenu a{position:absolute;font-family:Spectral,serif;font-weight:300;font-size:22px;text-decoration:none;color:var(--ink);transform:translate(-50%,0);text-align:center;padding:6px 8px;min-width:88px}
+.headmenu a small{display:block;font-family:"Archivo Narrow";font-size:11px;letter-spacing:.2em;opacity:.55}
+.headmenu a[aria-current]{color:var(--red)}
+.headmenu .x{position:absolute;top:18px;right:4vw;background:none;border:0;font:500 15px "Archivo Narrow";color:var(--ink)}
+/* page header */
+.pagehead{padding:150px 4vw 8vh;display:grid;grid-template-columns:1fr 1fr;gap:5vw;align-items:end}
+.pagehead .k{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+.pagehead .k .peg{width:34px;height:20px}
+.pagehead .k .peg path{fill:var(--red);stroke:var(--red)}
+.pagehead h1{margin:18px 0 0}
+.pagehead p{font-size:19px;line-height:1.55;max-width:46ch}
+.band{padding:10vh 4vw}
+.band+.band{padding-top:0}
+.label{font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:.6;margin-bottom:18px}
+.rule{border-top:1px solid rgba(24,24,27,.22)}
+/* prose */
+.prose{display:grid;grid-template-columns:220px minmax(0,62ch) 1fr;gap:4vw}
+.prose h3{font-family:Spectral,serif;font-weight:300;font-size:28px;line-height:1.1}
+.prose p{font-size:18px;line-height:1.7;margin-bottom:1.1em}
+.prose .side{align-self:start;position:sticky;top:110px}
+.quote{font-family:Spectral,serif;font-weight:200;font-size:clamp(28px,3.2vw,48px);line-height:1.2;max-width:28ch}
+.quote cite{display:block;margin-top:18px;font:500 14px "Archivo Narrow";font-style:normal;opacity:.7}
+/* lists */
+.ledger{list-style:none}
+.ledger li{display:grid;grid-template-columns:90px 1fr auto;gap:2vw;padding:18px 0;border-top:1px solid rgba(24,24,27,.2);font-size:18px;align-items:baseline}
+.ledger li:last-child{border-bottom:1px solid rgba(24,24,27,.2)}
+.ledger b{font-family:Spectral,serif;font-weight:300;font-size:30px}
+.ledger em{font-style:normal;opacity:.65;font-size:15px}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:3vw}
+.cols h4{font-family:Spectral,serif;font-weight:300;font-size:24px;margin-bottom:14px}
+.cols ul{list-style:none}
+.cols li{font-size:16px;line-height:1.45;padding:7px 0;border-top:1px solid rgba(24,24,27,.14)}
+details.rep{border-top:1px solid rgba(24,24,27,.22)}
+details.rep:last-of-type{border-bottom:1px solid rgba(24,24,27,.22)}
+details.rep summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:90px 1fr auto;gap:2vw;align-items:baseline;padding:22px 0}
+details.rep summary::-webkit-details-marker{display:none}
+details.rep summary b{font-family:Spectral,serif;font-weight:200;font-size:46px;line-height:1}
+details.rep summary span{font-size:20px;font-weight:500}
+details.rep summary i{font-style:normal;font-size:14px;opacity:.6}
+details.rep[open] summary i:after{content:" −"}details.rep:not([open]) summary i:after{content:" +"}
+details.rep ul{list-style:none;columns:2;column-gap:4vw;padding:0 0 26px calc(90px + 2vw)}
+details.rep li{font-size:16px;line-height:1.5;padding:4px 0;break-inside:avoid}
+/* media */
+.videos{display:grid;grid-template-columns:repeat(2,1fr);gap:4vw 3vw}
+.video .frame{position:relative;aspect-ratio:16/9;background:var(--dark);overflow:hidden;box-shadow:0 20px 40px -22px rgba(40,30,10,.5)}
+.video .frame img,.video .frame iframe{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:0}
+.video .play{position:absolute;inset:0;background:none;border:0;cursor:pointer}
+.video .play i{position:absolute;left:50%;top:50%;width:74px;height:74px;margin:-37px 0 0 -37px;border-radius:50%;background:rgba(243,241,236,.92);display:grid;place-items:center;transition:transform .3s}
+.video .play i:after{content:"";border-left:16px solid var(--ink);border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
+.video .play:hover i{transform:scale(1.08)}
+.video h3{font-family:Spectral,serif;font-weight:300;font-size:26px;margin-top:18px;line-height:1.2}
+.video p{font-size:15px;opacity:.7;margin-top:6px}
+.gallery{display:flex;gap:2.4vw;align-items:flex-start}
+.gcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:2.4vw}
+.g2{display:none}
+.gallery .photo{display:block;width:100%;margin:0;padding:10px 10px 30px;background:#f7f4ee;border:0;cursor:zoom-in;box-shadow:0 14px 30px -18px rgba(40,30,10,.45);position:relative;text-align:left}
+.gallery .photo:hover{transition:transform .4s}   /* only the hover eases; a transition on every transform fought the drop-in */
+.gallery .photo:nth-child(3n+1){transform:rotate(-.8deg)}.gallery .photo:nth-child(3n+2){transform:rotate(.6deg)}
+.gallery .photo:hover{transform:rotate(0) translateY(-4px)}
+.gallery img{display:block;width:100%;height:auto}
+.gallery small{position:absolute;left:12px;bottom:9px;font-size:11px;opacity:.6}
+dialog.lb{border:0;padding:0;background:transparent;max-width:92vw;max-height:92vh}
+dialog.lb::backdrop{background:rgba(20,20,19,.88)}
+dialog.lb img{display:block;max-width:92vw;max-height:86vh}
+dialog.lb button{position:fixed;top:18px;right:22px;background:none;border:0;color:#f3f1ec;font:500 15px "Archivo Narrow";cursor:pointer}
+/* concerts */
+.empty{display:grid;grid-template-columns:1.1fr .9fr;gap:5vw;align-items:center;padding:6vh 0}
+.empty h3{font-family:Spectral,serif;font-weight:200;font-size:clamp(34px,3.6vw,56px);line-height:1.05}
+.empty p{margin-top:16px;font-size:18px;line-height:1.6;max-width:44ch}
+.staff{width:100%;height:auto}
+.staff line{stroke:var(--ink);stroke-width:1;opacity:.5;vector-effect:non-scaling-stroke}
+.event{display:grid;grid-template-columns:130px 1fr 1fr 120px;gap:2vw;align-items:center;padding:22px 0;border-top:1px solid rgba(24,24,27,.22)}
+.event .d{font-family:Spectral,serif;font-weight:300;font-size:34px;line-height:1}
+.event .d small{display:block;font:500 13px "Archivo Narrow";letter-spacing:.12em;margin-top:6px;opacity:.65}
+.event h3{font-size:19px;font-weight:500}
+.event p{font-size:15px;opacity:.7}
+.sample{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);border:1px solid var(--red);border-radius:999px;padding:2px 8px;margin-left:8px}
+/* contact */
+.contact{display:grid;grid-template-columns:.9fr 1.1fr;gap:6vw}
+form.booking{display:grid;gap:22px}
+form.booking .two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+form.booking label{display:grid;gap:8px;font-size:14px;font-weight:500}
+form.booking input,form.booking select,form.booking textarea{font:16px "Archivo Narrow";color:var(--ink);background:rgba(255,255,255,.35);border:0;border-bottom:1px solid var(--ink);padding:12px 2px;border-radius:0;outline:none}
+form.booking textarea{min-height:150px;resize:vertical;border:1px solid rgba(24,24,27,.5);padding:12px}
+form.booking :is(input,select,textarea):focus{border-color:var(--red);box-shadow:0 1px 0 var(--red)}
+form.booking .hp{position:absolute;left:-9999px}
+form.booking .err{color:var(--red);font-size:13px;min-height:1em}
+.sent{display:none;padding:40px 0}
+.sent h3{font-family:Spectral,serif;font-weight:200;font-size:44px}
+.direct dl{display:grid;grid-template-columns:110px 1fr;gap:14px 20px;font-size:17px;margin-top:26px}
+.direct dt{opacity:.6}
+.direct dd a{text-underline-offset:4px}
+.tbd{color:var(--red);font-size:13px}
+@media (max-width:860px){
+  nav .links{display:none}
+  .pagehead{grid-template-columns:1fr;padding-top:110px;gap:18px}
+  .prose{grid-template-columns:1fr}.prose .side{position:static}
+  .cols{grid-template-columns:1fr 1fr}.videos{grid-template-columns:1fr}.g3{display:none}.g2{display:flex}
+  .empty,.contact,form.booking .two{grid-template-columns:1fr}
+  .event{grid-template-columns:90px 1fr;row-gap:6px}.event .where{grid-column:2}.event .pill{grid-column:2;justify-self:start}
+  details.rep ul{columns:1;padding-left:0}
+  .ledger li{grid-template-columns:70px 1fr}.ledger em{grid-column:2}
+}
+
+.readout,.close p{line-height:1.5}
+.hm-list{display:grid;gap:4px;width:min(80vw,340px)}
+.hm-list a{position:static;transform:none;display:flex;align-items:center;gap:16px;padding:14px 4px;border-top:1px solid rgba(24,24,27,.18);font-family:Spectral,serif;font-weight:300;font-size:30px;text-decoration:none;color:var(--ink);min-width:0;text-align:left}
+.hm-list a:last-child{border-bottom:1px solid rgba(24,24,27,.18)}
+.hm-list a small{margin-left:auto;font:500 12px "Archivo Narrow";letter-spacing:.2em;opacity:.5}
+.hm-list .peg{width:38px;height:22px}
+.hm-list a[aria-current]{color:var(--red)}.hm-list a[aria-current] .peg path{fill:var(--red);stroke:var(--red)}.hm-list a[aria-current] .peg circle{fill:var(--sand)}
+dialog.lb{margin:auto}
+
+/* ===== review round 1 ===== */
+/* home: the drafting table — name, the ink violin whose pegs index the site, the pinned print over its lower bout */
+.table{position:relative;min-height:100vh;display:grid;grid-template-columns:36fr 30fr 34fr;align-items:center;padding:96px 4vw 70px;overflow:hidden}
+.table h1{font-size:clamp(46px,5.6vw,96px)}
+.t-draw{height:min(84vh,820px);width:100%;overflow:visible;justify-self:center;margin-left:-4vw}
+.t-draw .ink{fill:none;stroke:var(--ink);stroke-width:1.1;vector-effect:non-scaling-stroke}
+.t-draw .cav{fill:var(--ink)}
+.t-draw .lead{fill:none;stroke:var(--ink);stroke-width:.8;vector-effect:non-scaling-stroke;stroke-dasharray:2 2}
+.t-draw a text{font:500 11px "Archivo Narrow";fill:var(--ink)}
+.t-draw a text.big{font:300 17px Spectral,serif}
+.t-draw a:hover text,.t-draw a:focus text{fill:var(--red)}
+.t-draw a:hover .pegfill,.t-draw a:focus .pegfill{fill:var(--red)}
+.t-draw .pegfill{fill:transparent;transition:fill .3s}
+.t-print{width:100%;max-width:500px;margin-left:-6vw;margin-top:22vh;transform:rotate(2deg);z-index:2}
+@media (min-width:861px){.table .readout{position:absolute;left:4vw;bottom:24px;max-width:32vw}}   /* under the name column, clear of the photograph */
+@media (max-width:860px){.table .readout{position:static;max-width:none;margin:4px 0 0}}
+/* darkroom: develop in from the paper instead of a hard cut */
+.darkroom{background:linear-gradient(var(--sand) 0,#8a8273 12vh,#3a3631 26vh,var(--dark) 38vh)}
+.darkroom{padding-top:34vh}
+/* closing letter */
+.letter{padding:16vh 4vw 4vh;max-width:1200px}
+.letter h2{font-size:clamp(34px,4.2vw,68px);line-height:1.22;margin-top:6px}
+.letter h2 a{color:var(--red);text-decoration-thickness:1px;text-underline-offset:8px}
+/* one spacing rhythm */
+.band{padding:9vh 4vw}
+.pagehead{padding-bottom:5vh}
+.close{padding:12vh 4vw 6vh}
+footer{margin-top:0}
+/* desktop pegs, larger and readable */
+nav .links a{gap:10px;padding:8px 14px}
+nav .links .peg{width:36px;height:22px}
+nav .links a small{font-size:12px;opacity:.6;font-weight:600;margin-left:-2px}
+nav .links a span{font-size:16px}
+@media (max-width:860px){
+  .table{grid-template-columns:1fr;padding-top:92px;gap:24px}
+  .t-draw{position:absolute;right:-16vw;top:64px;height:34vh;width:auto;opacity:.3;margin:0;pointer-events:none}
+  .t-draw a{display:none}
+  .t-print{margin:0;max-width:none}
+  .contact>.direct{order:2}
+  .letter{padding-top:10vh}
+}
+
+/* choreography helpers */
+.ln{display:block;overflow:hidden;padding-bottom:.06em}.ln>span{display:block}
+.ruled{position:relative;--rule:1;border-top-color:transparent!important}
+.ruled:before{content:"";position:absolute;left:0;top:-1px;height:1px;width:calc(var(--rule)*100%);background:rgba(24,24,27,.22)}
+.darkroom .ruled:before{background:rgba(243,241,236,.25)}
+.plate{min-height:100vh}
+.staff .note{fill:var(--red)}
+
+/* ===== real site: prints are real <img>; they develop from paper when JS is on ===== */
+.print .ph{display:block;position:relative;overflow:hidden;background:#f7f4ee}
+.print img{display:block;width:100%;height:auto}
+.t-print .ph{aspect-ratio:.9}.t-print img{height:100%;object-fit:cover;object-position:47% 30%}
+.js .print .ph::after{content:"";position:absolute;inset:0;background:#f7f4ee;opacity:.75;transition:opacity 1.6s cubic-bezier(.4,0,.2,1)}
+.js .print.developed .ph::after{opacity:0}
+.wire figure .ph{aspect-ratio:4/5}.wire figure img{height:100%;object-fit:cover}
+.lang{font-size:14px;text-decoration:none;opacity:.75}
+.lang:hover{opacity:1}
+@media (prefers-reduced-motion:reduce){.js .print .ph::after{display:none}}
+.gallery .photo{text-decoration:none;color:inherit}
+
+/* phones without JS: the menu button cannot open, so show the plain links instead */
+@media (max-width:860px){html:not(.js) nav{flex-wrap:wrap;gap:6px}html:not(.js) nav .links{display:flex;flex-wrap:wrap;gap:0}html:not(.js) nav .links a{padding:4px 8px}html:not(.js) nav .menu{display:none}}
+
+/* titles and the name in Cinzel (the artist's chosen title face); reading text stays in Archivo Narrow, long quotes in Spectral */
+h1,h2,.table h1,.pagehead h1,.letter h2,.darkroom h2,.plate h2,nav .mark span,footer .mark,.prose h3,.cols h4,.video h3,.empty h3,.sent h3,
+.ledger b,td.n,details.rep summary b,.prizes b,.event .d,.hm-list a span,.t-draw a text.big{font-family:Cinzel,serif;font-weight:400;letter-spacing:.01em}
+h1,.table h1,.pagehead h1{font-size:clamp(40px,5vw,84px);line-height:1.02}
+.letter h2{font-size:clamp(28px,3.4vw,54px);line-height:1.25}
+.plate h2,.darkroom h2{font-size:clamp(32px,3.6vw,58px)}
+nav .mark span{font-size:18px}
+.prose h3{font-size:24px}
+
+/* concerts: one wide photograph of a real hall, edge to edge */
+.hall{margin:0 0 4vh;position:relative}
+.hall img{display:block;width:100%;height:min(20vw,44vh);object-fit:cover;object-position:50% 30%}
+.hall figcaption{padding:12px 4vw 0;font-size:13px;opacity:.65}
+.empty[hidden],form.booking[hidden]{display:none}
+@media (max-width:860px){.event{grid-template-columns:1fr;row-gap:4px}.event .d{font-size:26px}.event .d small{display:inline;margin-left:10px}.event .where,.event .pill{grid-column:1}}
+@media (max-width:860px){.hall img{height:38vw;object-position:58% 30%}}
+
+/* landing intro: only when the page opted in (html.intro); otherwise these layers stay hidden */
+.t-draw .oneline,.oneline-tip,.oneline-cue{display:none}
+@media (min-width:861px){
+  html.intro .intro-run{height:480vh;position:relative}
+  html.intro .intro-run>.table{position:sticky;top:0;height:100vh;min-height:0}
+  html.intro .t-draw{position:relative;z-index:3}
+}
+@media (max-width:860px){html.intro .t-draw{z-index:3}html.intro .oneline-cue{display:none!important}}
+html.intro .t-draw .oneline{display:block;fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+html.intro .oneline-tip{display:block;position:fixed;left:0;top:0;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 5px rgba(24,24,27,.07);opacity:0;pointer-events:none;z-index:5}
+html.intro .oneline-cue{display:block;position:absolute;left:4vw;bottom:6vh;font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.7}
+html.intro .oneline-cue i{display:block;font:300 22px/1.2 Spectral,serif;letter-spacing:0;text-transform:none;margin-bottom:4px}
+html.intro .table .t-text,html.intro .table .t-print,html.intro .table .readout{opacity:0}
+html.intro .table .t-text{visibility:hidden}
+
+/* header staff: the four open strings G D A E, one under each page; the current page's note is red */
+.nav-staff{position:absolute;left:0;top:100%;width:100%;height:40px;overflow:visible;pointer-events:none}
+.nav-staff .sl{stroke:var(--ink);stroke-width:.6;opacity:.32}
+.nav-staff .ledger{stroke:var(--ink);stroke-width:.7;opacity:.35}
+.nav-staff .nt{fill:none;stroke:var(--ink);stroke-width:1.2}
+.nav-staff .nt{opacity:.45}.nav-staff .nt.here{fill:var(--red);stroke:var(--red);opacity:.75}
+.nav-staff text{font:23px "Noto Music",serif;fill:var(--ink);opacity:.55}
+.string-fly{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:31}
+.string-fly line{stroke:var(--ink);stroke-width:.9;stroke-linecap:round}
+.string-fly .pinhead{fill:var(--red)}
+html.intro .t-print .pin{opacity:0}
+html.intro .nav-staff{--staff:0;--notes:0}
+.nav-staff .sl,.nav-staff text{opacity:calc(var(--staff,1) * .22)}
+.nav-staff .note{opacity:var(--notes,1);transform:translateY(calc((1 - var(--notes,1)) * -10px))}
+@media (max-width:860px){.nav-staff{display:none}}
+/* tablets in landscape (861–1180px): the bar holds name, four pegs and booking on one line */
+@media (min-width:861px) and (max-width:1180px){
+  nav .mark span{font-size:16px;white-space:nowrap}
+  nav .mark{gap:8px}
+  nav .links{gap:0}
+  nav .links a{margin:0 2px;padding:8px 8px;gap:6px}
+  nav .links .peg{width:28px;height:18px}
+  nav .links a span{font-size:15px}
+  nav .links a small{display:none}
+  nav .right{gap:12px}
+}
+
+/* no native scrollbar; the page still scrolls by wheel, keys and touch */
+html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
+
+/* home darkroom on phones: the three prints become an album you swipe through, one centred at a time */
+@media (max-width:860px){
+  .wire{overflow-x:auto;scroll-snap-type:x mandatory;gap:18px;margin:0 -4vw;padding:30px 4vw 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .wire::-webkit-scrollbar{display:none}
+  .wire:before{left:0;right:auto;width:calc(3 * 74vw + 2 * 18px + 8vw);top:14px}
+  .wire figure{flex:0 0 74vw;width:74vw;scroll-snap-align:center}
+}
+/* home darkroom on desktop: three prints share the row (the generic .print width made each one hero-sized and pushed the third off screen) */
+@media (min-width:861px){.wire>.print{width:auto;flex:1 1 0;min-width:0}}
+
+/* polish pass (2026-11-26) */
+/* gallery: a print never splits across two columns (Safari/iPad showed a grey sliver where one did) */
+/* small text meets AA contrast on the sand paper (was .55–.6 opacity, about 4.2:1) */
+.label,.direct dt,footer small,nav .links a small{opacity:.72}
+.copy{opacity:.72}
+::placeholder{color:#5c5a55;opacity:1}
+/* labels no smaller than 12px */
+.gallery small,.wire figcaption{font-size:12px}
+/* touch targets: the phone menu button and footer links are at least 44px tall */
+@media (max-width:860px){
+  nav .menu{min-height:44px;min-width:44px;padding:0 6px}
+  footer a{display:flex;align-items:center;min-height:40px;width:fit-content}
+}
+main:focus{outline:none}
+.sent h3:focus{outline:none}
+/* tilted prints may lean past the page edge; clip it rather than let the page scroll sideways (clip keeps sticky working) */
+main{overflow-x:clip}
+.prizes em{font-style:normal;opacity:.7}
+footer .replay{display:block;margin-top:6px;font-size:13px;opacity:.72;text-decoration:underline;text-underline-offset:3px}
+
+/* landing intro, four strings: the stage sits over the page while it plays */
+.dstage{position:fixed;inset:0;z-index:25;pointer-events:none}
+.dstage canvas,.dstage svg{position:absolute;inset:0;width:100%;height:100%}
+.dstage canvas{cursor:pointer}
+.table h1 .l{display:inline-block}
+html.intro .t-draw .ink{opacity:1}
+
+/* ---------- landing: her photograph as a full-screen drafting plate (frame C) ---------- */
+.table.hero-plate{display:block;padding:0;min-height:0;height:100vh;height:100svh;overflow:hidden}
+.plate-photo{position:absolute;inset:0;margin:0}
+.plate-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:20% 50%}
+.plate-photo .mk{position:absolute;pointer-events:none}
+.plate-photo .crop{width:22px;height:22px;border:0 solid var(--ink)}
+.plate-photo .crop.tl{top:100px;left:3vw;border-width:1px 0 0 1px}.plate-photo .crop.tr{top:100px;right:3vw;border-width:1px 1px 0 0}
+.plate-photo .crop.bl{bottom:3.2vh;left:3vw;border-width:0 0 1px 1px}.plate-photo .crop.br{bottom:3.2vh;right:3vw;border-width:0 1px 1px 0}
+.plate-photo .reg{top:54%;width:16px;height:16px;border:1px solid var(--ink);border-radius:50%}
+.plate-photo .reg:before,.plate-photo .reg:after{content:"";position:absolute;background:var(--ink)}
+.plate-photo .reg:before{left:7px;top:-6px;width:1px;height:26px}.plate-photo .reg:after{top:7px;left:-6px;width:26px;height:1px}
+.plate-photo .reg.l{left:calc(3vw - 8px)}.plate-photo .reg.r{right:calc(3vw - 8px)}
+.plate-photo .sheet{top:104px;right:calc(3vw + 34px);font:500 11px "Archivo Narrow",sans-serif;letter-spacing:.24em}
+.plate-photo .dim{left:calc(3vw + 40px);right:calc(3vw + 40px);bottom:calc(3.2vh + 10px);height:1px;background:linear-gradient(90deg,var(--ink) calc(22% - 76px),transparent calc(22% - 76px) calc(22% + 76px),var(--ink) calc(22% + 76px));transform-origin:50% 50%}
+.plate-photo .dim:before,.plate-photo .dim:after{content:"";position:absolute;top:-5px;width:1px;height:11px;background:var(--ink)}
+.plate-photo .dim:before{left:0}.plate-photo .dim:after{right:0}
+.plate-photo .dim span{position:absolute;left:22%;top:-8px;transform:translateX(-50%);padding:0 10px;font:500 11px "Archivo Narrow",sans-serif;letter-spacing:.24em;line-height:16px}
+.plate-photo .stamp{right:calc(3vw + 34px);bottom:calc(3.2vh + 34px);font:600 12px "Archivo Narrow",sans-serif;letter-spacing:.3em;color:var(--red);border:1.5px solid var(--red);padding:4px 10px 4px 13px;transform:rotate(-4deg);mix-blend-mode:multiply}
+.hero-plate .t-text{position:absolute;left:calc(3vw + 34px);top:calc(50% + 20px);transform:translateY(-52%);max-width:min(34vw,520px);z-index:2}
+.hero-plate .readout{position:absolute;left:calc(3vw + 34px);top:104px;bottom:auto;max-width:40vw;z-index:2}   /* the plate's header line, opposite SHEET 1 / 4 */
+.strings-nav{display:flex;justify-content:center;padding:5vh 4vw 4vh}
+.strings-nav .t-draw{height:min(80vh,780px);width:auto;margin:0;position:static;opacity:1}
+html.intro .plate-photo .mk,html.intro .plate-photo img{opacity:0}
+@media (max-width:860px){
+  /* phones: the photograph fills the first screen with nothing over her face; the name follows on the paper */
+  .table.hero-plate{height:auto;overflow:visible}
+  .plate-photo{position:relative;height:100vh;height:100svh}
+  .plate-photo img{object-position:47% 30%}
+  .plate-photo .crop.tl,.plate-photo .crop.tr{top:84px}
+  .plate-photo .sheet{top:88px}
+  .plate-photo .reg,.plate-photo .stamp{display:none}
+  .hero-plate .t-text,.hero-plate .readout{position:static;transform:none;max-width:none;padding:0 4vw}
+  .hero-plate .t-text{padding-top:40px}
+  .hero-plate .readout{padding-bottom:20px;margin-top:22px}
+  .strings-nav .t-draw{height:62vh;position:static;opacity:1;right:auto;top:auto}
+  .strings-nav .t-draw a{display:inline}
+}
+
+/* violin pegs: hovering a page's peg rings its string, turns the peg, runs the lead, and shows a small preview of the page */
+.strings-nav{position:relative}
+.t-draw .str .line{fill:none;stroke:transparent;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.t-draw .str .glow{fill:none;stroke:transparent;stroke-width:7;vector-effect:non-scaling-stroke}
+.t-draw .str.on .line{stroke:var(--red);animation:ring .07s linear infinite alternate}
+.t-draw .str.on .glow{stroke:rgba(185,28,28,.16);animation:ring .09s linear infinite alternate-reverse}
+@keyframes ring{from{transform:translateX(-.7px)}to{transform:translateX(.7px)}}
+.t-draw .call .pegfill{transform-box:fill-box;transform-origin:center}
+.t-draw .call.on .pegfill{fill:var(--red);animation:tune .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes tune{0%{transform:scaleY(1)}35%{transform:scaleY(.35)}100%{transform:scaleY(1)}}
+.t-draw .call.on .lead{stroke:var(--red);animation:march .6s linear infinite}
+@keyframes march{to{stroke-dashoffset:-8}}
+.t-draw .call.on text{fill:var(--red)}
+/* hero text: the tagline on one line; the dimension line runs only under the photograph half, so it never crosses the text */
+@media (min-width:861px){
+  .hero-plate .lede{white-space:nowrap;max-width:none}
+  .hero-plate .t-text{max-width:none}
+  .plate-photo .dim{left:50%}
+  .plate-photo .dim{background:linear-gradient(90deg,var(--ink) calc(30% - 76px),transparent calc(30% - 76px) calc(30% + 76px),var(--ink) calc(30% + 76px))}
+  .plate-photo .dim span{left:30%}
+}
+@media (min-width:861px){
+  .plate-photo .dim{background:linear-gradient(90deg,var(--ink) calc(78% - 70px),transparent calc(78% - 70px) calc(78% + 70px),var(--ink) calc(78% + 70px))}
+  .plate-photo .dim span{left:78%}                     /* the label sits on the grey backdrop, not on her */
+  .hero-plate .readout{top:132px}                       /* clear of the header staff */
+}
+
+/* ---------- strings-nav: the violin in the middle, each peg's page unfolds beside it ---------- */
+.strings-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:3vw;padding:6vh 4vw;min-height:100vh}
+.strings-nav .t-draw{grid-column:2;grid-row:1}
+.sn-side{grid-row:1;position:relative;align-self:stretch;display:grid;align-items:center}
+.sn-side.left{grid-column:1}.sn-side.right{grid-column:3}
+.sn-panel{grid-area:1/1;max-width:520px;width:100%}
+.sn-side.left .sn-panel{justify-self:end}
+.sp-k{display:flex;align-items:center;gap:10px;font:500 11px "Archivo Narrow",sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--red);margin-bottom:18px}
+.sp-k i{display:block;width:34px;border-top:1px solid currentColor}
+.sp-img{margin:0 0 18px}.sp-img img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.sp-t{font:300 18px/1.5 Spectral,serif;margin:0 0 16px}
+.sp-big{font:400 clamp(24px,2.3vw,34px)/1.15 Cinzel,serif;margin:0 0 14px}.sp-big span{font-size:.62em;opacity:.7}
+.sp-list{font-size:14px;opacity:.72;margin:0 0 18px}
+.sp-mail{margin:0 0 20px}.sp-mail small{display:block;font-size:12px;opacity:.7}.sp-mail a{font:300 20px Spectral,serif;color:var(--ink)}
+.sp-staff{display:block;width:100%;height:46px;margin-bottom:12px}
+.sp-staff line{stroke:var(--ink);stroke-width:.8;opacity:.5}.sp-staff ellipse{fill:var(--red)}
+.sp-videos{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.sp-video{display:block;color:var(--ink);text-decoration:none}
+.sp-frame{display:block;position:relative;overflow:hidden;margin-bottom:10px;background:#111}
+.sp-frame img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.sp-frame i{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:1px solid rgba(247,243,234,.95)}
+.sp-frame i:after{content:"";position:absolute;left:15px;top:12px;border-left:11px solid rgba(247,243,234,.95);border-top:7px solid transparent;border-bottom:7px solid transparent}
+.sp-video b{display:block;font:400 15px/1.3 Cinzel,serif}.sp-video small{display:block;font-size:12px;opacity:.65;margin-top:2px}
+.sp-go{display:inline-flex;align-items:center;gap:8px;font:500 14px "Archivo Narrow",sans-serif;color:var(--ink);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px}
+.sp-go:after{content:"";width:18px;border-top:1px solid currentColor}
+
+/* motion: a wipe that unfolds away from the violin (left panels to the left, right panels to the right), then the contents follow,
+   staggered. Transitions, so a quick move from one peg to the next retargets instead of restarting. */
+@media (min-width:861px){
+  html.js .sn-panel{--ease:cubic-bezier(.23,1,.32,1);visibility:hidden;pointer-events:none;transition:visibility 0s .28s}
+  html.js .sn-panel.on{visibility:visible;pointer-events:auto;transition:visibility 0s}
+  .sn-panel>*{opacity:0;transform:translateX(var(--dx,0));transition:opacity .18s ease,transform .28s var(--ease)}
+  .sn-side.left .sn-panel>*{--dx:24px}.sn-side.right .sn-panel>*{--dx:-24px}
+  .sn-panel.on>*{opacity:1;transform:none;transition:opacity .24s ease,transform .28s var(--ease)}
+  .sn-panel.on>:nth-child(2){transition-delay:.04s}.sn-panel.on>:nth-child(3){transition-delay:.08s}.sn-panel.on>:nth-child(4){transition-delay:.12s}.sn-panel.on>:nth-child(5){transition-delay:.16s}
+  .sn-panel .sp-img,.sn-panel .sp-frame{clip-path:inset(0 0 0 0);transition:clip-path .3s var(--ease)}
+  .sn-side.left .sn-panel:not(.on) .sp-img,.sn-side.left .sn-panel:not(.on) .sp-frame{clip-path:inset(0 0 0 100%)}
+  .sn-side.right .sn-panel:not(.on) .sp-img,.sn-side.right .sn-panel:not(.on) .sp-staff{clip-path:inset(0 100% 0 0)}
+  .sn-panel .sp-staff{clip-path:inset(0 0 0 0);transition:clip-path .3s var(--ease)}
+  .sn-panel .sp-k i{transform-origin:var(--from,right);transform:scaleX(0);transition:transform .28s var(--ease)}
+  .sn-side.right .sn-panel .sp-k i{--from:left}
+  .sn-panel.on .sp-k i{transform:scaleX(1)}
+}
+@media (prefers-reduced-motion:reduce){.sn-panel>*{transform:none!important}.sn-panel .sp-img,.sn-panel .sp-frame,.sn-panel .sp-staff{clip-path:none!important}}
+/* touch and narrow screens: no hover, so every panel is simply there, under the violin */
+@media (max-width:860px){
+  .strings-nav{grid-template-columns:1fr;min-height:0;gap:40px}
+  .strings-nav .t-draw{grid-row:1;grid-column:1;justify-self:center}
+  .sn-side{grid-column:1!important;grid-row:auto;display:flex;flex-direction:column;gap:56px}
+  .sn-panel{max-width:none}
+}
+@media (min-width:861px){.strings-nav{height:100vh;min-height:0;padding:96px 4vw 3vh}.strings-nav .t-draw{height:calc(100vh - 130px)}}   /* the whole violin, labels included, sits below the header while it holds */
+/* timed intro on touch screens: no long scroll track, the hero is simply the first screen */
+html.intro.intro-timed .intro-run{height:auto}
+html.intro.intro-timed .intro-run>.table{position:relative}
+@media (max-width:860px){.strings-nav .t-draw{pointer-events:auto}}   /* the old phone rule made the hero's faint violin inert; this one is the menu */

@@ -173,117 +173,160 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
   if (form) once(form, gsap.timeline({ paused: true }).from($$('label', form), { y: 10, opacity: 0, duration: .5, stagger: .06, ease: 'power3.out' }))
 })
 
-/* landing intro, "four strings": the intro is the instrument. Four strings hang on the drafting paper; scrolling draws one long
-   down-bow across them and they ring; they part, an f-hole opens between them and the camera goes through it to her; the
-   photograph settles into the pinned print, and the four strings rise to become the header staff. Click a string to hear it. */
+/* landing intro, "3D camera": the camera lies on the fingerboard and looks down the four strings to the bridge, the violin
+   drawn in perspective in the site's ink. Scrolling dollies it along the strings; a bow crosses them by the bridge and they
+   ring; the camera rises, turns to the f-hole beside the bridge, where her photograph waits out of focus, and drops through
+   it as the picture sharpens; the photograph then settles into the pinned print. Click a string to hear it. */
 function landingIntro (tdraw) {
   const seen = () => { try { localStorage.setItem('introSeen', '1') } catch {} }   // first visit only; the footer link replays it
   window.__introRunning = true
-  const phone = innerWidth <= 860                // phones: the same story, timed (a tap fast-forwards), no header staff to land on
+  const phone = innerWidth <= 860                // phones: the same story, timed (a tap fast-forwards)
   scrollTo(0, 0); lenis?.scrollTo(0, { immediate: true })
   const NS = 'http://www.w3.org/2000/svg', run = $('.intro-run'), print = $('.t-print', run), pin = $('.pin', print), ph = $('.ph', print)
   const ink = $('.ink', tdraw), cav = $('.cav', tdraw), h1 = $('.table h1', run)
-  const W = innerWidth, H = innerHeight, RED = '#B91C1C', INK = '#18181B'
+  const W = innerWidth, H = innerHeight, INK = '#18181B', PAPER = '#F7F3EA'
 
-  // the stage: a canvas for strings and bow, an svg for the f-hole and the photograph behind it
+  // the stage: a canvas for the instrument and bow, an svg for the f-hole and the photograph behind it
   const stage = document.createElement('div'); stage.className = 'dstage'; stage.setAttribute('aria-hidden', 'true')
   const cv = document.createElement('canvas'), g = cv.getContext('2d'), dpr = Math.min(devicePixelRatio, 2)
   cv.width = W * dpr; cv.height = H * dpr
-  const FHOLE = tdraw.dataset.fhole.split(/(?=M)/).slice(0, 3).join(' ')   // the f-hole outline from the site's own violin drawing (right-hand f, bbox ≈ x 24–55, y 154–226)
-  const FH = { cx: 39.5, cy: 190, h: 72, pivot: [36.5, 189.5] }
-  const s0 = (phone ? .42 : .5) * H / FH.h
   const img = $('img', ph).currentSrc || $('img', ph).src
-  stage.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><mask id="fmask" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
-      <rect width="${W}" height="${H}" fill="#000"/><g id="fg"><path d="${FHOLE}" fill="#fff"/></g><rect id="ffill" width="${W}" height="${H}" fill="#fff" opacity="0"/></mask></defs>
-    <g mask="url(#fmask)"><image id="fphoto" href="${img}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/></g>
-    <g id="fline"><path d="${FHOLE}" fill="none" stroke="${INK}" stroke-width="1" vector-effect="non-scaling-stroke"/></g></svg>`
+  stage.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs>
+      <filter id="fblur" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="0"/></filter>
+      <mask id="fmask" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
+      <rect width="${W}" height="${H}" fill="#000"/><path id="fg" fill="#fff"/><rect id="ffill" width="${W}" height="${H}" fill="#fff" opacity="0"/></mask></defs>
+    <g mask="url(#fmask)"><g id="fpg" opacity="0"><image id="fphoto" href="${img}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/></g></g>
+    <path id="fline" fill="none" stroke="${INK}" stroke-width="1"/></svg>`
   stage.prepend(cv); document.body.appendChild(stage)
-  const fg = $('#fg', stage), fline = $('#fline', stage), photo = $('#fphoto', stage), ffill = $('#ffill', stage)
+  const fg = $('#fg', stage), fline = $('#fline', stage), fpg = $('#fpg', stage), photo = $('#fphoto', stage), ffill = $('#ffill', stage), blur = $('feGaussianBlur', stage)
 
-  // strings: nut at the top, bridge at the bottom, tapering like a real fingerboard; G is the thickest
-  const NOTES = [{ n: 'G', f: 196.00, w: 2.3 }, { n: 'D', f: 293.66, w: 1.8 }, { n: 'A', f: 440.00, w: 1.35 }, { n: 'E', f: 659.25, w: .95 }]
-  const S = { bow: -.3, spread: 0, open: 0, push: 1, lift: 0, fade: 1, shrink: 0, settle: 0 }
+  // the violin in millimetres, from the site's own drawing (src/lib/violin.js): x across, z along the instrument
+  // (nut −132, bridge 190), y up off the top plate. Outlines are sampled once into 3D points.
+  const sample = (d, n) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); $('defs', stage).appendChild(p)
+    const L = p.getTotalLength(); return Array.from({ length: n }, (_, i) => { const q = p.getPointAtLength(L * i / n); return [q.x, q.y] }) }
+  const plate = pts => pts.map(([x, z]) => [x, 0, z])
+  const FH = tdraw.dataset.fhole.split(/(?=M)/).slice(0, 3).map((d, i) => plate(sample(d, i ? 20 : 90)))   // right f-hole: outline + two eyes
+  const area = s => s.reduce((A, p, i) => { const q = s[(i + 1) % s.length]; return A + p[0] * q[2] - q[0] * p[2] }, 0)
+  FH.forEach(s => { if (Math.sign(area(s)) !== Math.sign(area(FH[0]))) s.reverse() })   // one winding, so the eyes add to the cut instead of punching through it
+  const FHL = FH.map(s => s.map(([x, y, z]) => [-x, y, z]))
+  const BODY = plate(sample(tdraw.dataset.body, 200))
+  const NUT = -132, BRIDGE = 190, FB_END = 136
+  const brY = x => 33 - (x / 20) ** 2 * 3                                     // the bridge's arched top
+  const NOTES = [{ n: 'G', f: 196.00, w: .24, nut: -8.25, br: -17.25 }, { n: 'D', f: 293.66, w: .19, nut: -2.75, br: -5.75 },
+    { n: 'A', f: 440.00, w: .15, nut: 2.75, br: 5.75 }, { n: 'E', f: 659.25, w: .11, nut: 8.25, br: 17.25 }]
+  const strAt = (s, u) => [s.nut + (s.br - s.nut) * u, 20 + (brY(s.br) - 20) * u, NUT + (BRIDGE - NUT) * u]   // u: 0 nut → 1 bridge
+  const fbY = z => 19.5 + 10 * (z - NUT) / (BRIDGE - NUT)
+  const FB = [[-12, NUT], [12, NUT], [21, FB_END - 4], [17, FB_END], [-17, FB_END], [-21, FB_END - 4]].map(([x, z]) => [x, fbY(z), z])
+  const side = [[20, 29], [16.5, 22], [14, 17], [16, 12], [20.5, 4], [21, 0], [11, 0], [9, 5], [5, 8], [0, 9]]   // arched top down the waist to a foot and the arch between the feet
+  const BR = [...Array.from({ length: 13 }, (_, i) => { const x = -20 + i * 40 / 12; return [x, brY(x), BRIDGE] }),
+    ...side.map(([x, y]) => [x, y, BRIDGE]), ...side.slice(0, -1).reverse().map(([x, y]) => [-x, y, BRIDGE])]
+
+  // the camera: four stations (position, look-at); S.cam runs 0→3 between them
+  const KEYS = phone
+    ? [[[0, 44, -175], [0, 0, 240]], [[0, 50, 70], [0, 24, 260]], [[36, 130, 150], [36, 0, 189]], [[36, 1.4, 189], [36, -60, 189.4]]]
+    : [[[0, 34, -168], [0, -14, 250]], [[0, 46, 70], [0, 24, 260]], [[36, 100, 150], [36, 0, 189]], [[36, 1.4, 189], [36, -60, 189.4]]]
+  const F = Math.min(W * 1.6, H * 1.1), NEAR = .8
+  const S = { cam: 0, bow: -1.4, note: 1, open: 0, blur: phone ? 8 : 14, fade: 1, shrink: 0, settle: 0 }
   const amp = [0, 0, 0, 0]
-  const NUT = H * (phone ? .16 : .13), BRIDGE = H * (phone ? .8 : .84), BOW_Y = .7
-  const staffTop = () => navStaff ? navStaff.getBoundingClientRect().top : 0, staffLeft = () => navStaff ? navStaff.getBoundingClientRect().left : 0
-  function geom (i) {
-    const k = i - 1.5, sp = 1 + S.spread * 4.5, n = phone ? 16 : 24, br = phone ? 26 : 40
-    let a = { x0: W / 2 + k * n * sp, y0: NUT, x1: W / 2 + k * br * sp, y1: BRIDGE }
-    if (S.lift > 0 && navStaff && !phone) {        // rising to the header: G becomes the bottom line, E the second from the top
-      const y = staffTop() + TOP + (4 - i) * GAP, e = S.lift < .5 ? 2 * S.lift * S.lift : 1 - Math.pow(-2 * S.lift + 2, 2) / 2
-      const b = { x0: staffLeft() + staffX[0], y0: y, x1: staffLeft() + staffX[1], y1: y }
-      a = { x0: a.x0 + (b.x0 - a.x0) * e, y0: a.y0 + (b.y0 - a.y0) * e, x1: a.x1 + (b.x1 - a.x1) * e, y1: a.y1 + (b.y1 - a.y1) * e }
+  let C, R, U, Fw
+  function camera () {
+    const k = Math.min(2, Math.floor(S.cam)), t = S.cam - k, a = KEYS[k], b = KEYS[k + 1], mix = (p, q) => p.map((v, i) => v + (q[i] - v) * t)
+    C = mix(a[0], b[0]); const T = mix(a[1], b[1]), d = T.map((v, i) => v - C[i]), m = Math.hypot(...d)
+    Fw = d.map(v => v / m); const yaw = Math.atan2(Fw[0], Fw[2])
+    R = [Math.cos(yaw), 0, -Math.sin(yaw)]
+    U = [Fw[1] * R[2] - Fw[2] * R[1], Fw[2] * R[0] - Fw[0] * R[2], Fw[0] * R[1] - Fw[1] * R[0]]
+  }
+  const view = P => { const d = [P[0] - C[0], P[1] - C[1], P[2] - C[2]], dot = v => d[0] * v[0] + d[1] * v[1] + d[2] * v[2]; return [dot(R), dot(U), dot(Fw)] }
+  const scr = c => [W / 2 + F * c[0] / c[2], H / 2 - F * c[1] / c[2]]
+  const cut = (a, b) => { const t = (NEAR - a[2]) / (b[2] - a[2]); return a.map((v, i) => v + (b[i] - v) * t) }
+  // a polyline in 3D, clipped at the near plane so lines behind the camera never wrap round
+  function path3 (pts, close) {
+    const c = pts.map(view), n = c.length
+    for (let i = 0; i < (close ? n : n - 1); i++) {
+      let a = c[i], b = c[(i + 1) % n]
+      if (a[2] < NEAR && b[2] < NEAR) continue
+      if (a[2] < NEAR) a = cut(a, b); if (b[2] < NEAR) b = cut(b, a)
+      const A = scr(a), B = scr(b); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1])
     }
-    return a
   }
-  // the bow: stick with a little camber, the hair, the frog with its pearl eye, the hatchet head; drawn in the site's ink
-  function drawBow (cx, y) {
-    const len = Math.min(W * .86, 1100), x = cx - len / 2
-    g.save(); g.lineCap = 'round'
-    g.fillStyle = '#F7F3EA'; g.fillRect(x + 20, y - 3, len - 28, 5)                                                                 // hair ribbon
-    g.strokeStyle = INK; g.lineWidth = .9; g.strokeRect(x + 20, y - 3, len - 28, 5)
-    g.lineWidth = 3.4; g.beginPath(); g.moveTo(x - 6, y - 15); g.quadraticCurveTo(x + len * .5, y - 24, x + len - 4, y - 12); g.stroke() // stick
-    g.fillStyle = INK; g.beginPath(); g.moveTo(x + len - 8, y - 13); g.lineTo(x + len + 4, y - 15); g.lineTo(x + len - 2, y + 1); g.lineTo(x + len - 10, y + 1); g.closePath(); g.fill() // head
-    g.strokeStyle = '#F7F3EA'; g.lineWidth = 1; g.beginPath(); g.moveTo(x + len + 2, y - 13.5); g.lineTo(x + len - 3, y - .5); g.stroke()  // ivory face
-    g.fillStyle = INK; g.beginPath(); g.roundRect(x - 2, y - 15, 26, 16, 3); g.fill()                                                // frog
-    g.fillStyle = '#F7F3EA'; g.beginPath(); g.arc(x + 11, y - 7, 3, 0, 7); g.fill()                                                  // pearl eye
-    g.fillStyle = INK; g.fillRect(x - 16, y - 13, 12, 6)                                                                              // button
-    g.restore()
-    return [x + 18, x + len - 6]
+  // a filled band between two 3D rails (a string's body, a sounding string's blur), dropped where it passes the near plane
+  function band (L, Rr) {
+    const l = L.map(view), r = Rr.map(view), keep = l.map((p, i) => p[2] > NEAR && r[i][2] > NEAR)
+    const ls = l.filter((_, i) => keep[i]).map(scr), rs = r.filter((_, i) => keep[i]).map(scr).reverse()
+    if (ls.length < 2) return
+    g.beginPath(); [...ls, ...rs].forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); g.fill()
   }
+  const label = (P, txt, dx, dy) => { const c = view(P); if (c[2] < NEAR) return; const [x, y] = scr(c); g.fillText(txt, x + dx, y + dy) }
+
+  // the bow, lying across the strings between fingerboard and bridge: hair ribbon, cambered stick, frog and head
+  const ZB = 166, HY = 32
+  function drawBow (cx) {
+    const x0 = cx - 300, x1 = cx + 300
+    g.fillStyle = PAPER; g.strokeStyle = INK; g.lineWidth = 1
+    const hair = [[x0 + 22, HY, ZB], [x1 - 8, HY, ZB], [x1 - 8, HY + 2.4, ZB], [x0 + 22, HY + 2.4, ZB]]
+    band([hair[0], hair[1]], [hair[3], hair[2]]); g.beginPath(); path3(hair, true); g.stroke()
+    const stick = Array.from({ length: 25 }, (_, i) => { const u = i / 24; return [x0 + u * 600, HY + 9 + 3.5 * Math.sin(Math.PI * u) - 4 * u, ZB] })
+    const mid = view([cx, HY + 10, ZB])[2]
+    g.lineWidth = Math.min(7, Math.max(1.4, 2.2 * F / Math.max(mid, 1))); g.lineCap = 'round'; g.beginPath(); path3(stick); g.stroke()
+    g.fillStyle = INK
+    band([[x0, HY, ZB], [x0 + 26, HY, ZB]], [[x0, HY + 11, ZB], [x0 + 26, HY + 11, ZB]])                          // frog
+    band([[x1 - 10, HY, ZB], [x1, HY, ZB]], [[x1 - 12, HY + 6, ZB], [x1 + 2, HY + 8, ZB]])                       // head
+    g.fillStyle = PAPER; const e = view([x0 + 13, HY + 6, ZB]); if (e[2] > NEAR) { const [x, y] = scr(e); g.beginPath(); g.arc(x, y, Math.max(1, 2.2 * F / e[2]), 0, 7); g.fill() }  // pearl eye
+    return [x0 + 22, x1 - 8]
+  }
+
   let lastBow = S.bow, t0 = performance.now()
   function frame () {
     const t = (performance.now() - t0) / 1000
+    camera()
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H)
-    if (S.fade > .002) {   // strings and bow (the f-hole and photo below keep moving after they fade)
-    g.globalAlpha = S.fade
-    const speed = Math.abs(S.bow - lastBow); lastBow = S.bow
-    const bowX = W * S.bow, by = NUT + (BRIDGE - NUT) * BOW_Y
-    const showBow = S.bow > -.28 && S.bow < 1.24 && S.spread < .5
-    const hair = showBow ? [bowX - Math.min(W * .86, 1100) / 2 + 18, bowX + Math.min(W * .86, 1100) / 2 - 6] : [0, -1]
-    NOTES.forEach((s, i) => {
-      const q = geom(i), xb = q.x0 + (q.x1 - q.x0) * BOW_Y
-      if (xb > hair[0] && xb < hair[1]) amp[i] = Math.min(1, amp[i] + speed * 26)      // the hair is on the string: it sounds while the bow moves
-      amp[i] *= .965
-      const A = amp[i] * 9 * (1 - S.lift), wv = 2 * Math.PI * s.f / 196 * 3.1
-      const y0 = q.y0, y1 = q.y1, len = Math.hypot(q.x1 - q.x0, y1 - y0), nx = (y1 - y0) / len, ny = -(q.x1 - q.x0) / len
-      const at = (u, d) => [q.x0 + (q.x1 - q.x0) * u + nx * d, y0 + (y1 - y0) * u + ny * d]
-      if (A > .3) {   // the blur of a sounding string, like a long exposure: a faint vermilion lens around it
-        g.fillStyle = `rgba(185,28,28,${.1 + amp[i] * .12})`; g.beginPath()
-        for (let j = 0; j <= 40; j++) { const u = j / 40, [x, y] = at(u, A * Math.sin(Math.PI * u)); j ? g.lineTo(x, y) : g.moveTo(x, y) }
-        for (let j = 40; j >= 0; j--) { const u = j / 40, [x, y] = at(u, -A * Math.sin(Math.PI * u)); g.lineTo(x, y) }
-        g.fill()
+    if (S.fade > .002) {
+      g.globalAlpha = S.fade; g.strokeStyle = INK; g.lineCap = 'round'; g.lineJoin = 'round'
+      // drafting construction: the horizon and the vanishing point the strings run toward
+      if (S.note > .01) {
+        const vx = W / 2 + F * R[2] / Fw[2], vy = H / 2 - F * U[2] / Fw[2]
+        g.globalAlpha = S.fade * S.note * .35; g.lineWidth = .6; g.setLineDash([2, 5])
+        g.beginPath(); g.moveTo(W * .06, vy); g.lineTo(W * .94, vy); g.stroke(); g.setLineDash([])
+        g.beginPath(); g.arc(vx, vy, 3, 0, 7); g.stroke()
+        g.globalAlpha = S.fade * S.note * .5; g.fillStyle = INK; g.font = '10px "Archivo Narrow", sans-serif'; g.textAlign = 'left'
+        g.fillText('V.P.', vx + 7, vy - 6); if (!phone) g.fillText('HORIZON', W * .06, vy - 6)
       }
-      g.beginPath()
-      for (let j = 0; j <= 80; j++) { const u = j / 80, d = A * (Math.sin(Math.PI * u) * Math.sin(t * wv) + .3 * Math.sin(2 * Math.PI * u) * Math.sin(t * wv * 2.01 + 1)); const [x, y] = at(u, d); j ? g.lineTo(x, y) : g.moveTo(x, y) }
-      g.strokeStyle = amp[i] > .08 ? RED : INK; g.lineWidth = s.w * (1 - S.lift * .6); g.stroke()
-      if (S.lift < .05 && S.spread < .3) {   // drafting notes at the nut: the string name and its pitch
-        const a = 1 - S.spread / .3
-        g.globalAlpha = S.fade * a; g.fillStyle = amp[i] > .08 ? RED : INK; g.textAlign = 'center'
-        g.font = '500 16px Cinzel, serif'; g.fillText(s.n, q.x0, q.y0 - 16)
-        g.globalAlpha = S.fade
+      // the instrument: body outline, the left f-hole, fingerboard, bridge, nut, in a constant hairline like the rest of the site
+      g.globalAlpha = S.fade; g.lineWidth = 1
+      g.beginPath(); path3(BODY, true); FHL.forEach(s => path3(s, true)); path3(FB, true); path3(BR, true)
+      path3([[-12, 20.5, NUT], [12, 20.5, NUT]]); g.stroke()
+      // strings: tapering bands in depth; a string the bow (or a click) sets going turns vermilion and blurs, like a long exposure
+      const speed = Math.abs(S.bow - lastBow); lastBow = S.bow
+      const showBow = S.bow > -1.35 && S.bow < 1.35, bx = S.bow * 520, hair = showBow ? [bx - 278, bx + 292] : [0, -1]
+      NOTES.forEach((s, i) => {
+        const xb = strAt(s, (ZB - NUT) / (BRIDGE - NUT))[0]
+        if (xb > hair[0] && xb < hair[1]) amp[i] = Math.min(1, amp[i] + speed * 16)
+        amp[i] *= .965
+        const A = amp[i] * 1.3, wv = 2 * Math.PI * s.f / 196 * 3.1, N = 48, on = amp[i] > .08
+        const pts = Array.from({ length: N + 1 }, (_, j) => { const u = j / N, p = strAt(s, u)
+          p[0] += A * (Math.sin(Math.PI * u) * Math.sin(t * wv) + .3 * Math.sin(2 * Math.PI * u) * Math.sin(t * wv * 2.01 + 1)); return [p, u] })
+        if (A > .05) { g.fillStyle = `rgba(185,28,28,${.1 + amp[i] * .12})`
+          band(pts.map(([p, u]) => [p[0] + A * Math.sin(Math.PI * u), p[1], p[2]]), pts.map(([p, u]) => [p[0] - A * Math.sin(Math.PI * u), p[1], p[2]])) }
+        g.fillStyle = g.strokeStyle = on ? '#B91C1C' : INK
+        band(pts.map(([p]) => [p[0] - s.w, p[1], p[2]]), pts.map(([p]) => [p[0] + s.w, p[1], p[2]]))
+        g.lineWidth = .7; g.beginPath(); path3(pts.map(([p]) => p)); g.stroke()
+        if (S.note > .01) { g.globalAlpha = S.fade * S.note; g.font = '500 16px Cinzel, serif'; g.textAlign = 'center'; label(strAt(s, 0), s.n, 0, 30); g.globalAlpha = S.fade }
+      })
+      g.strokeStyle = INK; g.fillStyle = INK
+      if (showBow) drawBow(bx)
+      if (S.note > .01 && !phone) {   // drafting notes
+        g.globalAlpha = S.fade * S.note * .55; g.font = '10px "Archivo Narrow", sans-serif'; g.textAlign = 'left'
+        label([12, 20.5, NUT], 'NUT', 12, 4); label([22, 33, BRIDGE], 'BRIDGE', 8, -4); label([56, 0, 222], 'F-HOLE', 8, 4)
+        g.fillText('G 196 · D 294 · A 440 · E 659 HZ', W * .7, H * .5); g.fillText('CLICK A STRING TO HEAR IT', W * .7, H * .5 + 16)
       }
-    })
-    if (S.lift < .05 && S.spread < .3) {   // the nut and the bridge, drawn like a technical drawing
-      const a = 1 - S.spread / .3; g.globalAlpha = S.fade * a; g.strokeStyle = INK; g.lineWidth = 1.2
-      const n0 = geom(0), n3 = geom(3)
-      g.beginPath(); g.moveTo(n0.x0 - 10, NUT); g.lineTo(n3.x0 + 10, NUT); g.stroke()
-      g.beginPath(); g.moveTo(n0.x1 - 22, BRIDGE + 10); g.quadraticCurveTo(W / 2, BRIDGE - 8, n3.x1 + 22, BRIDGE + 10); g.lineTo(n3.x1 + 16, BRIDGE + 4); g.quadraticCurveTo(W / 2, BRIDGE - 13, n0.x1 - 16, BRIDGE + 4); g.closePath(); g.stroke()
-      g.globalAlpha = S.fade * a * .5; g.font = '10px "Archivo Narrow", sans-serif'; g.textAlign = 'left'; g.fillStyle = INK
-      if (!phone) {
-        g.fillText('NUT', n3.x0 + 22, NUT + 4); g.fillText('BRIDGE', n3.x1 + 34, BRIDGE + 6)
-        const nx = n3.x1 + 34, ny = NUT + (BRIDGE - NUT) * .36
-        g.fillText('G 196 · D 294 · A 440 · E 659 HZ', nx, ny); g.fillText('CLICK A STRING TO HEAR IT', nx, ny + 16)
-      }
-      g.globalAlpha = S.fade
-    }
-    if (showBow) drawBow(bowX, by)
     }
     g.globalAlpha = 1
-    // f-hole and photograph
-    const s = s0 * S.open * S.push, p = FH.pivot
-    const tr = `translate(${W / 2},${H / 2}) scale(${s}) translate(${-p[0]},${-p[1]})`
-    fg.setAttribute('transform', tr); fline.setAttribute('transform', tr); fline.style.opacity = S.open > .02 ? Math.max(0, 1 - (S.push - 1) / 3) : 0
+    // the right f-hole is cut in the svg: its outline in ink, and the photograph behind it
+    const c = FH.map(s => s.map(view)), ok = c.every(s => s.every(p => p[2] > NEAR))
+    const d = ok ? c.map(s => 'M' + s.map(p => scr(p).map(v => v.toFixed(1)).join(',')).join('L') + 'Z').join('') : ''
+    fg.setAttribute('d', d); fline.setAttribute('d', d); fline.style.opacity = S.fade
+    fpg.setAttribute('opacity', S.open)
+    if (S.blur > .1) { blur.setAttribute('stdDeviation', S.blur.toFixed(2)); photo.setAttribute('filter', 'url(#fblur)') } else photo.removeAttribute('filter')
     // the photograph moves from full screen into the print's photo area
     const r = ph.getBoundingClientRect(), e = S.shrink
     photo.setAttribute('x', r.left * e); photo.setAttribute('y', r.top * e)
@@ -303,15 +346,16 @@ function landingIntro (tdraw) {
     for (let i = 0; i < len; i++) { const k = i % N, nx = (k + 1) % N; d[i] = ring[k]; ring[k] = .4985 * (ring[k] + ring[nx]) }
     const src = ac.createBufferSource(), gn = ac.createGain(); gn.gain.value = .3; src.buffer = b; src.connect(gn).connect(ac.destination); src.start() }
   cv.addEventListener('click', e => {
-    let best = -1, bd = 26
-    NOTES.forEach((s, i) => { const q = geom(i), u = (e.clientY - q.y0) / (q.y1 - q.y0); if (u < 0 || u > 1) return; const dx = Math.abs(e.clientX - (q.x0 + (q.x1 - q.x0) * u)); if (dx < bd) { bd = dx; best = i } })
+    let best = -1, bd = 22
+    NOTES.forEach((s, i) => { for (let j = 0; j <= 30; j++) { const c = view(strAt(s, j / 30)); if (c[2] < NEAR) continue
+      const [x, y] = scr(c), dd = Math.hypot(e.clientX - x, e.clientY - y); if (dd < bd) { bd = dd; best = i } } })
     if (best >= 0) { amp[best] = 1; pluck(NOTES[best].f) }
   })
-  const pointer = () => { cv.style.pointerEvents = S.spread < .1 && S.fade > .5 && !phone ? 'auto' : 'none' }
+  const pointer = () => { cv.style.pointerEvents = S.cam < .3 && !phone ? 'auto' : 'none' }
   gsap.ticker.add(frame); gsap.ticker.add(pointer)
 
   gsap.set(print, { opacity: 0 }); gsap.set(pin, { opacity: 0 })
-  const L = screenLen(ink); gsap.set(ink, { strokeDasharray: L, strokeDashoffset: L, opacity: 1 }); gsap.set(cav, { opacity: 0 })
+  const L = screenLen(ink); gsap.set(ink, { strokeDasharray: L, strokeDashoffset: L, opacity: 0 }); gsap.set(cav, { opacity: 0 })
   if (phone) document.documentElement.style.overflow = 'hidden'
 
   const end = () => { document.documentElement.style.overflow = ''; seen() }
@@ -326,29 +370,30 @@ function landingIntro (tdraw) {
     gsap.set(navStaff, { clearProps: '--staff,--notes' })
     document.documentElement.classList.remove('intro'); document.documentElement.style.overflow = ''; scrollTo(0, 0); ScrollTrigger.refresh()
   })
-  if (phone) { tl.timeScale(1.25); const skip = () => tl.timeScale(8); addEventListener('touchstart', skip, { once: true }); addEventListener('wheel', skip, { once: true }) }
+  if (phone) { tl.timeScale(1.5); const skip = () => tl.timeScale(8); addEventListener('touchstart', skip, { once: true }); addEventListener('wheel', skip, { once: true }) }
 
   tl.to('.oneline-cue', { opacity: 0, duration: .3 }, .2)
-    .to(S, { bow: 1.25, duration: 2.4, ease: 'power1.inOut' }, 0)                      // one long down-bow; the strings ring while it moves
-    .to(S, { spread: 1, duration: 1, ease: 'power2.inOut' }, 2.3)                       // the strings part…
-    .to(S, { open: 1, duration: .8, ease: 'power2.out' }, 2.5)                          // …and an f-hole opens between them
-  if (navStaff && !phone) {
-    tl.to(S, { lift: 1, duration: 1.1, ease: 'none' }, 2.9)                             // the four strings rise to the header and become the staff
-      .fromTo(navStaff, { '--staff': 0 }, { '--staff': 1, duration: .3 }, 3.85)
-      .to(S, { fade: 0, duration: .2 }, 4.0)
-      .fromTo(navStaff, { '--notes': 0 }, { '--notes': 1, duration: .4, ease: 'back.out(2)' }, 4.1)
-  } else tl.to(S, { fade: 0, duration: .5 }, 2.9)
-  tl.to(S, { push: 30, duration: 1.4, ease: 'power3.in' }, 3.2)                         // the camera goes through the f-hole
-    .to(ffill, { opacity: 1, duration: .45, ease: 'power1.in' }, 4.1)
-    .to(S, { shrink: 1, duration: 1, ease: 'power3.inOut' }, 4.6)                       // the photograph settles where the print hangs
-    .to(print, { opacity: 1, duration: .25 }, 5.45)
-    .to(stage, { opacity: 0, duration: .2 }, 5.55)
-    .fromTo(pin, { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: .3, ease: 'back.out(3)' }, 5.6)
-    .fromTo('.table .t-text', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .5 }, 5.6)
-    .to(S, { settle: 1, duration: 1.4, ease: 'power2.out' }, 5.6)                       // the name rings, then rests
-    .to(ink, { strokeDashoffset: 0, duration: 1.2, ease: 'power1.inOut' }, 5.7)          // the homepage violin draws itself
-    .to(cav, { opacity: 1, duration: .3 }, 6.6)
-    .fromTo($$('.call', tdraw), { autoAlpha: 0 }, { autoAlpha: 1, duration: .4, stagger: .1 }, 6.7)
-    .to('.table .readout', { opacity: .75, duration: .4 }, 7.0)
-    .to({}, { duration: .4 })
+    .to(S, { note: 0, duration: .8 }, .3)                                                // the drafting notes fall away as the camera moves
+    .to(S, { cam: 1, duration: 2.5, ease: 'power1.inOut' }, 0)                           // the camera runs down the strings toward the bridge
+    .to(S, { bow: 1.4, duration: 1.7, ease: 'power1.inOut' }, 1.1)                       // one long down-bow by the bridge; the strings ring
+    .to(S, { cam: 2, duration: 1, ease: 'power2.inOut' }, 2.7)                           // the camera rises and turns to the f-hole…
+    .to(S, { open: 1, duration: .6, ease: 'power1.out' }, 3.0)                           // …where she is, out of focus
+    .to(S, { cam: 3, duration: 1, ease: 'power2.in' }, 3.65)                              // the camera drops through the f-hole
+    .to(S, { blur: 0, duration: .9, ease: 'power2.in' }, 3.7)                            // and the photograph comes into focus
+    .to(ffill, { opacity: 1, duration: .15, ease: 'power1.in' }, 4.58)
+    .to(S, { fade: 0, duration: .15 }, 4.6)
+    .to(S, { shrink: 1, duration: 1, ease: 'power3.inOut' }, 4.8)                        // the photograph settles where the print hangs
+    .to(print, { opacity: 1, duration: .25 }, 5.65)
+    .to(stage, { opacity: 0, duration: .2 }, 5.75)
+    .fromTo(pin, { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: .3, ease: 'back.out(3)' }, 5.8)
+    .fromTo('.table .t-text', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .5 }, 5.8)
+    .to(S, { settle: 1, duration: 1.4, ease: 'power2.out' }, 5.8)                        // the name rings, then rests
+    .set(ink, { opacity: 1 }, 5.9)                                                     // (hidden until then: its dash caps leave dots)
+    .to(ink, { strokeDashoffset: 0, duration: 1.2, ease: 'power1.inOut' }, 5.9)          // the homepage violin draws itself
+    .to(cav, { opacity: 1, duration: .3 }, 6.8)
+    .fromTo($$('.call', tdraw), { autoAlpha: 0 }, { autoAlpha: 1, duration: .4, stagger: .1 }, 6.9)
+    .to('.table .readout', { opacity: .75, duration: .4 }, 7.2)
+  if (navStaff && !phone) tl.fromTo(navStaff, { '--staff': 0 }, { '--staff': 1, duration: .4 }, 6.0)   // the header staff fades back in
+    .fromTo(navStaff, { '--notes': 0 }, { '--notes': 1, duration: .4, ease: 'back.out(2)' }, 6.3)
+  tl.to({}, { duration: .4 })
 }

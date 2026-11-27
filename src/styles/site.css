@@ -382,3 +382,10 @@ main:focus{outline:none}
 main{overflow-x:clip}
 .prizes em{font-style:normal;opacity:.7}
 footer .replay{display:block;margin-top:6px;font-size:13px;opacity:.72;text-decoration:underline;text-underline-offset:3px}
+
+/* landing intro, four strings: the stage sits over the page while it plays */
+.dstage{position:fixed;inset:0;z-index:25;pointer-events:none}
+.dstage canvas,.dstage svg{position:absolute;inset:0;width:100%;height:100%}
+.dstage canvas{cursor:pointer}
+.table h1 .l{display:inline-block}
+html.intro .t-draw .ink{opacity:1}

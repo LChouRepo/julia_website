@@ -472,3 +472,16 @@ html.intro .plate-photo .mk,html.intro .plate-photo img{opacity:0}
 .peek .pk-t{display:block;font:300 16px/1.35 Spectral,serif;color:var(--ink)}
 @media (hover:none),(max-width:860px){.peek{display:none}}
 @keyframes land{from{transform:translateY(-14px);opacity:0}to{transform:translateY(0);opacity:1}}
+/* hero text: the tagline on one line; the dimension line runs only under the photograph half, so it never crosses the text */
+@media (min-width:861px){
+  .hero-plate .lede{white-space:nowrap;max-width:none}
+  .hero-plate .t-text{max-width:none}
+  .plate-photo .dim{left:50%}
+  .plate-photo .dim{background:linear-gradient(90deg,var(--ink) calc(30% - 76px),transparent calc(30% - 76px) calc(30% + 76px),var(--ink) calc(30% + 76px))}
+  .plate-photo .dim span{left:30%}
+}
+@media (min-width:861px){
+  .plate-photo .dim{background:linear-gradient(90deg,var(--ink) calc(78% - 70px),transparent calc(78% - 70px) calc(78% + 70px),var(--ink) calc(78% + 70px))}
+  .plate-photo .dim span{left:78%}                     /* the label sits on the grey backdrop, not on her */
+  .hero-plate .readout{top:132px}                       /* clear of the header staff */
+}

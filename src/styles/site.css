@@ -505,3 +505,4 @@ html.intro .plate-photo .mk,html.intro .plate-photo img{opacity:0}
   .sn-side{grid-column:1!important;grid-row:auto;display:flex;flex-direction:column;gap:56px}
   .sn-panel{max-width:none}
 }
+@media (min-width:861px){.strings-nav{height:100vh;min-height:0;padding:96px 4vw 3vh}.strings-nav .t-draw{height:calc(100vh - 130px)}}   /* the whole violin, labels included, sits below the header while it holds */

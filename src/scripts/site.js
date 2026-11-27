@@ -119,7 +119,7 @@ gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
     // the band holds still while the violin draws itself with the scroll, then its four pegs appear
     const wide = innerWidth > 860
     // drawing starts as the band comes up the screen and finishes while it holds still at the top
-    if (wide) ScrollTrigger.create({ trigger: '.strings-nav', start: 'top top', end: '+=55%', pin: true })
+    if (wide) ScrollTrigger.create({ trigger: '.strings-nav', start: 'top top', end: '+=160%', pin: true })   // it stays a good while, so the pegs can be explored
     gsap.timeline({ scrollTrigger: wide ? { trigger: '.strings-nav', start: 'top 80%', end: () => '+=' + innerHeight * 1.3, scrub: .6 } : { trigger: tdraw, start: 'top 85%', end: 'bottom 60%', scrub: .6 } })
       .to(ink, { strokeDashoffset: 0, duration: 2.2, ease: 'none' }, 0)
       .to($('.cav', tdraw), { opacity: 1, duration: .3 }, 1.9)
